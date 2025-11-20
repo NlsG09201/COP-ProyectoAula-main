@@ -9,10 +9,34 @@ export class ServiciosComponent implements AfterViewInit {
   async ngAfterViewInit() {
     const form = document.getElementById('citaForm') as HTMLFormElement | null;
     const servicioSelect = document.getElementById('servicioSelect') as HTMLSelectElement | null;
+    const categoriaSelect = document.getElementById('categoriaSelect') as HTMLSelectElement | null;
     const medicoSelect = document.getElementById('medicoSelect') as HTMLSelectElement | null;
     const msg = document.getElementById('citaMsg');
     const booking = document.querySelector('.booking-section') as HTMLElement | null;
     const nameToId: Record<string, number> = {};
+    let serviciosCache: any[] = [];
+    const categoriaDe = (nombre: string) => {
+      const n = (nombre || '').toLowerCase();
+      if (n.includes('psico') || n.includes('pareja') || n.includes('familiar') || n.includes('terapia')) return 'Psicologia';
+      return 'Odontologia';
+    };
+    const renderServicios = (categoria: string) => {
+      if (!servicioSelect) return;
+      const list = serviciosCache
+        .filter(s => !categoria || categoriaDe(s.tipoServicio?.nombre) === categoria)
+        .slice()
+        .sort((a, b) => {
+          const an = (a.tipoServicio?.nombre || '').toString().toLowerCase();
+          const bn = (b.tipoServicio?.nombre || '').toString().toLowerCase();
+          return an.localeCompare(bn);
+        });
+      const current = servicioSelect.value || '';
+      servicioSelect.innerHTML = '<option value="">Selecciona servicio</option>' + list.map(s => {
+        const nombre = (s.tipoServicio?.nombre || s.idServicio + '').toString();
+        return `<option value="${s.idServicio}">${nombre}</option>`;
+      }).join('');
+      if (current) servicioSelect.value = current;
+    };
     const fetchServicios = async () => {
       let attempt = 0;
       while (attempt < 3) {
@@ -20,12 +44,13 @@ export class ServiciosComponent implements AfterViewInit {
           const r = await fetch('/api/servicios');
           if (!r.ok) throw new Error(String(r.status));
           const servicios: any[] = await r.json();
+          serviciosCache = servicios;
           if (servicioSelect) {
-            servicioSelect.innerHTML = '<option value="">Selecciona servicio</option>' + servicios.map(s => {
+            servicios.forEach(s => {
               const nombre = (s.tipoServicio?.nombre || s.idServicio + '').toString();
               nameToId[nombre.toLowerCase()] = s.idServicio;
-              return `<option value="${s.idServicio}">${nombre}</option>`;
-            }).join('');
+            });
+            renderServicios(categoriaSelect?.value || '');
           }
           document.querySelectorAll('.service-detail-card .btn-primary').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -46,6 +71,7 @@ export class ServiciosComponent implements AfterViewInit {
       if (msg) (msg as HTMLElement).textContent = 'No fue posible cargar servicios. Intenta nuevamente.';
     };
     await fetchServicios();
+    if (categoriaSelect) categoriaSelect.addEventListener('change', () => renderServicios(categoriaSelect.value || ''));
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();

@@ -29,6 +29,7 @@ public class SecurityConfig {
                     "/api/dientes/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/citas").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/medicos/por-servicio/**").permitAll()
                 .requestMatchers("/api/citas/**", "/api/odontogramas/**", "/api/detalles-odontograma/**", "/api/medicos/**").authenticated()
                 .anyRequest().permitAll()
             )

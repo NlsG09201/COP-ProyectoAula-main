@@ -22,6 +22,11 @@ public class MedicoController {
         return repo.findByRol(Rol.MEDICO);
     }
 
+    @GetMapping("/por-servicio/{idServicio}")
+    public List<Persona> listarPorServicio(@PathVariable Long idServicio) {
+        return repo.findByRolAndServicios_Id(Rol.MEDICO, idServicio);
+    }
+
     @GetMapping("/{id}")
     public Persona obtener(@PathVariable Long id) {
         Persona p = repo.findById(id).orElseThrow(() -> new RuntimeException("Médico no encontrado"));
