@@ -18,19 +18,7 @@ interface Cita { idCita?: number; fecha: string; hora: string; direccion: string
       <div class="field"><label>Hasta</label><input type="date" [(ngModel)]="filtroHasta"></div>
       <div class="field"><label>Buscar por paciente / médico</label><input placeholder="Texto" [(ngModel)]="filtroTexto"></div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-      <div class="field md:col-span-1">
-        <label>Usuario médico</label>
-        <input placeholder="usuario" [(ngModel)]="user">
-      </div>
-      <div class="field md:col-span-1">
-        <label>Contraseña</label>
-        <input type="password" placeholder="contraseña" [(ngModel)]="pass">
-      </div>
-      <div class="field md:col-span-1 flex items-end">
-        <button class="btn" (click)="login()">Iniciar sesión</button>
-      </div>
-    </div>
+    
     <div class="flex gap-2 mb-4">
       <button class="btn" (click)="aplicarFiltros()">Aplicar filtros</button>
       <button class="btn secondary" (click)="resetFiltros()">Limpiar</button>
@@ -108,8 +96,6 @@ export class CitasPageComponent {
   filtroDesde = '';
   filtroHasta = '';
   filtroTexto = '';
-  user = '';
-  pass = '';
   medicos: any[] = [];
   selectedMedicoId: number | null = null;
   turnoMedicoId: number | null = null;
@@ -119,7 +105,7 @@ export class CitasPageComponent {
   errorTurno = '';
   okTurno = '';
 
-  constructor(private api: ApiService) { if (this.api.hasAuth()) this.load(); }
+  constructor(private api: ApiService) { this.load(); }
 
   load() {
     this.loading = true; this.error = '';
@@ -165,7 +151,7 @@ export class CitasPageComponent {
     this.citasFiltradas.sort((a,b) => (parse(a[campo]) > parse(b[campo]) ? 1 : -1));
   }
 
-  login() { this.api.setAuth(this.user, this.pass); this.load(); }
+  
 
   confirmar(id: number | undefined) {
     if (!id || !this.selectedMedicoId) return;
