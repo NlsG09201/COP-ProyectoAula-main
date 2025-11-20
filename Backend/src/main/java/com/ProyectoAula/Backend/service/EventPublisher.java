@@ -9,14 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class EventPublisher {
     private final RabbitTemplate rabbitTemplate;
-    private final MessageConverter rabbitConverter;
     private final JmsTemplate jmsTemplate;
 
     public EventPublisher(RabbitTemplate rabbitTemplate,
                           MessageConverter rabbitConverter,
                           JmsTemplate jmsTemplate) {
         this.rabbitTemplate = rabbitTemplate;
-        this.rabbitConverter = rabbitConverter;
         this.jmsTemplate = jmsTemplate;
         this.rabbitTemplate.setMessageConverter(rabbitConverter);
     }

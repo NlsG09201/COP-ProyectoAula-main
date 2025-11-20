@@ -34,6 +34,7 @@ public class ServicioController {
     @PutMapping("/{id}")
     public Servicio actualizar(@PathVariable Long id, @RequestBody Servicio datos) {
         Servicio s = repo.findById(id).orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
+        s.setNombre(datos.getNombre());
         s.setTipoServicio(datos.getTipoServicio());
         return repo.save(s);
     }

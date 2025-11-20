@@ -14,26 +14,23 @@ export class ServiciosComponent implements AfterViewInit {
     const msg = document.getElementById('citaMsg');
     const booking = document.querySelector('.booking-section') as HTMLElement | null;
     const nameToId: Record<string, number> = {};
+    const typeToFirstId: Record<string, number> = {};
     let serviciosCache: any[] = [];
     if (medicoSelect) medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>';
-    const categoriaDe = (nombre: string) => {
-      const n = (nombre || '').toLowerCase();
-      if (n.includes('psico') || n.includes('pareja') || n.includes('familiar') || n.includes('terapia')) return 'Psicologia';
-      return 'Odontologia';
-    };
+    const tiposDisponibles = new Set<string>();
     const renderServicios = (categoria: string) => {
       if (!servicioSelect) return;
       const list = serviciosCache
-        .filter(s => !categoria || categoriaDe(s.tipoServicio?.nombre) === categoria)
+        .filter(s => !categoria || (s.tipoServicio?.nombre === categoria))
         .slice()
         .sort((a, b) => {
-          const an = (a.tipoServicio?.nombre || '').toString().toLowerCase();
-          const bn = (b.tipoServicio?.nombre || '').toString().toLowerCase();
+          const an = (a.nombre || '').toString().toLowerCase();
+          const bn = (b.nombre || '').toString().toLowerCase();
           return an.localeCompare(bn);
         });
       const current = servicioSelect.value || '';
       servicioSelect.innerHTML = '<option value="">Selecciona servicio</option>' + list.map(s => {
-        const nombre = (s.tipoServicio?.nombre || s.idServicio + '').toString();
+        const nombre = (s.nombre || s.idServicio + '').toString();
         return `<option value="${s.idServicio}">${nombre}</option>`;
       }).join('');
       if (current) servicioSelect.value = current;
@@ -48,16 +45,25 @@ export class ServiciosComponent implements AfterViewInit {
           serviciosCache = servicios;
           if (servicioSelect) {
             servicios.forEach(s => {
-              const nombre = (s.tipoServicio?.nombre || s.idServicio + '').toString();
+              const nombre = (s.nombre || s.idServicio + '').toString();
               nameToId[nombre.toLowerCase()] = s.idServicio;
+              if (s?.tipoServicio?.nombre) tiposDisponibles.add(String(s.tipoServicio.nombre));
+              const t = String(s?.tipoServicio?.nombre || '');
+              if (t && typeToFirstId[t] == null) typeToFirstId[t] = s.idServicio;
             });
+            if (categoriaSelect) {
+              const actual = categoriaSelect.value || '';
+              const opts = ['<option value="">Todos</option>', ...Array.from(tiposDisponibles).sort().map(t => `<option value="${t}">${t}</option>`)];
+              categoriaSelect.innerHTML = opts.join('');
+              categoriaSelect.value = actual;
+            }
             renderServicios(categoriaSelect?.value || '');
           }
           document.querySelectorAll('.service-detail-card .btn-primary').forEach(btn => {
             btn.addEventListener('click', () => {
               const card = btn.closest('.service-detail-card');
-              const name = card?.querySelector('h3')?.textContent?.trim().toLowerCase() || '';
-              const id = nameToId[name];
+              const name = card?.querySelector('h3')?.textContent?.trim() || '';
+              const id = typeToFirstId[name] || nameToId[name.toLowerCase()];
               if (servicioSelect && id) servicioSelect.value = String(id);
               if (servicioSelect && id) fetchMedicosPorServicio(String(id));
               if (booking) { booking.classList.remove('hidden'); booking.scrollIntoView({ behavior: 'smooth' }); }
@@ -108,7 +114,6 @@ export class ServiciosComponent implements AfterViewInit {
         const docIden = (document.getElementById('pacienteDoc') as HTMLInputElement)?.value || '';
         const fecha = (document.getElementById('citaFecha') as HTMLInputElement)?.value || '';
         const hora = (document.getElementById('citaHora') as HTMLInputElement)?.value || '';
-        const direccionCita = (document.getElementById('citaDireccion') as HTMLInputElement)?.value || 'Clínica COP';
         const servicioId = servicioSelect?.value || '';
         if (!nombre || !email || !fecha || !hora || !servicioId) { if (msg) msg.textContent = 'Completa los campos obligatorios'; return; }
         try {
@@ -120,7 +125,7 @@ export class ServiciosComponent implements AfterViewInit {
           if (!pacienteRes.ok) { if (msg) msg.textContent = 'Error creando paciente'; return; }
           const medicoId = medicoSelect?.value || '';
           const body: any = {
-            fecha, hora, direccion: direccionCita,
+            fecha, hora,
             paciente: { idPersona: paciente.idPersona },
             servicio: { idServicio: Number(servicioId) }
           };

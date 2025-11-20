@@ -19,7 +19,7 @@ public class Cita {
     @Column(nullable = false)
     private LocalTime hora;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String direccion;
 
     @ManyToOne

@@ -10,6 +10,9 @@ public class Servicio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idServicio;
 
+    @Column(nullable = false)
+    private String nombre;
+
     @ManyToOne
     @JoinColumn(name = "ID_TipoServicio", nullable = false)
     private TipoServicio tipoServicio;
@@ -23,6 +26,8 @@ public class Servicio {
     // Getters y Setters
     public Long getIdServicio() { return idServicio; }
     public void setIdServicio(Long idServicio) { this.idServicio = idServicio; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
     public TipoServicio getTipoServicio() { return tipoServicio; }
     public void setTipoServicio(TipoServicio tipoServicio) { this.tipoServicio = tipoServicio; }
     

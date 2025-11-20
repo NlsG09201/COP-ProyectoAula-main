@@ -2,9 +2,13 @@ package com.ProyectoAula.Backend.config;
 
 import com.ProyectoAula.Backend.model.Diente;
 import com.ProyectoAula.Backend.model.Persona;
+import com.ProyectoAula.Backend.model.Servicio;
+import com.ProyectoAula.Backend.model.TipoServicio;
 import com.ProyectoAula.Backend.model.Persona.Rol;
 import com.ProyectoAula.Backend.repository.DienteRepository;
 import com.ProyectoAula.Backend.repository.PersonaRepository;
+import com.ProyectoAula.Backend.repository.ServicioRepository;
+import com.ProyectoAula.Backend.repository.TipoServicioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -15,11 +19,16 @@ public class DataInitializer implements CommandLineRunner {
     private final DienteRepository dienteRepository;
     private final PersonaRepository personaRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TipoServicioRepository tipoRepo;
+    private final ServicioRepository servicioRepo;
 
-    public DataInitializer(DienteRepository dienteRepository, PersonaRepository personaRepository, PasswordEncoder passwordEncoder) {
+    public DataInitializer(DienteRepository dienteRepository, PersonaRepository personaRepository, PasswordEncoder passwordEncoder,
+                           TipoServicioRepository tipoRepo, ServicioRepository servicioRepo) {
         this.dienteRepository = dienteRepository;
         this.personaRepository = personaRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tipoRepo = tipoRepo;
+        this.servicioRepo = servicioRepo;
     }
 
     @Override
@@ -50,6 +59,10 @@ public class DataInitializer implements CommandLineRunner {
             t.setUsername("testmedico");
             t.setPasswordHash(passwordEncoder.encode("test123"));
             personaRepository.save(t);
+        }
+
+        if (servicioRepo.count() == 0) {
+            seedServiciosOdonto();
         }
     }
 
@@ -105,5 +118,47 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         System.out.println("✅ Inicializados 32 dientes en la base de datos");
+    }
+
+    private void seedServiciosOdonto() {
+        TipoServicio odGeneral = tipoRepo.findByNombre("Odontología General").orElseGet(() -> {
+            TipoServicio ts = new TipoServicio(); ts.setNombre("Odontología General"); return tipoRepo.save(ts);
+        });
+        TipoServicio ortodoncia = tipoRepo.findByNombre("Ortodoncia").orElseGet(() -> {
+            TipoServicio ts = new TipoServicio(); ts.setNombre("Ortodoncia"); return tipoRepo.save(ts);
+        });
+        TipoServicio estetica = tipoRepo.findByNombre("Estética Dental").orElseGet(() -> {
+            TipoServicio ts = new TipoServicio(); ts.setNombre("Estética Dental"); return tipoRepo.save(ts);
+        });
+        TipoServicio implantes = tipoRepo.findByNombre("Implantes Dentales").orElseGet(() -> {
+            TipoServicio ts = new TipoServicio(); ts.setNombre("Implantes Dentales"); return tipoRepo.save(ts);
+        });
+
+        createServicio("Limpieza y Profilaxis", odGeneral);
+        createServicio("Empastes y Restauraciones", odGeneral);
+        createServicio("Endodoncias (tratamientos de conducto)", odGeneral);
+        createServicio("Extracciones Dentales", odGeneral);
+
+        createServicio("Brackets Metálicos", ortodoncia);
+        createServicio("Brackets Estéticos (Cerámica, Zafiro)", ortodoncia);
+        createServicio("Ortodoncia Invisible (Aligners)", ortodoncia);
+        createServicio("Retenedores", ortodoncia);
+
+        createServicio("Blanqueamiento Dental", estetica);
+        createServicio("Carillas de Porcelana y Resina", estetica);
+        createServicio("Coronas Dentales", estetica);
+        createServicio("Contorneado Estético", estetica);
+
+        createServicio("Implantes de Titanio", implantes);
+        createServicio("Coronas sobre Implantes", implantes);
+        createServicio("Puentes sobre Implantes", implantes);
+        createServicio("Regeneración Ósea", implantes);
+    }
+
+    private void createServicio(String nombre, TipoServicio tipo) {
+        Servicio s = new Servicio();
+        s.setNombre(nombre);
+        s.setTipoServicio(tipo);
+        servicioRepo.save(s);
     }
 }

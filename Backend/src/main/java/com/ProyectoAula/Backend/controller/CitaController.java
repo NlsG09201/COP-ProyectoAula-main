@@ -99,7 +99,7 @@ public class CitaController {
                 creada.getPaciente() != null ? creada.getPaciente().getNombreCompleto() : null,
                 creada.getPaciente() != null ? creada.getPaciente().getEmail() : null,
                 creada.getMedico() != null ? creada.getMedico().getNombreCompleto() : null,
-                creada.getServicio() != null ? creada.getServicio().getTipoServicio().name() : null,
+                creada.getServicio() != null ? creada.getServicio().getTipoServicio().getNombre() : null,
                 "CREATED"
         );
         events.publish("cita.created", evt);
@@ -123,7 +123,7 @@ public class CitaController {
                 actualizada.getPaciente() != null ? actualizada.getPaciente().getNombreCompleto() : null,
                 actualizada.getPaciente() != null ? actualizada.getPaciente().getEmail() : null,
                 actualizada.getMedico() != null ? actualizada.getMedico().getNombreCompleto() : null,
-                actualizada.getServicio() != null ? actualizada.getServicio().getTipoServicio().name() : null,
+                actualizada.getServicio() != null ? actualizada.getServicio().getTipoServicio().getNombre() : null,
                 "UPDATED"
         );
         events.publish("cita.updated", evt);
@@ -149,7 +149,7 @@ public class CitaController {
                 c.getPaciente() != null ? c.getPaciente().getNombreCompleto() : null,
                 c.getPaciente() != null ? c.getPaciente().getEmail() : null,
                 c.getMedico() != null ? c.getMedico().getNombreCompleto() : null,
-                c.getServicio() != null ? c.getServicio().getTipoServicio().name() : null,
+                c.getServicio() != null ? c.getServicio().getTipoServicio().getNombre() : null,
                 "CONFIRMED"
         );
         events.publish("cita.confirmed", evt);
