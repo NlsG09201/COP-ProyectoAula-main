@@ -75,48 +75,64 @@ export class TestimoniosComponent implements AfterViewInit {
       }
       grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8"><p>Cargando testimonios...</p></div>';
     }
-    fetch('/api/testimonios/ultimos')
-      .then(res => res.json())
-      .then(data => {
-        if (!container) return;
-        const grid = container.querySelector('.grid')!;
-        grid.innerHTML = '';
-        const testimonios = Array.isArray(data) ? data : [];
-        if (testimonios.length === 0) {
-          grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8"><p>Aún no hay testimonios.</p></div>';
-          return;
-        }
-        const header = document.createElement('div');
-        header.className = 'col-span-full text-center mb-4';
-        header.innerHTML = `<p class="text-gray-600">Total: ${testimonios.length} testimonio${testimonios.length !== 1 ? 's' : ''}</p>`;
-        grid.appendChild(header);
-        testimonios.forEach((t: any) => {
-          const div = document.createElement('div');
-          div.className = 'testimonial-card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100';
-          const imageSrc = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(t.nombre) + '&background=0891b2&color=fff&size=80';
-          const fechaMostrar = t.fechaCreacion;
-          div.innerHTML = `
-            <div class="flex items-center mb-4">
-              <img src="${imageSrc}" alt="${t.nombre}" class="rounded-full w-16 h-16 object-cover mr-4 shadow-sm border-2 border-blue-100" loading="lazy">
-              <div>
-                <p class="font-semibold text-lg text-gray-800">${t.nombre}</p>
-                <div class="flex items-center space-x-1" title="${t.calificacion} de 5 estrellas">
-                  ${this.generateStarsHtml(t.calificacion)}
-                  <span class="text-sm text-gray-500 ml-2">(${t.calificacion}/5)</span>
+    const run = async () => {
+      let attempt = 0;
+      let lastErr = '';
+      while (attempt < 3) {
+        try {
+          const res = await fetch('/api/testimonios/ultimos');
+          if (!res.ok) throw new Error(String(res.status));
+          const data = await res.json();
+          if (!container) return;
+          const grid = container.querySelector('.grid')!;
+          grid.innerHTML = '';
+          const testimonios = Array.isArray(data) ? data : [];
+          if (testimonios.length === 0) {
+            grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8"><p>Aún no hay testimonios.</p></div>';
+            return;
+          }
+          const header = document.createElement('div');
+          header.className = 'col-span-full text-center mb-4';
+          header.innerHTML = `<p class="text-gray-600">Total: ${testimonios.length} testimonio${testimonios.length !== 1 ? 's' : ''}</p>`;
+          grid.appendChild(header);
+          testimonios.forEach((t: any) => {
+            const div = document.createElement('div');
+            div.className = 'testimonial-card bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100';
+            const imageSrc = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(t.nombre) + '&background=0891b2&color=fff&size=80';
+            const fechaMostrar = t.fechaCreacion;
+            div.innerHTML = `
+              <div class="flex items-center mb-4">
+                <img src="${imageSrc}" alt="${t.nombre}" class="rounded-full w-16 h-16 object-cover mr-4 shadow-sm border-2 border-blue-100" loading="lazy">
+                <div>
+                  <p class="font-semibold text-lg text-gray-800">${t.nombre}</p>
+                  <div class="flex items-center space-x-1" title="${t.calificacion} de 5 estrellas">
+                    ${this.generateStarsHtml(t.calificacion)}
+                    <span class="text-sm text-gray-500 ml-2">(${t.calificacion}/5)</span>
+                  </div>
+                  <div class="text-xs text-gray-400 mt-1"><span class="fecha-absoluta">${fechaMostrar}</span></div>
                 </div>
-                <div class="text-xs text-gray-400 mt-1"><span class="fecha-absoluta">${fechaMostrar}</span></div>
               </div>
-            </div>
-            <p class="text-gray-700 italic leading-relaxed">"${t.comentario}"</p>
-          `;
-          grid.appendChild(div);
-        });
-      })
-      .catch(() => {
-        if (!container) return;
+              <p class="text-gray-700 italic leading-relaxed">"${t.comentario}"</p>
+            `;
+            grid.appendChild(div);
+          });
+          return;
+        } catch (e: any) {
+          lastErr = e?.message || '';
+          attempt++;
+          if (container) {
+            const grid = container.querySelector('.grid')!;
+            grid.innerHTML = '<div class="col-span-full text-center text-red-500 py-8"><p>Backend no disponible, reintentando...</p></div>';
+          }
+          await new Promise(r => setTimeout(r, 700 * attempt));
+        }
+      }
+      if (container) {
         const grid = container.querySelector('.grid')!;
-        grid.innerHTML = '<div class="col-span-full text-center text-red-500 py-8"><p>Error al cargar testimonios.</p></div>';
-      });
+        grid.innerHTML = '<div class="col-span-full text-center text-red-500 py-8"><p>No fue posible cargar testimonios. Intenta nuevamente.</p></div>';
+      }
+    };
+    run();
   }
 
   private generateStarsHtml(calificacion: number) {

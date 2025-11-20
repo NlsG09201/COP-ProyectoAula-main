@@ -6,33 +6,46 @@ import { Component, AfterViewInit } from '@angular/core';
   templateUrl: './servicios.component.html'
 })
 export class ServiciosComponent implements AfterViewInit {
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     const form = document.getElementById('citaForm') as HTMLFormElement | null;
     const servicioSelect = document.getElementById('servicioSelect') as HTMLSelectElement | null;
     const medicoSelect = document.getElementById('medicoSelect') as HTMLSelectElement | null;
     const msg = document.getElementById('citaMsg');
     const booking = document.querySelector('.booking-section') as HTMLElement | null;
     const nameToId: Record<string, number> = {};
-    fetch('/api/servicios')
-      .then(r => r.json())
-      .then((servicios: any[]) => {
-        if (servicioSelect) {
-          servicioSelect.innerHTML = '<option value="">Selecciona servicio</option>' + servicios.map(s => {
-            const nombre = (s.tipoServicio?.nombre || s.idServicio + '').toString();
-            nameToId[nombre.toLowerCase()] = s.idServicio;
-            return `<option value="${s.idServicio}">${nombre}</option>`;
-          }).join('');
-        }
-        document.querySelectorAll('.service-detail-card .btn-primary').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const card = btn.closest('.service-detail-card');
-            const name = card?.querySelector('h3')?.textContent?.trim().toLowerCase() || '';
-            const id = nameToId[name];
-            if (servicioSelect && id) servicioSelect.value = String(id);
-            if (booking) { booking.classList.remove('hidden'); booking.scrollIntoView({ behavior: 'smooth' }); }
+    const fetchServicios = async () => {
+      let attempt = 0;
+      while (attempt < 3) {
+        try {
+          const r = await fetch('/api/servicios');
+          if (!r.ok) throw new Error(String(r.status));
+          const servicios: any[] = await r.json();
+          if (servicioSelect) {
+            servicioSelect.innerHTML = '<option value="">Selecciona servicio</option>' + servicios.map(s => {
+              const nombre = (s.tipoServicio?.nombre || s.idServicio + '').toString();
+              nameToId[nombre.toLowerCase()] = s.idServicio;
+              return `<option value="${s.idServicio}">${nombre}</option>`;
+            }).join('');
+          }
+          document.querySelectorAll('.service-detail-card .btn-primary').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const card = btn.closest('.service-detail-card');
+              const name = card?.querySelector('h3')?.textContent?.trim().toLowerCase() || '';
+              const id = nameToId[name];
+              if (servicioSelect && id) servicioSelect.value = String(id);
+              if (booking) { booking.classList.remove('hidden'); booking.scrollIntoView({ behavior: 'smooth' }); }
+            });
           });
-        });
-      }).catch(() => {});
+          return;
+        } catch {
+          attempt++;
+          if (msg) (msg as HTMLElement).textContent = 'Backend no disponible, reintentando...';
+          await new Promise(r => setTimeout(r, 700 * attempt));
+        }
+      }
+      if (msg) (msg as HTMLElement).textContent = 'No fue posible cargar servicios. Intenta nuevamente.';
+    };
+    await fetchServicios();
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -71,10 +84,9 @@ export class ServiciosComponent implements AfterViewInit {
             if (msg) msg.textContent = cita?.message || 'Error registrando cita';
           }
         } catch {
-          if (msg) msg.textContent = 'Error de conexión al backend';
+          if (msg) msg.textContent = 'Backend no disponible, intenta nuevamente en unos segundos';
         }
       });
     }
   }
 }
-
