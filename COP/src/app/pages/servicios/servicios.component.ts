@@ -15,6 +15,7 @@ export class ServiciosComponent implements AfterViewInit {
     const booking = document.querySelector('.booking-section') as HTMLElement | null;
     const nameToId: Record<string, number> = {};
     let serviciosCache: any[] = [];
+    if (medicoSelect) medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>';
     const categoriaDe = (nombre: string) => {
       const n = (nombre || '').toLowerCase();
       if (n.includes('psico') || n.includes('pareja') || n.includes('familiar') || n.includes('terapia')) return 'Psicologia';
@@ -58,6 +59,7 @@ export class ServiciosComponent implements AfterViewInit {
               const name = card?.querySelector('h3')?.textContent?.trim().toLowerCase() || '';
               const id = nameToId[name];
               if (servicioSelect && id) servicioSelect.value = String(id);
+              if (servicioSelect && id) fetchMedicosPorServicio(String(id));
               if (booking) { booking.classList.remove('hidden'); booking.scrollIntoView({ behavior: 'smooth' }); }
             });
           });
@@ -72,6 +74,30 @@ export class ServiciosComponent implements AfterViewInit {
     };
     await fetchServicios();
     if (categoriaSelect) categoriaSelect.addEventListener('change', () => renderServicios(categoriaSelect.value || ''));
+    const fetchMedicosPorServicio = async (idServicio: string) => {
+      if (!medicoSelect) return;
+      medicoSelect.innerHTML = '<option value="">Cargando médicos...</option>';
+      let attempt = 0;
+      while (attempt < 3) {
+        try {
+          const r = await fetch(`/api/medicos/por-servicio/${idServicio}`);
+          if (!r.ok) throw new Error(String(r.status));
+          const medicos: any[] = await r.json();
+          medicos.sort((a, b) => (a.nombreCompleto || '').localeCompare(b.nombreCompleto || ''));
+          medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>' + medicos.map(m => `<option value="${m.idPersona}">${m.nombreCompleto}</option>`).join('');
+          return;
+        } catch {
+          attempt++;
+          await new Promise(r => setTimeout(r, 700 * attempt));
+        }
+      }
+      medicoSelect.innerHTML = '<option value="">Sin médicos disponibles</option>';
+    };
+    if (servicioSelect) servicioSelect.addEventListener('change', () => {
+      const id = servicioSelect.value;
+      if (id) fetchMedicosPorServicio(id);
+      else if (medicoSelect) medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>';
+    });
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
