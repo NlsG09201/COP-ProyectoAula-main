@@ -23,8 +23,20 @@ export class ServiciosComponent implements AfterViewInit {
     const tiposDisponibles = new Set<string>();
     const renderServicios = (categoria: string) => {
       if (!servicioSelect) return;
+      const odontoGroup = [
+        'Odontología General',
+        'Ortodoncia',
+        'Estética Dental',
+        'Implantes Dentales'
+      ];
+      const permitidos = (cat: string) => {
+        if (!cat) return null; // null => todos
+        if (cat === 'Odontología') return new Set(odontoGroup);
+        return new Set([cat]);
+      };
+      const allowed = permitidos(categoria);
       const list = serviciosCache
-        .filter(s => !categoria || (s.tipoServicio?.nombre === categoria))
+        .filter(s => !allowed || allowed.has(String(s?.tipoServicio?.nombre || '')))
         .slice()
         .sort((a, b) => {
           const an = (a.nombre || '').toString().toLowerCase();
@@ -36,7 +48,9 @@ export class ServiciosComponent implements AfterViewInit {
         const nombre = (s.nombre || s.idServicio + '').toString();
         return `<option value="${s.idServicio}">${nombre}</option>`;
       }).join('');
-      if (current) servicioSelect.value = current;
+      if (current && Array.from(servicioSelect.options).some(o => o.value === current)) {
+        servicioSelect.value = current;
+      }
     };
     const fetchServicios = async () => {
       let attempt = 0;
@@ -54,14 +68,17 @@ export class ServiciosComponent implements AfterViewInit {
               const t = String(s?.tipoServicio?.nombre || '');
               if (t && typeToFirstId[t] == null) typeToFirstId[t] = s.idServicio;
             });
-            if (categoriaSelect) {
-              const actual = categoriaSelect.value || '';
-              const opts = ['<option value="">Todos</option>', ...Array.from(tiposDisponibles).sort().map(t => `<option value="${t}">${t}</option>`)];
-              categoriaSelect.innerHTML = opts.join('');
-              categoriaSelect.value = actual;
-            }
-            renderServicios(categoriaSelect?.value || '');
+          if (categoriaSelect) {
+            const actual = categoriaSelect.value || '';
+            const baseOpts = ['<option value="">Todos</option>', '<option value="Odontología">Odontología</option>'];
+            const typeOpts = Array.from(tiposDisponibles).sort().map(t => `<option value="${t}">${t}</option>`);
+            const opts = [...baseOpts, ...typeOpts];
+            categoriaSelect.innerHTML = opts.join('');
+            const hasActual = opts.some(o => o.includes(`value="${actual}"`));
+            categoriaSelect.value = hasActual ? actual : '';
           }
+          renderServicios(categoriaSelect?.value || '');
+        }
           document.querySelectorAll('.service-detail-card .btn-primary').forEach(btn => {
             btn.addEventListener('click', () => {
               const card = btn.closest('.service-detail-card');
