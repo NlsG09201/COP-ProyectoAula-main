@@ -65,6 +65,8 @@ services:
     restart: unless-stopped
     networks:
       - app_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   dashboard:
     build:
@@ -77,6 +79,8 @@ services:
     restart: unless-stopped
     networks:
       - app_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   rabbitmq:
     image: rabbitmq:3.13-management
