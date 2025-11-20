@@ -15,6 +15,19 @@ services:
       - ./db-init:/docker-entrypoint-initdb.d
     restart: unless-stopped
 
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+
   backend:
     build:
       context: ./Backend
@@ -64,4 +77,21 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=app
       - RABBITMQ_DEFAULT_PASS=app-secret
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./Worker
+    container_name: worker
+    environment:
+      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
+      - WORKER_BACKEND_BASE_URL=${WORKER_BACKEND_BASE_URL}
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=app
+      - SPRING_RABBITMQ_PASSWORD=app-secret
+    depends_on:
+      - backend
+      - rabbitmq
+      - mongodb
     restart: unless-stopped

@@ -39,6 +39,18 @@ public class DataInitializer implements CommandLineRunner {
             m.setPasswordHash(passwordEncoder.encode("medico123"));
             personaRepository.save(m);
         }
+
+        if (personaRepository.findByUsername("testmedico").isEmpty()) {
+            Persona t = new Persona();
+            t.setRol(Rol.MEDICO);
+            t.setNombreCompleto("Medico Test");
+            t.setEmail("tester@example.com");
+            t.setTelefono("3001111111");
+            t.setDireccion("Clínica COP");
+            t.setUsername("testmedico");
+            t.setPasswordHash(passwordEncoder.encode("test123"));
+            personaRepository.save(t);
+        }
     }
 
     private void initializeDientes() {
