@@ -24,13 +24,12 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
-                // Público: catálogo y páginas públicas
                 .requestMatchers(HttpMethod.GET, 
                     "/api/servicios/**", 
                     "/api/dientes/**").permitAll()
-                // Admin: citas y odontograma (lectura puede ser pública si se requiere)
+                .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/citas").permitAll()
                 .requestMatchers("/api/citas/**", "/api/odontogramas/**", "/api/detalles-odontograma/**", "/api/medicos/**").authenticated()
-                // Todo lo demás
                 .anyRequest().permitAll()
             )
             .httpBasic(Customizer.withDefaults());

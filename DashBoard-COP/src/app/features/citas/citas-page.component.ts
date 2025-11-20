@@ -119,7 +119,7 @@ export class CitasPageComponent {
   errorTurno = '';
   okTurno = '';
 
-  constructor(private api: ApiService) { this.load(); }
+  constructor(private api: ApiService) { if (this.api.hasAuth()) this.load(); }
 
   load() {
     this.loading = true; this.error = '';
@@ -165,10 +165,7 @@ export class CitasPageComponent {
     this.citasFiltradas.sort((a,b) => (parse(a[campo]) > parse(b[campo]) ? 1 : -1));
   }
 
-  login() {
-    this.api.setAuth(this.user, this.pass);
-    this.load();
-  }
+  login() { this.api.setAuth(this.user, this.pass); this.load(); }
 
   confirmar(id: number | undefined) {
     if (!id || !this.selectedMedicoId) return;

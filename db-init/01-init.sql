@@ -1,19 +1,7 @@
--- ================================================
--- BASE DE DATOS DEL CONSULTORIO ODONTOLÓGICO
--- Estructura unificada PERSONAS (Médico/Paciente), CITAS con SERVICIO único,
--- TIPOSERVICIO y módulo de odontograma
--- ================================================
-
--- Charset unicode para acentos y emojis
-CREATE DATABASE IF NOT EXISTS `nelsonda_COP`
+CREATE DATABASE IF NOT EXISTS `COP_db`
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
-USE `nelsonda_COP`;
-
--- Usuario de aplicación
-CREATE USER IF NOT EXISTS 'nelsonda_NlsG'@'%' IDENTIFIED BY 'NelsonH09092001';
-GRANT SELECT, INSERT, UPDATE, DELETE ON `nelsonda_COP`.* TO 'nelsonda_NlsG'@'%';
-FLUSH PRIVILEGES;
+USE `COP_db`;
 
 -- ============================================================
 -- TABLA: PERSONAS (unifica PACIENTES y MEDICOS)
@@ -88,7 +76,6 @@ CREATE TABLE IF NOT EXISTS `MEDICO_SERVICIO` (
     ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Eliminado: ya no se usa relación N:M, CITAS referencia un SERVICIO único
 
 -- ============================================================
 -- MÓDULO DE ODONTOGRAMA
