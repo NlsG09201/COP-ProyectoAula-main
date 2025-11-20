@@ -61,9 +61,7 @@ public class DataInitializer implements CommandLineRunner {
             personaRepository.save(t);
         }
 
-        if (servicioRepo.count() == 0) {
-            seedServiciosOdonto();
-        }
+        seedServiciosOdonto();
     }
 
     private void initializeDientes() {
@@ -156,6 +154,7 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void createServicio(String nombre, TipoServicio tipo) {
+        if (servicioRepo.findByNombre(nombre).isPresent()) return;
         Servicio s = new Servicio();
         s.setNombre(nombre);
         s.setTipoServicio(tipo);
