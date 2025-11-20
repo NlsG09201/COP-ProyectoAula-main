@@ -24,7 +24,7 @@ public class MedicoController {
 
     @GetMapping("/por-servicio/{idServicio}")
     public List<Persona> listarPorServicio(@PathVariable Long idServicio) {
-        return repo.findByRolAndServicios_Id(Rol.MEDICO, idServicio);
+        return repo.findByRolAndServicios_IdServicio(Rol.MEDICO, idServicio);
     }
 
     @GetMapping("/{id}")

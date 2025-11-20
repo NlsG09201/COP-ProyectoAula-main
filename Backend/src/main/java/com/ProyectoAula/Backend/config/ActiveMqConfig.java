@@ -3,6 +3,7 @@ package com.ProyectoAula.Backend.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.core.JmsTemplate;
+import jakarta.jms.ConnectionFactory;
 import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
 
 @Configuration
@@ -16,8 +17,9 @@ public class ActiveMqConfig {
     }
 
     @Bean
-    public JmsTemplate jmsTemplate(org.springframework.jms.core.JmsTemplate template,
+    public JmsTemplate jmsTemplate(ConnectionFactory cf,
                                    MappingJackson2MessageConverter converter) {
+        JmsTemplate template = new JmsTemplate(cf);
         template.setPubSubDomain(true);
         template.setMessageConverter(converter);
         return template;

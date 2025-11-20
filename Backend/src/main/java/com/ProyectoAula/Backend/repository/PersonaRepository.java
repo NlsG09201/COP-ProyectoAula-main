@@ -20,5 +20,5 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
 
     List<Persona> findByRolAndNombreCompletoContainingIgnoreCase(Rol rol, String nombre);
 
-    List<Persona> findByRolAndServicios_Id(Rol rol, Long idServicio);
+    List<Persona> findByRolAndServicios_IdServicio(Rol rol, Long idServicio);
 }
