@@ -1,0 +1,21 @@
+<header class="header bg-white shadow">
+  <div class="container mx-auto flex justify-between items-center p-4">
+    <div class="logo flex items-center">
+      <img src="/assets/Logo.png" alt="Logo Centro Odontológico y Psicológico" class="h-16 w-auto rounded-lg shadow-md">
+      <span class="ml-4 text-2xl font-bold text-gray-800">Centro Odontológico y Psicológico</span>
+    </div>
+    <button id="menu-toggle" (click)="toggleMenu()" class="block md:hidden text-3xl text-gray-700 focus:outline-none" aria-label="Abrir menú">
+      <i class="fas fa-bars"></i>
+    </button>
+    <nav class="navigation" id="main-nav">
+      <ul id="main-menu" class="flex flex-col md:flex-row md:space-x-6" [class.hidden]="isMobile() && !menuOpen()">
+        <li><a routerLink="/" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Inicio</a></li>
+        <li><a routerLink="/servicios" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Servicios</a></li>
+        <li><a routerLink="/nosotros" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Nosotros</a></li>
+        <li><a routerLink="/testimonios" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Testimonios</a></li>
+        <li><a routerLink="/contacto" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Contacto</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+

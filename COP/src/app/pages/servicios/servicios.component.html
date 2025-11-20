@@ -1,0 +1,172 @@
+<main class="main-content">
+  <section class="services-hero">
+    <div class="container mx-auto text-center py-20">
+      <h1 class="text-5xl font-bold text-gray-800 mb-4">Nuestros Servicios Integrales</h1>
+      <p class="text-xl text-gray-600 mb-8">Ofrecemos una amplia gama de tratamientos dentales y terapias psicológicas.</p>
+    </div>
+  </section>
+
+  <section class="booking-section bg-white rounded-lg shadow p-6 mb-8 max-w-2xl mx-auto hidden">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Agendar Cita</h2>
+    <form id="citaForm">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-gray-700 mb-1">Nombre</label>
+          <input id="pacienteNombre" class="w-full border rounded px-3 py-2" required>
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Documento</label>
+          <input id="pacienteDoc" class="w-full border rounded px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Email</label>
+          <input id="pacienteEmail" type="email" class="w-full border rounded px-3 py-2" required>
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Teléfono</label>
+          <input id="pacienteTelefono" class="w-full border rounded px-3 py-2">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-gray-700 mb-1">Dirección</label>
+          <input id="pacienteDireccion" class="w-full border rounded px-3 py-2">
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <div>
+          <label class="block text-gray-700 mb-1">Fecha</label>
+          <input id="citaFecha" type="date" class="w-full border rounded px-3 py-2" required>
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Hora</label>
+          <input id="citaHora" type="time" class="w-full border rounded px-3 py-2" required>
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Servicio</label>
+          <select id="servicioSelect" class="w-full border rounded px-3 py-2" required></select>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="md:col-span-2">
+          <label class="block text-gray-700 mb-1">Dirección de la cita</label>
+          <input id="citaDireccion" class="w-full border rounded px-3 py-2" placeholder="Clínica COP">
+        </div>
+      </div>
+      <div class="text-sm text-gray-600 mb-3">Un médico disponible asignará y confirmará tu cita por correo.</div>
+      <button type="submit" class="btn-primary px-6 py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Agendar</button>
+      <div id="citaMsg" class="mt-3 text-sm"></div>
+    </form>
+  </section>
+
+  <section id="odontologia" class="service-category">
+    <div class="container mx-auto py-16">
+      <h2 class="text-4xl font-bold text-gray-800 text-center mb-12">Servicios Odontológicos</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="service-detail-card">
+          <img src="/assets/Atendiendo pacientes en cali.jpg" alt="Odontología General" class="rounded-t-lg mb-4">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Odontología General</h3>
+          <p class="text-gray-600 mb-4">Realizamos diagnósticos, limpiezas profesionales, empastes, extracciones y tratamientos de conducto. Mantenemos tu salud bucal en óptimas condiciones.</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4">
+            <li>Limpieza y Profilaxis</li>
+            <li>Empastes y Restauraciones</li>
+            <li>Endodoncias (tratamientos de conducto)</li>
+            <li>Extracciones Dentales</li>
+          </ul>
+          <button class="btn-primary">Solicitar Cita</button>
+        </div>
+        <div class="service-detail-card">
+          <img src="/assets/Logo.png" alt="Ortodoncia" class="rounded-t-lg mb-4">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Ortodoncia</h3>
+          <p class="text-gray-600 mb-4">Corrección de la posición de los dientes y la mandíbula con brackets tradicionales, estéticos o alineadores invisibles.</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4">
+            <li>Brackets Metálicos</li>
+            <li>Brackets Estéticos (Cerámica, Zafiro)</li>
+            <li>Ortodoncia Invisible (Aligners)</li>
+            <li>Retenedores</li>
+          </ul>
+          <button class="btn-primary">Solicitar Cita</button>
+        </div>
+        <div class="service-detail-card">
+          <img src="/assets/Captura de pantalla 2025-05-29 150338.png" alt="Estética Dental" class="rounded-t-lg mb-4">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Estética Dental</h3>
+          <p class="text-gray-600 mb-4">Mejora la apariencia de tu sonrisa con blanqueamientos, carillas, coronas y contorneado dental.</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4">
+            <li>Blanqueamiento Dental</li>
+            <li>Carillas de Porcelana y Resina</li>
+            <li>Coronas Dentales</li>
+            <li>Contorneado Estético</li>
+          </ul>
+          <button class="btn-primary">Solicitar Cita</button>
+        </div>
+        <div class="service-detail-card">
+          <img src="/assets/Gemini.png" alt="Implantes Dentales" class="rounded-t-lg mb-4">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Implantes Dentales</h3>
+          <p class="text-gray-600 mb-4">Soluciones permanentes para reemplazar dientes perdidos, restaurando la función y la estética.</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4">
+            <li>Implantes de Titanio</li>
+            <li>Coronas sobre Implantes</li>
+            <li>Puentes sobre Implantes</li>
+            <li>Regeneración Ósea</li>
+          </ul>
+          <button class="btn-primary">Solicitar Cita</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="psicologia" class="service-category bg-gray-100">
+    <div class="container mx-auto py-16">
+      <h2 class="text-4xl font-bold text-gray-800 text-center mb-12">Servicios Psicológicos</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="service-detail-card">
+          <img src="/assets/Solicita con nosotros tu servicio de psicología, estamos atendiendo con todos los protocolos te esperamos.....jpg" alt="Terapia Individual" class="rounded-t-lg mb-4">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Terapia Individual</h3>
+          <p class="text-gray-600 mb-4">Sesiones personalizadas para abordar problemas de ansiedad, depresión, estrés, duelos y crecimiento personal.</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4">
+            <li>Manejo de Ansiedad y Estrés</li>
+            <li>Terapia para la Depresión</li>
+            <li>Apoyo en Duelos</li>
+            <li>Desarrollo Personal</li>
+          </ul>
+          <button class="btn-primary">Solicitar Cita</button>
+        </div>
+        <div class="service-detail-card">
+          <img src="/assets/Logo.png" alt="Terapia de Pareja" class="rounded-t-lg mb-4">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Terapia de Pareja</h3>
+          <p class="text-gray-600 mb-4">Ayudamos a las parejas a mejorar la comunicación, resolver conflictos y fortalecer su relación.</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4">
+            <li>Mejora de la Comunicación</li>
+            <li>Resolución de Conflictos</li>
+            <li>Fortalecimiento de Vínculos</li>
+            <li>Terapia Prematrimonial</li>
+          </ul>
+          <button class="btn-primary">Solicitar Cita</button>
+        </div>
+        <div class="service-detail-card">
+          <img src="/assets/Captura de pantalla 2025-05-29 150338.png" alt="Terapia Familiar" class="rounded-t-lg mb-4">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Terapia Familiar</h3>
+          <p class="text-gray-600 mb-4">Intervenciones para mejorar la dinámica familiar, afrontar cambios y superar crisis.</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4">
+            <li>Dinámicas Familiares</li>
+            <li>Adaptación a Cambios</li>
+            <li>Apoyo en Crisis Familiares</li>
+            <li>Comunicación Familiar</li>
+          </ul>
+          <button class="btn-primary">Solicitar Cita</button>
+        </div>
+        <div class="service-detail-card">
+          <img src="/assets/Gemini.png" alt="Psicología Infantil" class="rounded-t-lg mb-4">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Psicología Infantil y Adolescente</h3>
+          <p class="text-gray-600 mb-4">Apoyo a niños y adolescentes en el manejo de emociones, problemas de conducta y desarrollo.</p>
+          <ul class="list-disc list-inside text-gray-700 mb-4">
+            <li>Problemas de Conducta</li>
+            <li>Manejo de Emociones</li>
+            <li>Dificultades de Aprendizaje</li>
+            <li>Orientación a Padres</li>
+          </ul>
+          <button class="btn-primary">Solicitar Cita</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+

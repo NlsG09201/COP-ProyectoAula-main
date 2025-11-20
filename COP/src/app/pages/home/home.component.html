@@ -1,0 +1,50 @@
+<main class="main-content">
+  <section class="hero-section">
+    <div class="container mx-auto text-center py-20">
+      <h1 class="text-5xl font-bold text-gray-800 mb-4">Bienvenido a Nuestro Centro</h1>
+      <p class="text-xl text-gray-600 mb-8">Cuidado integral para tu salud dental y bienestar mental.</p>
+      <a routerLink="/servicios" class="btn-primary">Explora Nuestros Servicios</a>
+    </div>
+  </section>
+
+  <section class="about-us-preview">
+    <div class="container mx-auto flex flex-col md:flex-row items-center justify-center py-16">
+      <div class="md:w-1/2 p-4">
+        <img src="/assets/Logo.png" alt="Cuidado Integral" class="rounded-lg shadow-lg">
+      </div>
+      <div class="md:w-1/2 p-4">
+        <h2 class="text-4xl font-bold text-gray-800 mb-4">¿Quiénes Somos?</h2>
+        <p class="text-lg text-gray-700 mb-6">
+          Somos un equipo de profesionales dedicados a ofrecer soluciones de salud oral y apoyo psicológico. Creemos en un enfoque holístico para tu bienestar, combinando la experiencia clínica con un trato humano y personalizado.
+        </p>
+        <a routerLink="/nosotros" class="btn-secondary">Conoce Más Sobre Nosotros</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="services-preview">
+    <div class="container mx-auto py-16 text-center">
+      <h2 class="text-4xl font-bold text-gray-800 mb-12">Nuestros Servicios Destacados</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="service-card">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Odontología General</h3>
+          <p class="text-gray-600 mb-4">Revisiones, limpiezas, empastes y más para mantener tu sonrisa saludable.</p>
+          <a routerLink="/servicios#odontologia" class="text-blue-600 hover:underline">Ver más</a>
+        </div>
+        <div class="service-card">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Psicología Clínica</h3>
+          <p class="text-gray-600 mb-4">Sesiones individuales para abordar ansiedad, estrés y otros desafíos emocionales.</p>
+          <a routerLink="/servicios#psicologia" class="text-blue-600 hover:underline">Ver más</a>
+        </div>
+        <div class="service-card">
+          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Ortodoncia</h3>
+          <p class="text-gray-600 mb-4">Soluciones avanzadas para alinear tus dientes y mejorar tu mordida.</p>
+          <a routerLink="/servicios#ortodoncia" class="text-blue-600 hover:underline">Ver más</a>
+        </div>
+      </div>
+      <div class="mt-12">
+        <a routerLink="/servicios" class="btn-primary">Ver Todos los Servicios</a>
+      </div>
+    </div>
+  </section>
+</main>
