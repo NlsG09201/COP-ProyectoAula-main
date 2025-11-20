@@ -11,12 +11,15 @@ export class ServiciosComponent implements AfterViewInit {
     const servicioSelect = document.getElementById('servicioSelect') as HTMLSelectElement | null;
     const categoriaSelect = document.getElementById('categoriaSelect') as HTMLSelectElement | null;
     const medicoSelect = document.getElementById('medicoSelect') as HTMLSelectElement | null;
+    const fechaInput = document.getElementById('citaFecha') as HTMLInputElement | null;
+    const horaInput = document.getElementById('citaHora') as HTMLInputElement | null;
     const msg = document.getElementById('citaMsg');
     const booking = document.querySelector('.booking-section') as HTMLElement | null;
     const nameToId: Record<string, number> = {};
     const typeToFirstId: Record<string, number> = {};
     let serviciosCache: any[] = [];
     if (medicoSelect) medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>';
+    const medicoAvail: Record<string, { inicio?: string; fin?: string; dias?: string }> = {};
     const tiposDisponibles = new Set<string>();
     const renderServicios = (categoria: string) => {
       if (!servicioSelect) return;
@@ -90,7 +93,14 @@ export class ServiciosComponent implements AfterViewInit {
           if (!r.ok) throw new Error(String(r.status));
           const medicos: any[] = await r.json();
           medicos.sort((a, b) => (a.nombreCompleto || '').localeCompare(b.nombreCompleto || ''));
-          medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>' + medicos.map(m => `<option value="${m.idPersona}">${m.nombreCompleto}</option>`).join('');
+          medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>' + medicos.map(m => {
+            medicoAvail[String(m.idPersona)] = {
+              inicio: m.horaInicioDisponibilidad || undefined,
+              fin: m.horaFinDisponibilidad || undefined,
+              dias: m.diasDisponibles || ''
+            };
+            return `<option value="${m.idPersona}">${m.nombreCompleto}</option>`;
+          }).join('');
           return;
         } catch {
           attempt++;
@@ -104,6 +114,26 @@ export class ServiciosComponent implements AfterViewInit {
       if (id) fetchMedicosPorServicio(id);
       else if (medicoSelect) medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>';
     });
+
+    const dayName = (d: Date) => ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'][d.getDay()===0?6:d.getDay()-1];
+    const applyMedicoRules = () => {
+      if (!horaInput || !fechaInput) return;
+      const id = medicoSelect?.value || '';
+      const av = id ? medicoAvail[id] : undefined;
+      if (av?.inicio) horaInput.min = av.inicio;
+      else horaInput.removeAttribute('min');
+      if (av?.fin) horaInput.max = av.fin;
+      else horaInput.removeAttribute('max');
+      const f = fechaInput.value ? new Date(fechaInput.value) : null;
+      const dname = f ? dayName(f) : '';
+      if (av?.dias && dname && !av.dias.includes(dname)) {
+        if (msg) (msg as HTMLElement).textContent = 'El médico no atiende el día seleccionado';
+      } else {
+        if (msg) (msg as HTMLElement).textContent = '';
+      }
+    };
+    if (medicoSelect) medicoSelect.addEventListener('change', applyMedicoRules);
+    if (fechaInput) fechaInput.addEventListener('change', applyMedicoRules);
     if (form) {
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
