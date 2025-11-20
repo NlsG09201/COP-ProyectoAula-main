@@ -155,7 +155,9 @@ export class ServiciosComponent implements AfterViewInit {
           if (!pacienteRes.ok) { if (msg) msg.textContent = 'Error creando paciente'; return; }
           const medicoId = medicoSelect?.value || '';
           const body: any = {
-            fecha, hora,
+            fecha,
+            hora: hora && hora.length === 5 ? `${hora}:00` : hora,
+            direccion: direccionPaciente || 'Clínica COP',
             paciente: { idPersona: paciente.idPersona },
             servicio: { idServicio: Number(servicioId) }
           };

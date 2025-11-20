@@ -49,6 +49,9 @@ public class CitaController {
 
     @PostMapping
     public Cita crear(@RequestBody Cita cita) {
+        if (cita.getDireccion() == null || cita.getDireccion().isBlank()) {
+            cita.setDireccion("Clínica COP");
+        }
         if (cita.getPaciente() != null && cita.getPaciente().getIdPersona() != null) {
             Persona paciente = personaRepo.findById(cita.getPaciente().getIdPersona())
                     .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
