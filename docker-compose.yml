@@ -14,6 +14,8 @@ services:
     volumes:
       - ./db-init:/docker-entrypoint-initdb.d
     restart: unless-stopped
+    networks:
+      - app_net
 
   mongodb:
     image: mongo:7
@@ -27,6 +29,8 @@ services:
     volumes:
       - ./mongo-init:/docker-entrypoint-initdb.d
     restart: unless-stopped
+    networks:
+      - app_net
 
   backend:
     build:
@@ -47,6 +51,8 @@ services:
       - SPRING_RABBITMQ_USERNAME=app
       - SPRING_RABBITMQ_PASSWORD=app-secret
     restart: unless-stopped
+    networks:
+      - app_net
 
   cop-frontend:
     build:
@@ -57,6 +63,8 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - app_net
 
   dashboard:
     build:
@@ -67,6 +75,8 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+    networks:
+      - app_net
 
   rabbitmq:
     image: rabbitmq:3.13-management
@@ -78,6 +88,8 @@ services:
       - RABBITMQ_DEFAULT_USER=app
       - RABBITMQ_DEFAULT_PASS=app-secret
     restart: unless-stopped
+    networks:
+      - app_net
 
   worker:
     build:
@@ -95,3 +107,9 @@ services:
       - rabbitmq
       - mongodb
     restart: unless-stopped
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge
