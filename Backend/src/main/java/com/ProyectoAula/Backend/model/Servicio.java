@@ -10,7 +10,7 @@ public class Servicio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idServicio;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String nombre;
 
     @ManyToOne
