@@ -3,6 +3,7 @@ package com.ProyectoAula.Backend.model;
 import jakarta.persistence.*;
 import java.time.LocalTime;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Persona {
@@ -32,9 +33,11 @@ public class Persona {
     private String diasDisponibles;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Cita> citasPaciente;
 
     @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Cita> citasMedico;
 
     @ManyToMany
@@ -43,6 +46,7 @@ public class Persona {
             joinColumns = @JoinColumn(name = "ID_Persona"),
             inverseJoinColumns = @JoinColumn(name = "ID_Servicio")
     )
+    @JsonIgnore
     private List<Servicio> servicios;
 
     public Long getIdPersona() { return idPersona; }

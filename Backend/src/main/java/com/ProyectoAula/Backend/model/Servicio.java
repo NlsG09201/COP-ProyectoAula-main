@@ -2,6 +2,7 @@ package com.ProyectoAula.Backend.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Servicio {
@@ -18,9 +19,11 @@ public class Servicio {
     private TipoServicio tipoServicio;
 
     @ManyToMany(mappedBy = "servicios")
+    @JsonIgnore
     private List<Persona> medicos;
 
     @OneToMany(mappedBy = "servicio")
+    @JsonIgnore
     private List<Cita> citas;
 
     // Getters y Setters
