@@ -3,12 +3,14 @@ package com.ProyectoAula.Backend.config;
 import com.ProyectoAula.Backend.model.Diente;
 import com.ProyectoAula.Backend.model.Persona;
 import com.ProyectoAula.Backend.model.Servicio;
+import com.ProyectoAula.Backend.model.Testimonio;
 import com.ProyectoAula.Backend.model.TipoServicio;
 import com.ProyectoAula.Backend.model.Persona.Rol;
 import com.ProyectoAula.Backend.repository.DienteRepository;
 import com.ProyectoAula.Backend.repository.PersonaRepository;
 import com.ProyectoAula.Backend.repository.ServicioRepository;
 import com.ProyectoAula.Backend.repository.TipoServicioRepository;
+import com.ProyectoAula.Backend.repository.TestimonioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -21,14 +23,16 @@ public class DataInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final TipoServicioRepository tipoRepo;
     private final ServicioRepository servicioRepo;
+    private final TestimonioRepository testimonioRepo;
 
     public DataInitializer(DienteRepository dienteRepository, PersonaRepository personaRepository, PasswordEncoder passwordEncoder,
-                           TipoServicioRepository tipoRepo, ServicioRepository servicioRepo) {
+                           TipoServicioRepository tipoRepo, ServicioRepository servicioRepo, TestimonioRepository testimonioRepo) {
         this.dienteRepository = dienteRepository;
         this.personaRepository = personaRepository;
         this.passwordEncoder = passwordEncoder;
         this.tipoRepo = tipoRepo;
         this.servicioRepo = servicioRepo;
+        this.testimonioRepo = testimonioRepo;
     }
 
     @Override
@@ -62,6 +66,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         seedServiciosOdonto();
+        seedTestimonios();
     }
 
     private void initializeDientes() {
@@ -159,5 +164,25 @@ public class DataInitializer implements CommandLineRunner {
         s.setNombre(nombre);
         s.setTipoServicio(tipo);
         servicioRepo.save(s);
+    }
+
+    private void seedTestimonios() {
+        long count = testimonioRepo.count();
+        if (count >= 2000) return;
+        var servicios = servicioRepo.findAll();
+        if (servicios.isEmpty()) return;
+        int toCreate = (int)(2000 - count);
+        java.util.Random rnd = new java.util.Random(12345);
+        java.util.ArrayList<Testimonio> batch = new java.util.ArrayList<>();
+        for (int i = 0; i < toCreate; i++) {
+            Testimonio t = new Testimonio();
+            t.setNombre("Usuario " + (count + i + 1));
+            t.setComentario("Excelente atención y servicio " + (count + i + 1));
+            t.setCalificacion(1 + rnd.nextInt(5));
+            Servicio s = servicios.get(rnd.nextInt(servicios.size()));
+            t.setServicio(s);
+            batch.add(t);
+        }
+        testimonioRepo.saveAll(batch);
     }
 }
