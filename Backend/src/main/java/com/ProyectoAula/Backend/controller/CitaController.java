@@ -74,7 +74,16 @@ public class CitaController {
             Persona m = cita.getMedico();
             DayOfWeek dia = cita.getFecha().getDayOfWeek();
             String dias = Optional.ofNullable(m.getDiasDisponibles()).orElse("");
-            boolean diaDisponible = dias.isEmpty() || dias.contains(dia.name());
+            String diaEs = switch (dia) {
+                case MONDAY -> "Lunes";
+                case TUESDAY -> "Martes";
+                case WEDNESDAY -> "Miércoles";
+                case THURSDAY -> "Jueves";
+                case FRIDAY -> "Viernes";
+                case SATURDAY -> "Sábado";
+                case SUNDAY -> "Domingo";
+            };
+            boolean diaDisponible = dias.isEmpty() || dias.contains(dia.name()) || dias.toLowerCase().contains(diaEs.toLowerCase());
             if (!diaDisponible) {
                 throw new RuntimeException("El médico no está disponible en el día seleccionado");
             }
@@ -164,12 +173,23 @@ public class CitaController {
         Cita c = citaRepo.findById(id).orElseThrow(() -> new RuntimeException("Cita no encontrada"));
         Persona m = personaRepo.findById(medicoId).orElseThrow(() -> new RuntimeException("Médico no encontrado"));
 
-        DayOfWeek dia = c.getFecha().getDayOfWeek();
-        String dias = Optional.ofNullable(m.getDiasDisponibles()).orElse("");
-        boolean diaDisponible = dias.isEmpty() || dias.contains(dia.name());
-        if (!diaDisponible) throw new RuntimeException("El médico no está disponible en el día seleccionado");
-        if (m.getHoraInicioDisponibilidad() != null && c.getHora().isBefore(m.getHoraInicioDisponibilidad())) throw new RuntimeException("Hora fuera del rango de disponibilidad del médico");
-        if (m.getHoraFinDisponibilidad() != null && c.getHora().isAfter(m.getHoraFinDisponibilidad())) throw new RuntimeException("Hora fuera del rango de disponibilidad del médico");
+        if (!confirmar) {
+            DayOfWeek dia = c.getFecha().getDayOfWeek();
+            String dias = Optional.ofNullable(m.getDiasDisponibles()).orElse("");
+            String diaEs = switch (dia) {
+                case MONDAY -> "Lunes";
+                case TUESDAY -> "Martes";
+                case WEDNESDAY -> "Miércoles";
+                case THURSDAY -> "Jueves";
+                case FRIDAY -> "Viernes";
+                case SATURDAY -> "Sábado";
+                case SUNDAY -> "Domingo";
+            };
+            boolean diaDisponible = dias.isEmpty() || dias.contains(dia.name()) || dias.toLowerCase().contains(diaEs.toLowerCase());
+            if (!diaDisponible) throw new RuntimeException("El médico no está disponible en el día seleccionado");
+            if (m.getHoraInicioDisponibilidad() != null && c.getHora().isBefore(m.getHoraInicioDisponibilidad())) throw new RuntimeException("Hora fuera del rango de disponibilidad del médico");
+            if (m.getHoraFinDisponibilidad() != null && c.getHora().isAfter(m.getHoraFinDisponibilidad())) throw new RuntimeException("Hora fuera del rango de disponibilidad del médico");
+        }
 
         List<Cita> existentes = citaRepo.findByMedico(m).stream()
                 .filter(ci -> !ci.getIdCita().equals(c.getIdCita()) && ci.getFecha().equals(c.getFecha()) && ci.getHora().equals(c.getHora()))
