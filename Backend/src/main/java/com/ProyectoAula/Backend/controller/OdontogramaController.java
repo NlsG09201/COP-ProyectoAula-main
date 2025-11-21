@@ -1,7 +1,9 @@
 package com.ProyectoAula.Backend.controller;
 
 import com.ProyectoAula.Backend.model.Odontograma;
+import com.ProyectoAula.Backend.model.Persona;
 import com.ProyectoAula.Backend.repository.OdontogramaRepository;
+import com.ProyectoAula.Backend.repository.PersonaRepository;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -11,9 +13,11 @@ import java.util.List;
 public class OdontogramaController {
 
     private final OdontogramaRepository repo;
+    private final PersonaRepository personaRepo;
 
-    public OdontogramaController(OdontogramaRepository repo) {
+    public OdontogramaController(OdontogramaRepository repo, PersonaRepository personaRepo) {
         this.repo = repo;
+        this.personaRepo = personaRepo;
     }
 
     @GetMapping
@@ -28,6 +32,12 @@ public class OdontogramaController {
 
     @PostMapping
     public Odontograma crear(@RequestBody Odontograma odontograma) {
+        if (odontograma.getPaciente() == null || odontograma.getPaciente().getIdPersona() == null) {
+            throw new RuntimeException("Paciente es obligatorio");
+        }
+        Persona p = personaRepo.findById(odontograma.getPaciente().getIdPersona())
+                .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        odontograma.setPaciente(p);
         return repo.save(odontograma);
     }
 
