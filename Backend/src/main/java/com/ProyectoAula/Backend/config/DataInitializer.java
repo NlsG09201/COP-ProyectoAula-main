@@ -67,6 +67,7 @@ public class DataInitializer implements CommandLineRunner {
 
         seedServiciosOdonto();
         seedTestimonios();
+        seedPacientes();
     }
 
     private void initializeDientes() {
@@ -184,5 +185,24 @@ public class DataInitializer implements CommandLineRunner {
             batch.add(t);
         }
         testimonioRepo.saveAll(batch);
+    }
+
+    private void seedPacientes() {
+        int existentes = personaRepository.findByRol(Rol.PACIENTE).size();
+        if (existentes >= 2000) return;
+        int toCreate = 2000 - existentes;
+        java.util.ArrayList<Persona> nuevos = new java.util.ArrayList<>();
+        for (int i = 0; i < toCreate; i++) {
+            int idx = existentes + i + 1;
+            Persona p = new Persona();
+            p.setRol(Rol.PACIENTE);
+            p.setDocIden(String.format("DOC-%07d", idx));
+            p.setNombreCompleto("Paciente " + idx);
+            p.setTelefono(String.format("300%07d", idx));
+            p.setEmail("paciente" + idx + "@example.com");
+            p.setDireccion("Ciudad COP");
+            nuevos.add(p);
+        }
+        personaRepository.saveAll(nuevos);
     }
 }
