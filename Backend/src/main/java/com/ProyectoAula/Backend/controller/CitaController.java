@@ -172,7 +172,7 @@ public class CitaController {
         if (m.getHoraFinDisponibilidad() != null && c.getHora().isAfter(m.getHoraFinDisponibilidad())) throw new RuntimeException("Hora fuera del rango de disponibilidad del médico");
 
         List<Cita> existentes = citaRepo.findByMedico(m).stream()
-                .filter(ci -> ci.getFecha().equals(c.getFecha()) && ci.getHora().equals(c.getHora()))
+                .filter(ci -> !ci.getIdCita().equals(c.getIdCita()) && ci.getFecha().equals(c.getFecha()) && ci.getHora().equals(c.getHora()))
                 .toList();
         if (!existentes.isEmpty()) throw new RuntimeException("Ya existe una cita para el médico en esa fecha y hora");
 
@@ -188,7 +188,7 @@ public class CitaController {
                     actualizada.getPaciente() != null ? actualizada.getPaciente().getNombreCompleto() : null,
                     actualizada.getPaciente() != null ? actualizada.getPaciente().getEmail() : null,
                     actualizada.getMedico() != null ? actualizada.getMedico().getNombreCompleto() : null,
-                    actualizada.getServicio() != null ? actualizada.getServicio().getTipoServicio().name() : null,
+                    actualizada.getServicio() != null ? actualizada.getServicio().getTipoServicio().getNombre() : null,
                     "CONFIRMED"
             );
             events.publish("cita.confirmed", evt);
