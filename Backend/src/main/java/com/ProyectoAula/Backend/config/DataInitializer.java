@@ -68,6 +68,7 @@ public class DataInitializer implements CommandLineRunner {
         seedServiciosOdonto();
         seedTestimonios();
         seedPacientes();
+        seedMedicosExtra();
     }
 
     private void initializeDientes() {
@@ -165,6 +166,35 @@ public class DataInitializer implements CommandLineRunner {
         s.setNombre(nombre);
         s.setTipoServicio(tipo);
         servicioRepo.save(s);
+    }
+
+    private void seedMedicosExtra() {
+        var existentes = personaRepository.findByRol(Rol.MEDICO);
+        if (existentes.size() >= 5) return;
+        var servicios = servicioRepo.findAll();
+        java.util.Random rnd = new java.util.Random(42);
+        int start = existentes.size();
+        for (int i = start; i < 5; i++) {
+            Persona m = new Persona();
+            m.setRol(Rol.MEDICO);
+            m.setDocIden("MED-" + String.format("%03d", i+1));
+            m.setNombreCompleto("Médico " + (i+1));
+            m.setTelefono("311" + String.format("%07d", i+1));
+            m.setEmail("medico" + (i+1) + "@example.com");
+            m.setDireccion("Sede Principal");
+            m.setUsername("medico" + (i+1));
+            m.setPasswordHash(passwordEncoder.encode("medico" + (i+1) + "123"));
+            m.setHoraInicioDisponibilidad(java.time.LocalTime.of(8, 0));
+            m.setHoraFinDisponibilidad(java.time.LocalTime.of(17, 0));
+            m.setDiasDisponibles("MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
+            if (!servicios.isEmpty()) {
+                int n = 1 + rnd.nextInt(Math.max(1, Math.min(3, servicios.size())));
+                java.util.ArrayList<Servicio> ss = new java.util.ArrayList<>();
+                for (int k = 0; k < n; k++) ss.add(servicios.get(rnd.nextInt(servicios.size())));
+                m.setServicios(ss);
+            }
+            personaRepository.save(m);
+        }
     }
 
     private void seedTestimonios() {

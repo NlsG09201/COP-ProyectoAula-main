@@ -14,6 +14,10 @@ export class ApiService {
 
   private get headers() {
     let h = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const token = sessionStorage.getItem('auth');
+    if (token) {
+      h = h.set('Authorization', 'Basic ' + token);
+    }
     return h;
   }
 }

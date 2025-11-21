@@ -34,6 +34,12 @@ public class Cita {
     @JoinColumn(name = "ID_Servicio", nullable = false)
     private Servicio servicio;
 
+    @Column(name = "Estado", nullable = true)
+    private String estado;
+
+    @Column(name = "Confirmado", nullable = true)
+    private Boolean confirmado;
+
     public Cita() {}
 
     public Cita(LocalDate fecha, LocalTime hora, String direccion, Persona paciente, Persona medico, Servicio servicio) {
@@ -59,4 +65,8 @@ public class Cita {
     public void setMedico(Persona medico) { this.medico = medico; }
     public Servicio getServicio() { return servicio; }
     public void setServicio(Servicio servicio) { this.servicio = servicio; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+    public Boolean getConfirmado() { return confirmado; }
+    public void setConfirmado(Boolean confirmado) { this.confirmado = confirmado; }
 }

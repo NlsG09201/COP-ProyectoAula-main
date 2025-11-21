@@ -26,11 +26,16 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.GET, 
                     "/api/servicios/**", 
-                    "/api/dientes/**").permitAll()
+                    "/api/dientes/**",
+                    "/api/citas/**",
+                    "/api/medicos/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/citas").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/medicos/por-servicio/**").permitAll()
-                .requestMatchers("/api/citas/**", "/api/odontogramas/**", "/api/detalles-odontograma/**", "/api/medicos/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/citas/*/asignar").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/citas/*/confirmar").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/odontogramas").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/detalles-odontograma").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/medicos/**").authenticated()
                 .anyRequest().permitAll()
             )
             .httpBasic(Customizer.withDefaults());

@@ -76,7 +76,7 @@ export class OdontogramaPageComponent {
     const odontogramaBody = {
       fechaRegistro: this.fecha,
       observacionesGenerales: this.observaciones,
-      paciente: { idP: this.pacienteId }
+      paciente: { idPersona: this.pacienteId }
     };
     this.api.post<any>('/odontogramas', odontogramaBody).subscribe({
       next: (od) => {

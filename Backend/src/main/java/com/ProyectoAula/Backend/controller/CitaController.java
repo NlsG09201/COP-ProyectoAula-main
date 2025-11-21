@@ -102,6 +102,8 @@ public class CitaController {
             }
         }
 
+        cita.setEstado("CREATED");
+        cita.setConfirmado(Boolean.FALSE);
         Cita creada = citaRepo.save(cita);
         CitaEvent evt = new CitaEvent(
                 creada.getIdCita(),
@@ -153,6 +155,9 @@ public class CitaController {
     public Cita confirmar(@PathVariable Long id) {
         Cita c = citaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+        c.setEstado("CONFIRMED");
+        c.setConfirmado(Boolean.TRUE);
+        c = citaRepo.save(c);
         CitaEvent evt = new CitaEvent(
                 c.getIdCita(),
                 c.getFecha(),
@@ -197,6 +202,7 @@ public class CitaController {
         if (!existentes.isEmpty()) throw new RuntimeException("Ya existe una cita para el médico en esa fecha y hora");
 
         c.setMedico(m);
+        if (confirmar) { c.setEstado("CONFIRMED"); c.setConfirmado(Boolean.TRUE); }
         Cita actualizada = citaRepo.save(c);
 
         if (confirmar) {
