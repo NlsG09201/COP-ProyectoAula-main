@@ -160,8 +160,10 @@ export class OdontogramaPageComponent {
       next: async (ods) => {
         const lista: { o: any, detalles: any[] }[] = [];
         for (const o of (ods || [])) {
-          const detalles = await firstValueFrom(this.api.get<any[]>(`/detalles-odontograma/odontograma/${o.idOdontograma}`)).catch(() => []);
-          lista.push({ o, detalles: this.marcarCambios(detalles, lista.at(-1)?.detalles || []) });
+          let detalles: any[] = [];
+          try { detalles = await firstValueFrom(this.api.get<any[]>(`/detalles-odontograma/odontograma/${o.idOdontograma}`)); } catch { detalles = []; }
+          const prev = lista.length ? lista[lista.length - 1].detalles : [];
+          lista.push({ o, detalles: this.marcarCambios(detalles, prev || []) });
         }
         this.historial = lista;
       },
