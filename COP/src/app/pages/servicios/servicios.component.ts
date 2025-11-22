@@ -164,12 +164,35 @@ export class ServiciosComponent implements AfterViewInit {
         const servicioId = servicioSelect?.value || '';
         if (!nombre || !email || !fecha || !hora || !servicioId) { if (msg) msg.textContent = 'Completa los campos obligatorios'; return; }
         try {
-          const pacienteRes = await fetch('/api/pacientes', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombreCompleto: nombre, email, telefono, direccion: direccionPaciente, docIden })
-          });
-          const paciente = await pacienteRes.json();
-          if (!pacienteRes.ok) { if (msg) msg.textContent = 'Error creando paciente'; return; }
+          let paciente: any = null;
+          if (docIden) {
+            try {
+              const r = await fetch(`/api/pacientes/by-doc/${encodeURIComponent(docIden)}`);
+              if (r.ok) paciente = await r.json();
+            } catch {}
+          }
+          if (!paciente) {
+            const pacienteRes = await fetch('/api/pacientes', {
+              method: 'POST', headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ nombreCompleto: nombre, email, telefono, direccion: direccionPaciente, docIden })
+            });
+            if (pacienteRes.ok) {
+              paciente = await pacienteRes.json();
+            } else {
+              let serverMsg = '';
+              try { const data = await pacienteRes.json(); serverMsg = (data?.message || '').toString(); } catch {}
+              if (pacienteRes.status === 409 && docIden) {
+                try {
+                  const r2 = await fetch(`/api/pacientes/by-doc/${encodeURIComponent(docIden)}`);
+                  if (r2.ok) paciente = await r2.json();
+                } catch {}
+                if (!paciente) { if (msg) msg.textContent = serverMsg || 'Documento de identidad ya registrado'; return; }
+              } else {
+                if (msg) msg.textContent = serverMsg || 'Error creando paciente';
+                return;
+              }
+            }
+          }
           const medicoId = medicoSelect?.value || '';
           const body: any = {
             fecha,
@@ -187,7 +210,7 @@ export class ServiciosComponent implements AfterViewInit {
             if (msg) msg.textContent = 'Cita registrada. Un médico confirmará por correo.';
             form.reset();
           } else {
-            if (msg) msg.textContent = cita?.message || 'Error registrando cita';
+            if (msg) msg.textContent = (cita?.message || 'Error registrando cita');
           }
         } catch {
           if (msg) msg.textContent = 'Backend no disponible, intenta nuevamente en unos segundos';
