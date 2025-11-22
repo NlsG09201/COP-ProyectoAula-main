@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
       <a routerLink="/pacientes" routerLinkActive="active">Pacientes</a>
       <a routerLink="/odontograma" routerLinkActive="active">Odontograma</a>
       <a routerLink="/medicos" routerLinkActive="active">Médicos</a>
+      <a routerLink="/notificaciones" routerLinkActive="active">Notificaciones</a>
       <span style="margin-left:auto"></span>
       <input class="nav-input" placeholder="usuario" [(ngModel)]="user" />
       <input class="nav-input" type="password" placeholder="clave" [(ngModel)]="pass" />
