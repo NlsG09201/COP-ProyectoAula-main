@@ -37,10 +37,10 @@ AppComponent = __decorate([
       <a routerLink="/odontograma" routerLinkActive="active">Odontograma</a>
       <a routerLink="/medicos" routerLinkActive="active">Médicos</a>
       <span style="margin-left:auto"></span>
-      <input placeholder="usuario" [(ngModel)]="user" style="padding:6px;border-radius:6px;border:1px solid #1e293b;color:#111827" />
-      <input type="password" placeholder="clave" [(ngModel)]="pass" style="padding:6px;border-radius:6px;border:1px solid #1e293b;color:#111827" />
-      <button (click)="login()" class="btn" style="padding:6px 10px">Entrar</button>
-      <button (click)="logout()" class="btn secondary" style="padding:6px 10px">Salir</button>
+      <input class="nav-input" placeholder="usuario" [(ngModel)]="user" />
+      <input class="nav-input" type="password" placeholder="clave" [(ngModel)]="pass" />
+      <button (click)="login()" class="btn">Entrar</button>
+      <button (click)="logout()" class="btn secondary">Salir</button>
     </nav>
     <div class="container">
       <router-outlet></router-outlet>

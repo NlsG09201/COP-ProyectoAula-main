@@ -25,8 +25,9 @@ interface Cita {
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <h2 style="margin-bottom:16px">Médicos disponibles</h2>
-    <div class="grid" style="grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:12px">
+    <h2 class="text-2xl font-semibold mb-2">Médicos disponibles</h2>
+    <p class="text-slate-600 mb-4">Filtra por fecha, hora, servicio y texto.</p>
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4">
       <div class="field">
         <label>Fecha</label>
         <input type="date" [(ngModel)]="filtroFecha" (change)="aplicarFiltros()">
@@ -54,38 +55,40 @@ interface Cita {
         <label>Texto</label>
         <input placeholder="Buscar por nombre o email" [(ngModel)]="filtroTexto" (input)="aplicarFiltros()">
       </div>
-      <div class="field" style="align-self:end">
+      <div class="field">
         <button class="btn secondary" (click)="resetFiltros()">Limpiar filtros</button>
       </div>
     </div>
 
-    <div *ngIf="loading">Cargando...</div>
-    <div *ngIf="error" class="text-red-700">{{ error }}</div>
+    <div class="card mb-4" *ngIf="loading">Cargando...</div>
+    <div class="card mb-4 text-red-700" *ngIf="error">{{ error }}</div>
 
-    <table class="w-full" *ngIf="!loading">
-      <thead>
-        <tr>
-          <th class="text-left">Nombre</th>
-          <th class="text-left">Email</th>
-          <th class="text-left">Teléfono</th>
-          <th class="text-left">Horario</th>
-          <th class="text-left">Días</th>
-          <th class="text-left">Disponible</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let m of medicosFiltrados">
-          <td>{{ m.nombreCompleto }}</td>
-          <td>{{ m.email || '—' }}</td>
-          <td>{{ m.telefono || '—' }}</td>
-          <td>{{ formatHora(m.horaInicioDisponibilidad) }} - {{ formatHora(m.horaFinDisponibilidad) }}</td>
-          <td>{{ formatDias(m.diasDisponibles) }}</td>
-          <td>
-            <span [style.color]="estaDisponible(m) ? '#16a34a' : '#dc2626'">{{ estaDisponible(m) ? 'Sí' : 'No' }}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="overflow-x-auto rounded-lg shadow">
+      <table class="min-w-full bg-white" *ngIf="!loading">
+        <thead class="bg-blue-50">
+          <tr>
+            <th class="px-4 py-2 text-left">Nombre</th>
+            <th class="px-4 py-2 text-left">Email</th>
+            <th class="px-4 py-2 text-left">Teléfono</th>
+            <th class="px-4 py-2 text-left">Horario</th>
+            <th class="px-4 py-2 text-left">Días</th>
+            <th class="px-4 py-2 text-left">Disponible</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of medicosFiltrados" class="border-t">
+            <td class="px-4 py-2">{{ m.nombreCompleto }}</td>
+            <td class="px-4 py-2">{{ m.email || '—' }}</td>
+            <td class="px-4 py-2">{{ m.telefono || '—' }}</td>
+            <td class="px-4 py-2">{{ formatHora(m.horaInicioDisponibilidad) }} - {{ formatHora(m.horaFinDisponibilidad) }}</td>
+            <td class="px-4 py-2">{{ formatDias(m.diasDisponibles) }}</td>
+            <td class="px-4 py-2">
+              <span [style.color]="estaDisponible(m) ? '#16a34a' : '#dc2626'">{{ estaDisponible(m) ? 'Sí' : 'No' }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   `,
 })
 export class MedicosPageComponent {
