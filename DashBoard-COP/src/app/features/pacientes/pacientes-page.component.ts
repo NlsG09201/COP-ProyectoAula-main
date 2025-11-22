@@ -19,10 +19,10 @@ interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCo
       <div class="field"><label>Documento</label><div class="flex items-center gap-2"><input class="flex-1" [(ngModel)]="form.docIden" (blur)="verificarDoc()" (ngModelChange)="docInputChanged($event)" /><span *ngIf="docValid===true" class="text-green-600">✓</span><span *ngIf="docValid===false" class="text-red-600">✗</span></div><div *ngIf="docMsg" class="text-xs mt-1" [class.text-red-600]="docValid===false" [class.text-green-600]="docValid===true">{{ docMsg }}</div></div>
       <div class="field"><label>Nombre</label><input [(ngModel)]="form.nombreCompleto" /></div>
       <div class="field"><label>Teléfono</label><input [(ngModel)]="form.telefono" /></div>
-      <div class="field"><label>Email</label><input [(ngModel)]="form.email" /></div>
+      <div class="field"><label>Email</label><div class="flex items-center gap-2"><input class="flex-1" [(ngModel)]="form.email" (ngModelChange)="emailChanged($event)" /><span *ngIf="emailValid===true" class="text-green-600">✓</span><span *ngIf="emailValid===false" class="text-red-600">✗</span></div><div *ngIf="emailMsg" class="text-xs mt-1" [class.text-red-600]="emailValid===false" [class.text-green-600]="emailValid===true">{{ emailMsg }}</div></div>
       <div class="field"><label>Dirección</label><input [(ngModel)]="form.direccion" /></div>
     </div>
-    <button class="btn" (click)="guardar()" [disabled]="loading || docValid===false">Guardar</button>
+    <button class="btn" (click)="guardar()" [disabled]="loading || docValid===false || emailValid===false">Guardar</button>
     <div *ngIf="msg" class="mt-2">{{ msg }}</div>
 
     <h3 class="text-xl font-semibold mt-8 mb-2">Lista de pacientes</h3>
@@ -63,10 +63,15 @@ export class PacientesPageComponent implements OnDestroy {
   docValid: boolean | null = null;
   private docInput$ = new Subject<string>();
   private docSub?: Subscription;
+  emailMsg = '';
+  emailValid: boolean | null = null;
+  private emailInput$ = new Subject<string>();
+  private emailSub?: Subscription;
 
   constructor(private api: ApiService) {
     this.cargar();
     this.docSub = this.docInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(v => this.verificarDocDebounced(v));
+    this.emailSub = this.emailInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(v => this.verificarEmailDebounced(v));
   }
 
   guardar() {
@@ -128,4 +133,12 @@ export class PacientesPageComponent implements OnDestroy {
   }
 
   ngOnDestroy() { try { this.docSub?.unsubscribe(); } catch {} }
+  emailChanged(v: string) { this.emailInput$.next((v||'').trim()); }
+  verificarEmailDebounced(v: string) {
+    const e = (v||'').trim();
+    if (!e) { this.emailMsg = ''; this.emailValid = null; return; }
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (regex.test(e)) { this.emailMsg = 'Email válido'; this.emailValid = true; }
+    else { this.emailMsg = 'Email inválido'; this.emailValid = false; }
+  }
 }
