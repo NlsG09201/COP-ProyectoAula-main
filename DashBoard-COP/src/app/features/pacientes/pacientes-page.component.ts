@@ -16,13 +16,13 @@ interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCo
     <p class="text-slate-600 mb-4">Registra y administra pacientes.</p>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-      <div class="field"><label>Documento</label><input [(ngModel)]="form.docIden" (blur)="verificarDoc()" (ngModelChange)="docInputChanged($event)" /><div *ngIf="docMsg" class="text-xs mt-1" [class.text-red-600]="docValid===false" [class.text-green-600]="docValid===true">{{ docMsg }}</div></div>
+      <div class="field"><label>Documento</label><div class="flex items-center gap-2"><input class="flex-1" [(ngModel)]="form.docIden" (blur)="verificarDoc()" (ngModelChange)="docInputChanged($event)" /><span *ngIf="docValid===true" class="text-green-600">✓</span><span *ngIf="docValid===false" class="text-red-600">✗</span></div><div *ngIf="docMsg" class="text-xs mt-1" [class.text-red-600]="docValid===false" [class.text-green-600]="docValid===true">{{ docMsg }}</div></div>
       <div class="field"><label>Nombre</label><input [(ngModel)]="form.nombreCompleto" /></div>
       <div class="field"><label>Teléfono</label><input [(ngModel)]="form.telefono" /></div>
       <div class="field"><label>Email</label><input [(ngModel)]="form.email" /></div>
       <div class="field"><label>Dirección</label><input [(ngModel)]="form.direccion" /></div>
     </div>
-    <button class="btn" (click)="guardar()" [disabled]="loading">Guardar</button>
+    <button class="btn" (click)="guardar()" [disabled]="loading || docValid===false">Guardar</button>
     <div *ngIf="msg" class="mt-2">{{ msg }}</div>
 
     <h3 class="text-xl font-semibold mt-8 mb-2">Lista de pacientes</h3>
