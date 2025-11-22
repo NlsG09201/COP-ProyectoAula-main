@@ -1,137 +1,89 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql
-    profiles:
-      - localdb
+    container_name: cop-mysql
+    restart: unless-stopped
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: copdb
+      MYSQL_USER: copuser
+      MYSQL_PASSWORD: coppass
     ports:
       - "3306:3306"
     volumes:
-      - ./db-init:/docker-entrypoint-initdb.d
-    restart: unless-stopped
-    networks:
-      - app_net
+      - mysql_data:/var/lib/mysql
 
-  mongodb:
+  mongo:
     image: mongo:7
-    container_name: mongodb
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
-      - MONGO_INITDB_DATABASE=${MONGO_INITDB_DATABASE}
-    ports:
-      - "27017:27017"
-    volumes:
-      - ./mongo-init:/docker-entrypoint-initdb.d
+    container_name: cop-mongo
     restart: unless-stopped
-    networks:
-      - app_net
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: cop-rabbit
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
   backend:
     build:
       context: ./Backend
-    container_name: backend
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=localdb
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/COP_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      - SPRING_DATASOURCE_USERNAME=cop_user
-      - SPRING_DATASOURCE_PASSWORD=cop_password
-      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.MySQL8Dialect
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=app
-      - SPRING_RABBITMQ_PASSWORD=app-secret
-      - SPRING_ACTIVEMQ_BROKER_URL=tcp://activemq:61616
-      - SPRING_ACTIVEMQ_USER=admin
-      - SPRING_ACTIVEMQ_PASSWORD=admin
+    container_name: cop-backend
     restart: unless-stopped
-    networks:
-      - app_net
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/copdb?useUnicode=true&characterEncoding=utf8&serverTimezone=America/Bogota&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true
+      SPRING_DATASOURCE_USERNAME: copuser
+      SPRING_DATASOURCE_PASSWORD: coppass
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
     depends_on:
       - mysql
-
-  cop-frontend:
-    build:
-      context: ./COP
-    container_name: cop-frontend
+      - rabbitmq
     ports:
-      - "8081:80"
-    depends_on:
-      - backend
-    restart: unless-stopped
-    networks:
-      - app_net
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  dashboard:
-    build:
-      context: ./DashBoard-COP
-    container_name: dashboard
-    ports:
-      - "8082:80"
-    depends_on:
-      - backend
-    restart: unless-stopped
-    networks:
-      - app_net
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  rabbitmq:
-    image: rabbitmq:3.13-management
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=app
-      - RABBITMQ_DEFAULT_PASS=app-secret
-    restart: unless-stopped
-    networks:
-      - app_net
-
-  activemq:
-    image: rmohr/activemq:latest
-    container_name: activemq
-    ports:
-      - "61616:61616"
-      - "8161:8161"
-    environment:
-      - ACTIVEMQ_ADMIN_LOGIN=admin
-      - ACTIVEMQ_ADMIN_PASSWORD=admin
-    restart: unless-stopped
-    networks:
-      - app_net
+      - "8080:8080"
 
   worker:
     build:
       context: ./Worker
-    container_name: worker
+    container_name: cop-worker
+    restart: unless-stopped
     environment:
-      - SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}
-      - WORKER_BACKEND_BASE_URL=${WORKER_BACKEND_BASE_URL}
-      - SPRING_RABBITMQ_HOST=rabbitmq
-      - SPRING_RABBITMQ_PORT=5672
-      - SPRING_RABBITMQ_USERNAME=app
-      - SPRING_RABBITMQ_PASSWORD=app-secret
+      SERVER_PORT: 8082
+      worker.backend.base-url: http://backend:8080/api
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/workerdb
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      # Opcional correo (configurar si se desea envío real)
+      # SPRING_MAIL_HOST: smtp.gmail.com
+      # SPRING_MAIL_PORT: 587
+      # SPRING_MAIL_USERNAME: ""
+      # SPRING_MAIL_PASSWORD: ""
+      # SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      # SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      # SPRING_MAIL_FROM: ""
     depends_on:
       - backend
+      - mongo
       - rabbitmq
-      - mongodb
-    restart: unless-stopped
-    networks:
-      - app_net
+    # No exponemos puerto del worker, no es necesario acceso externo
 
-networks:
-  app_net:
-    driver: bridge
+  dashboard:
+    build:
+      context: ./DashBoard-COP
+    container_name: cop-dashboard
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8085:80"
+
+volumes:
+  mysql_data:
+  mongo_data:
+
