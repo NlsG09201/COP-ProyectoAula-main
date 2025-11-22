@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
+import { Router } from '@angular/router';
 
 interface Cita { idCita?: number; fecha: string; hora: string; direccion: string; paciente?: any; medico?: any; servicios?: any[]; }
 
@@ -105,7 +106,7 @@ export class CitasPageComponent {
   errorTurno = '';
   okTurno = '';
 
-  constructor(private api: ApiService) { this.load(); }
+  constructor(private api: ApiService, private router: Router) { this.load(); }
 
   load() {
     this.loading = true; this.error = '';
@@ -155,8 +156,12 @@ export class CitasPageComponent {
 
   confirmar(id: number | undefined) {
     if (!id || !this.selectedMedicoId) return;
+    const citaSel = this.citas.find(ci => ci.idCita === id);
+    const email = citaSel?.paciente?.email;
+    if (email) { try { sessionStorage.setItem('notifFilterEmail', email); } catch {}
+    }
     this.api.post(`/citas/${id}/asignar?medicoId=${this.selectedMedicoId}&confirmar=true`, {}).subscribe({
-      next: () => this.load(),
+      next: () => { this.load(); try { this.router.navigate(['/notificaciones']); } catch {} },
       error: () => this.error = 'Error confirmando la cita'
     });
   }

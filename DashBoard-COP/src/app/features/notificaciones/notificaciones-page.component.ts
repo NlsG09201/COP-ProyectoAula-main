@@ -57,6 +57,10 @@ export class NotificacionesPageComponent {
   constructor(private api: ApiService) { this.buscar(); }
 
   buscar() {
+    try {
+      const preset = sessionStorage.getItem('notifFilterEmail') || '';
+      if (preset && !this.filtroTo) { this.filtroTo = preset; }
+    } catch {}
     this.loading = true; this.error = '';
     const q = this.filtroTo ? `?to=${encodeURIComponent(this.filtroTo)}` : '';
     this.api.get<Notificacion[]>(`/notificaciones${q}`).subscribe({

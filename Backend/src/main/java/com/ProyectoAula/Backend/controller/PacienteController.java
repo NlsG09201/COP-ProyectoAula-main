@@ -32,6 +32,11 @@ public class PacienteController {
     @PostMapping
     public Persona crear(@RequestBody Persona paciente) {
         paciente.setRol(Rol.PACIENTE);
+        String doc = paciente.getDocIden();
+        if (doc != null && !doc.isBlank()) {
+            var existente = repo.findByDocIden(doc);
+            if (existente.isPresent()) { throw new RuntimeException("Documento de identidad ya registrado"); }
+        }
         return repo.save(paciente);
     }
 
@@ -42,7 +47,14 @@ public class PacienteController {
         p.setTelefono(datos.getTelefono());
         p.setEmail(datos.getEmail());
         p.setDireccion(datos.getDireccion());
-        p.setDocIden(datos.getDocIden());
+        String nuevoDoc = datos.getDocIden();
+        if (nuevoDoc != null && !nuevoDoc.isBlank() && (p.getDocIden() == null || !p.getDocIden().equals(nuevoDoc))) {
+            var existente = repo.findByDocIden(nuevoDoc);
+            if (existente.isPresent() && !existente.get().getIdPersona().equals(p.getIdPersona())) {
+                throw new RuntimeException("Documento de identidad ya registrado");
+            }
+            p.setDocIden(nuevoDoc);
+        }
         return repo.save(p);
     }
 

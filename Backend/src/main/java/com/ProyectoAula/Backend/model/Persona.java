@@ -14,6 +14,7 @@ public class Persona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPersona;
 
+    @Column(unique = true)
     private String docIden;
     private String nombreCompleto;
     private String telefono;
