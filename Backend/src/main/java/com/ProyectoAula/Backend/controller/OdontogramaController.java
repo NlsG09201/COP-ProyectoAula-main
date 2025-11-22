@@ -30,6 +30,12 @@ public class OdontogramaController {
         return repo.findById(id).orElseThrow(() -> new RuntimeException("Odontograma no encontrado"));
     }
 
+    @GetMapping("/paciente/{idPersona}")
+    public List<Odontograma> historialPorPaciente(@PathVariable Long idPersona) {
+        return repo.findByPaciente_IdPersonaOrderByFechaRegistroDesc(idPersona);
+    }
+
+
     @PostMapping
     public Odontograma crear(@RequestBody Odontograma odontograma) {
         if (odontograma.getPaciente() == null || odontograma.getPaciente().getIdPersona() == null) {

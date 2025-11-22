@@ -35,6 +35,11 @@ public class DetalleOdontogramaController {
         return repo.findById(id).orElseThrow(() -> new RuntimeException("Detalle no encontrado"));
     }
 
+    @GetMapping("/odontograma/{idOdontograma}")
+    public List<DetalleOdontograma> listarPorOdontograma(@PathVariable Long idOdontograma) {
+        return repo.findByOdontograma_IdOdontograma(idOdontograma);
+    }
+
     @PostMapping
     public DetalleOdontograma crear(@RequestBody DetalleOdontograma detalle) {
         // Validar relaciones
