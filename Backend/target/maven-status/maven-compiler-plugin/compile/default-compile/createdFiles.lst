@@ -20,9 +20,11 @@ com\ProyectoAula\Backend\config\DataInitializer.class
 com\ProyectoAula\Backend\model\Persona$Rol.class
 com\ProyectoAula\Backend\config\SecurityConfig.class
 com\ProyectoAula\Backend\repository\CitaRepository.class
+com\ProyectoAula\Backend\config\ActiveMqConfig.class
 com\ProyectoAula\Backend\controller\TestimonioController.class
 com\ProyectoAula\Backend\controller\DienteController.class
 com\ProyectoAula\Backend\repository\DienteRepository.class
+com\ProyectoAula\Backend\controller\CitaController$1.class
 com\ProyectoAula\Backend\service\CitaService.class
 com\ProyectoAula\Backend\repository\DetalleOdontogramaRepository.class
 com\ProyectoAula\Backend\repository\TestimonioRepository.class

@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
       <a routerLink="/citas" routerLinkActive="active">Citas</a>
       <a routerLink="/pacientes" routerLinkActive="active">Pacientes</a>
       <a routerLink="/odontograma" routerLinkActive="active">Odontograma</a>
+      <a routerLink="/medicos" routerLinkActive="active">Médicos</a>
       <span style="margin-left:auto"></span>
       <input placeholder="usuario" [(ngModel)]="user" style="padding:6px;border-radius:6px;border:1px solid #1e293b;color:#111827" />
       <input type="password" placeholder="clave" [(ngModel)]="pass" style="padding:6px;border-radius:6px;border:1px solid #1e293b;color:#111827" />
