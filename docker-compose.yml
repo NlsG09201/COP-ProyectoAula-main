@@ -45,6 +45,14 @@ services:
       timeout: 5s
       retries: 10
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: cop-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+
   backend:
     build:
       context: ./Backend
@@ -76,14 +84,14 @@ services:
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/workerdb
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
-      # Opcional correo (configurar si se desea envío real)
-      # SPRING_MAIL_HOST: smtp.gmail.com
-      # SPRING_MAIL_PORT: 587
-      # SPRING_MAIL_USERNAME: ""
-      # SPRING_MAIL_PASSWORD: ""
-      # SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
-      # SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
-      # SPRING_MAIL_FROM: ""
+      # SMTP para pruebas (MailHog)
+      SPRING_MAIL_HOST: mailhog
+      SPRING_MAIL_PORT: 1025
+      SPRING_MAIL_USERNAME: ""
+      SPRING_MAIL_PASSWORD: ""
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
+      SPRING_MAIL_FROM: "no-reply@cop.local"
     depends_on:
       backend:
         condition: service_started
@@ -91,6 +99,8 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
+      mailhog:
+        condition: service_started
     # No exponemos puerto del worker, no es necesario acceso externo
 
   dashboard:
