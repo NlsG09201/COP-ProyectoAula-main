@@ -83,9 +83,14 @@ export class PacientesPageComponent implements OnDestroy {
         this.api.post<Paciente>('/pacientes', this.form).subscribe({
           next: (p) => { this.msg = 'Paciente registrado (ID ' + (p.idP||p.idPersona||'N/A') + ')'; this.loading = false; this.cargar(); },
           error: (err) => {
-            const txt = (typeof err?.error === 'string') ? err.error : JSON.stringify(err?.error||{});
-            if (txt && txt.toLowerCase().includes('documento de identidad ya registrado')) {
+            const status = err?.status;
+            const txt = (typeof err?.error === 'string') ? err.error : (err?.error?.message || JSON.stringify(err?.error||{}));
+            if (status === 409 || (txt && txt.toLowerCase().includes('documento de identidad ya registrado'))) {
               this.msg = 'Documento de identidad ya registrado';
+            } else if (status === 400) {
+              this.msg = 'Solicitud inválida';
+            } else if (status === 404) {
+              this.msg = 'Paciente no encontrado';
             } else {
               this.msg = 'Error registrando paciente';
             }

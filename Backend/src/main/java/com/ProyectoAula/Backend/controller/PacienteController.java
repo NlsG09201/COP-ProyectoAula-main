@@ -5,6 +5,8 @@ import com.ProyectoAula.Backend.model.Persona.Rol;
 import com.ProyectoAula.Backend.repository.PersonaRepository;
 import com.ProyectoAula.Backend.repository.CitaRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -30,15 +32,17 @@ public class PacienteController {
 
     @GetMapping("/by-doc/{doc}")
     public Persona obtenerPorDocumento(@PathVariable String doc) {
-        Persona p = repo.findByDocIden(doc).orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
-        if (p.getRol() != Rol.PACIENTE) throw new RuntimeException("No es un paciente");
+        Persona p = repo.findByDocIden(doc)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado"));
+        if (p.getRol() != Rol.PACIENTE) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No es un paciente");
         return p;
     }
 
     @GetMapping("/{id}")
     public Persona obtener(@PathVariable Long id) {
-        Persona p = repo.findById(id).orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
-        if (p.getRol() != Rol.PACIENTE) throw new RuntimeException("No es un paciente");
+        Persona p = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado"));
+        if (p.getRol() != Rol.PACIENTE) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No es un paciente");
         return p;
     }
 
@@ -48,14 +52,15 @@ public class PacienteController {
         String doc = paciente.getDocIden();
         if (doc != null && !doc.isBlank()) {
             var existente = repo.findByDocIden(doc);
-            if (existente.isPresent()) { throw new RuntimeException("Documento de identidad ya registrado"); }
+            if (existente.isPresent()) { throw new ResponseStatusException(HttpStatus.CONFLICT, "Documento de identidad ya registrado"); }
         }
         return repo.save(paciente);
     }
 
     @PutMapping("/{id}")
     public Persona actualizar(@PathVariable Long id, @RequestBody Persona datos) {
-        Persona p = repo.findById(id).orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        Persona p = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado"));
         p.setNombreCompleto(datos.getNombreCompleto());
         p.setTelefono(datos.getTelefono());
         p.setEmail(datos.getEmail());
@@ -64,7 +69,7 @@ public class PacienteController {
         if (nuevoDoc != null && !nuevoDoc.isBlank() && (p.getDocIden() == null || !p.getDocIden().equals(nuevoDoc))) {
             var existente = repo.findByDocIden(nuevoDoc);
             if (existente.isPresent() && !existente.get().getIdPersona().equals(p.getIdPersona())) {
-                throw new RuntimeException("Documento de identidad ya registrado");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Documento de identidad ya registrado");
             }
             p.setDocIden(nuevoDoc);
         }
