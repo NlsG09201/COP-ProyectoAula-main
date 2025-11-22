@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 
@@ -14,7 +16,7 @@ interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCo
     <p class="text-slate-600 mb-4">Registra y administra pacientes.</p>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-      <div class="field"><label>Documento</label><input [(ngModel)]="form.docIden" /></div>
+      <div class="field"><label>Documento</label><input [(ngModel)]="form.docIden" (blur)="verificarDoc()" (ngModelChange)="docInputChanged($event)" /><div *ngIf="docMsg" class="text-xs mt-1" [class.text-red-600]="docValid===false" [class.text-green-600]="docValid===true">{{ docMsg }}</div></div>
       <div class="field"><label>Nombre</label><input [(ngModel)]="form.nombreCompleto" /></div>
       <div class="field"><label>Teléfono</label><input [(ngModel)]="form.telefono" /></div>
       <div class="field"><label>Email</label><input [(ngModel)]="form.email" /></div>
@@ -50,14 +52,22 @@ interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCo
     <div *ngIf="!filtrados.length && !loading" class="mt-2">No hay pacientes registrados.</div>
   `,
 })
-export class PacientesPageComponent {
+export class PacientesPageComponent implements OnDestroy {
   form: Paciente = { docIden: '', nombreCompleto: '' };
   msg = ''; loading = false;
   pacientes: Paciente[] = [];
   filtrados: Paciente[] = [];
   filtro = '';
+  docMsg = '';
+  docChecking = false;
+  docValid: boolean | null = null;
+  private docInput$ = new Subject<string>();
+  private docSub?: Subscription;
 
-  constructor(private api: ApiService) { this.cargar(); }
+  constructor(private api: ApiService) {
+    this.cargar();
+    this.docSub = this.docInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(v => this.verificarDocDebounced(v));
+  }
 
   guardar() {
     if (!this.form.docIden || !this.form.nombreCompleto) { this.msg = 'Documento y Nombre son obligatorios.'; return; }
@@ -95,4 +105,27 @@ export class PacientesPageComponent {
       (p.docIden||'').toLowerCase().includes(t) || (p.nombreCompleto||'').toLowerCase().includes(t)
     ));
   }
+
+  verificarDoc() {
+    const d = (this.form.docIden||'').trim();
+    if (!d) { this.docMsg = ''; this.docValid = null; return; }
+    this.docChecking = true; this.docMsg = '';
+    this.api.get<any>(`/pacientes/by-doc/${encodeURIComponent(d)}`).subscribe({
+      next: () => { this.docMsg = 'Documento de identidad ya registrado'; this.docValid = false; this.docChecking = false; },
+      error: () => { this.docMsg = 'Documento disponible'; this.docValid = true; this.docChecking = false; }
+    });
+  }
+
+  docInputChanged(v: string) { this.docInput$.next((v||'').trim()); }
+
+  verificarDocDebounced(d: string) {
+    if (!d) { this.docMsg = ''; this.docValid = null; return; }
+    this.docChecking = true; this.docMsg = '';
+    this.api.get<any>(`/pacientes/by-doc/${encodeURIComponent(d)}`).subscribe({
+      next: () => { this.docMsg = 'Documento de identidad ya registrado'; this.docValid = false; this.docChecking = false; },
+      error: () => { this.docMsg = 'Documento disponible'; this.docValid = true; this.docChecking = false; }
+    });
+  }
+
+  ngOnDestroy() { try { this.docSub?.unsubscribe(); } catch {} }
 }

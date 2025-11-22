@@ -3,8 +3,12 @@ package com.ProyectoAula.Backend.controller;
 import com.ProyectoAula.Backend.model.Persona;
 import com.ProyectoAula.Backend.model.Persona.Rol;
 import com.ProyectoAula.Backend.repository.PersonaRepository;
+import com.ProyectoAula.Backend.repository.CitaRepository;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 @RestController
 @RequestMapping("/api/pacientes")
@@ -12,9 +16,11 @@ import java.util.List;
 public class PacienteController {
 
     private final PersonaRepository repo;
+    private final CitaRepository citaRepo;
 
-    public PacienteController(PersonaRepository repo) {
+    public PacienteController(PersonaRepository repo, CitaRepository citaRepo) {
         this.repo = repo;
+        this.citaRepo = citaRepo;
     }
 
     @GetMapping
@@ -68,5 +74,30 @@ public class PacienteController {
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         repo.deleteById(id);
+    }
+
+    @PostMapping("/deduplicar")
+    @Transactional
+    public Map<String,Object> deduplicar() {
+        List<Persona> pacientes = repo.findByRol(Rol.PACIENTE);
+        Map<String, List<Persona>> porDoc = pacientes.stream()
+                .filter(p -> p.getDocIden() != null && !p.getDocIden().isBlank())
+                .collect(Collectors.groupingBy(Persona::getDocIden));
+        int gruposDuplicados = 0;
+        int eliminados = 0;
+        for (Map.Entry<String, List<Persona>> e : porDoc.entrySet()) {
+            List<Persona> lista = e.getValue();
+            if (lista.size() <= 1) continue;
+            gruposDuplicados++;
+            Persona keeper = lista.stream().min((a,b) -> a.getIdPersona().compareTo(b.getIdPersona())).orElse(lista.get(0));
+            for (Persona dup : lista) {
+                if (dup.getIdPersona().equals(keeper.getIdPersona())) continue;
+                List<com.ProyectoAula.Backend.model.Cita> citas = citaRepo.findByPaciente(dup);
+                for (var c : citas) { c.setPaciente(keeper); citaRepo.save(c); }
+                repo.delete(dup);
+                eliminados++;
+            }
+        }
+        return Map.of("gruposDuplicados", gruposDuplicados, "eliminados", eliminados);
     }
 }
