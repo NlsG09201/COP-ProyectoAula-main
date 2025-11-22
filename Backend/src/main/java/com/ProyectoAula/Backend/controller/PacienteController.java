@@ -22,6 +22,13 @@ public class PacienteController {
         return repo.findByRol(Rol.PACIENTE);
     }
 
+    @GetMapping("/by-doc/{doc}")
+    public Persona obtenerPorDocumento(@PathVariable String doc) {
+        Persona p = repo.findByDocIden(doc).orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        if (p.getRol() != Rol.PACIENTE) throw new RuntimeException("No es un paciente");
+        return p;
+    }
+
     @GetMapping("/{id}")
     public Persona obtener(@PathVariable Long id) {
         Persona p = repo.findById(id).orElseThrow(() -> new RuntimeException("Paciente no encontrado"));

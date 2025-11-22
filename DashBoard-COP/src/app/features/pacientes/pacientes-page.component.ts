@@ -62,16 +62,21 @@ export class PacientesPageComponent {
   guardar() {
     if (!this.form.docIden || !this.form.nombreCompleto) { this.msg = 'Documento y Nombre son obligatorios.'; return; }
     this.loading = true; this.msg = '';
-    this.api.post<Paciente>('/pacientes', this.form).subscribe({
-      next: (p) => { this.msg = 'Paciente registrado (ID ' + (p.idP||p.idPersona||'N/A') + ')'; this.loading = false; this.cargar(); },
-      error: (err) => {
-        const txt = (typeof err?.error === 'string') ? err.error : JSON.stringify(err?.error||{});
-        if (txt && txt.toLowerCase().includes('documento de identidad ya registrado')) {
-          this.msg = 'Documento de identidad ya registrado';
-        } else {
-          this.msg = 'Error registrando paciente';
-        }
-        this.loading = false;
+    this.api.get<any>(`/pacientes/by-doc/${encodeURIComponent(this.form.docIden)}`).subscribe({
+      next: () => { this.msg = 'Documento de identidad ya registrado'; this.loading = false; },
+      error: () => {
+        this.api.post<Paciente>('/pacientes', this.form).subscribe({
+          next: (p) => { this.msg = 'Paciente registrado (ID ' + (p.idP||p.idPersona||'N/A') + ')'; this.loading = false; this.cargar(); },
+          error: (err) => {
+            const txt = (typeof err?.error === 'string') ? err.error : JSON.stringify(err?.error||{});
+            if (txt && txt.toLowerCase().includes('documento de identidad ya registrado')) {
+              this.msg = 'Documento de identidad ya registrado';
+            } else {
+              this.msg = 'Error registrando paciente';
+            }
+            this.loading = false;
+          }
+        });
       }
     });
   }
