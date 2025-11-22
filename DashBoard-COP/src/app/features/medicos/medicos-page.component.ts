@@ -26,7 +26,7 @@ interface Cita {
   imports: [CommonModule, FormsModule],
   template: `
     <h2 style="margin-bottom:16px">Médicos disponibles</h2>
-    <div class="grid" style="grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:12px">
+    <div class="grid" style="grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:12px">
       <div class="field">
         <label>Fecha</label>
         <input type="date" [(ngModel)]="filtroFecha" (change)="aplicarFiltros()">
@@ -34,6 +34,21 @@ interface Cita {
       <div class="field">
         <label>Hora</label>
         <input type="time" [(ngModel)]="filtroHora" (change)="aplicarFiltros()">
+      </div>
+      <div class="field">
+        <label>Desde</label>
+        <input type="date" [(ngModel)]="filtroDesde" (change)="aplicarFiltros()">
+      </div>
+      <div class="field">
+        <label>Hasta</label>
+        <input type="date" [(ngModel)]="filtroHasta" (change)="aplicarFiltros()">
+      </div>
+      <div class="field">
+        <label>Servicio</label>
+        <select [(ngModel)]="servicioId" (change)="cargarMedicosPorServicio()">
+          <option [ngValue]="null">Todos</option>
+          <option *ngFor="let s of servicios" [ngValue]="s.idServicio">{{ s.nombre || (s.tipoServicio?.nombre) }}</option>
+        </select>
       </div>
       <div class="field">
         <label>Texto</label>
@@ -79,11 +94,15 @@ export class MedicosPageComponent {
   citas: Cita[] = [];
   filtroFecha = '';
   filtroHora = '';
+  filtroDesde = '';
+  filtroHasta = '';
   filtroTexto = '';
   loading = false;
   error = '';
+  servicios: any[] = [];
+  servicioId: number | null = null;
 
-  constructor(private api: ApiService) { this.load(); }
+  constructor(private api: ApiService) { this.load(); this.cargarServicios(); }
 
   load() {
     this.loading = true; this.error = '';
@@ -92,6 +111,19 @@ export class MedicosPageComponent {
       error: () => { this.error = 'Error cargando médicos'; this.loading = false; }
     });
     this.api.get<Cita[]>('/citas').subscribe({ next: (c) => this.citas = c, error: () => {} });
+  }
+
+  cargarServicios() {
+    this.api.get<any[]>('/servicios').subscribe({ next: (s) => this.servicios = s, error: () => {} });
+  }
+
+  cargarMedicosPorServicio() {
+    this.loading = true;
+    const url = this.servicioId ? `/medicos/por-servicio/${this.servicioId}` : '/medicos';
+    this.api.get<Medico[]>(url).subscribe({
+      next: (m) => { this.medicos = m; this.aplicarFiltros(); this.loading = false; },
+      error: () => { this.error = 'Error cargando médicos'; this.loading = false; }
+    });
   }
 
   aplicarFiltros() {
@@ -103,23 +135,33 @@ export class MedicosPageComponent {
   }
 
   resetFiltros() {
-    this.filtroFecha = ''; this.filtroHora = ''; this.filtroTexto = ''; this.aplicarFiltros();
+    this.filtroFecha = ''; this.filtroHora = ''; this.filtroTexto = ''; this.filtroDesde=''; this.filtroHasta=''; this.servicioId=null; this.aplicarFiltros();
   }
 
   filtroDisponible(m: Medico): boolean {
-    const fecha = this.filtroFecha ? new Date(this.filtroFecha) : null;
     const hora = this.filtroHora || '';
-    const diaNombre = fecha ? this.nombreDia(fecha) : '';
-
-    const dias = (m.diasDisponibles || '').toLowerCase();
-    const diaOk = !fecha || !dias || dias.includes(diaNombre.toLowerCase()) || dias.includes(this.diaEnIngles(fecha));
-
     const hi = m.horaInicioDisponibilidad || '';
     const hf = m.horaFinDisponibilidad || '';
     const horaOk = !hora || (!hi && !hf) || ((hi ? hora >= hi : true) && (hf ? hora <= hf : true));
 
-    const conflicto = this.existeCita(m, this.filtroFecha, this.filtroHora);
-    return diaOk && horaOk && !conflicto;
+    const diasDisp = (m.diasDisponibles || '').toLowerCase();
+
+    if (this.filtroFecha) {
+      const fecha = new Date(this.filtroFecha);
+      const diaOk = !diasDisp || diasDisp.includes(this.nombreDia(fecha).toLowerCase()) || diasDisp.includes(this.diaEnIngles(fecha));
+      const conflicto = this.existeCita(m, this.filtroFecha, hora);
+      return diaOk && horaOk && !conflicto;
+    }
+
+    if (this.filtroDesde && this.filtroHasta) {
+      const diasRango = this.diasDelRango(new Date(this.filtroDesde), new Date(this.filtroHasta));
+      const diaOk = !diasDisp || diasRango.some(d => diasDisp.includes(d) || diasDisp.includes(this.traducirDiaIngles(d)));
+      const conflicto = this.existeCitaEnRango(m, this.filtroDesde, this.filtroHasta, hora);
+      return diaOk && horaOk && !conflicto;
+    }
+
+    const conflicto = this.existeCita(m, this.filtroFecha, hora);
+    return horaOk && !conflicto;
   }
 
   existeCita(m: Medico, fechaStr: string, horaStr: string): boolean {
@@ -129,6 +171,19 @@ export class MedicosPageComponent {
       const f = c.fecha === fechaStr;
       const h = (c.hora || '').startsWith(horaStr);
       return Boolean(mis && f && h);
+    });
+  }
+
+  existeCitaEnRango(m: Medico, desdeStr: string, hastaStr: string, horaStr: string): boolean {
+    if (!desdeStr || !hastaStr || !horaStr) return false;
+    const desde = new Date(desdeStr).getTime();
+    const hasta = new Date(hastaStr).getTime();
+    return this.citas.some(c => {
+      const mis = c.medico?.idPersona === m.idPersona;
+      const f = new Date(c.fecha).getTime();
+      const enRango = f >= desde && f <= hasta;
+      const h = (c.hora || '').startsWith(horaStr);
+      return Boolean(mis && enRango && h);
     });
   }
 
@@ -152,6 +207,19 @@ export class MedicosPageComponent {
   diaEnIngles(f: Date): string {
     const dias = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
     return dias[f.getDay()];
+  }
+
+  traducirDiaIngles(dia: string): string {
+    const map: Record<string,string> = { lunes:'MONDAY', martes:'TUESDAY', miércoles:'WEDNESDAY', jueves:'THURSDAY', viernes:'FRIDAY', sábado:'SATURDAY', domingo:'SUNDAY' };
+    return map[dia.toLowerCase()] || dia;
+  }
+
+  diasDelRango(desde: Date, hasta: Date): string[] {
+    const res: string[] = [];
+    for (let d = new Date(desde); d.getTime() <= hasta.getTime(); d.setDate(d.getDate() + 1)) {
+      res.push(this.nombreDia(d).toLowerCase());
+    }
+    return res;
   }
 }
 
