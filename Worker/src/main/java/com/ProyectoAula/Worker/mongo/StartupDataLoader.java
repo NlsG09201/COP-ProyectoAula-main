@@ -43,6 +43,7 @@ public class StartupDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        log.info("[GEN Citas] count={}", generateCitasCount);
         if (testInsert) {
             try {
                 ReminderLog doc = new ReminderLog(
