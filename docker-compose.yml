@@ -93,6 +93,7 @@ services:
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
       SPRING_MAIL_FROM: "no-reply@cop.local"
+      WORKER_GENERATE_CITAS_COUNT: 2000
     depends_on:
       backend:
         condition: service_started
