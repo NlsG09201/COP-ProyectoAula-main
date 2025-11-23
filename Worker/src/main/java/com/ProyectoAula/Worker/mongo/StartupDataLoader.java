@@ -43,24 +43,23 @@ public class StartupDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (!testInsert) {
-            return;
-        }
-        try {
-            ReminderLog doc = new ReminderLog(
-                    System.currentTimeMillis(),
-                    "Tester",
-                    "tester@example.com",
-                    LocalDateTime.now().plusDays(1),
-                    List.of("Consulta", "Limpieza"),
-                    "TEST",
-                    null,
-                    LocalDateTime.now()
-            );
-            ReminderLog saved = repository.save(doc);
-            log.info("[Mongo TEST] Insertado documento de prueba en reminder_logs con id={}", saved.getId());
-        } catch (Exception ex) {
-            log.error("[Mongo TEST] Error insertando documento de prueba: {}", ex.getMessage());
+        if (testInsert) {
+            try {
+                ReminderLog doc = new ReminderLog(
+                        System.currentTimeMillis(),
+                        "Tester",
+                        "tester@example.com",
+                        LocalDateTime.now().plusDays(1),
+                        List.of("Consulta", "Limpieza"),
+                        "TEST",
+                        null,
+                        LocalDateTime.now()
+                );
+                ReminderLog saved = repository.save(doc);
+                log.info("[Mongo TEST] Insertado documento de prueba en reminder_logs con id={}", saved.getId());
+            } catch (Exception ex) {
+                log.error("[Mongo TEST] Error insertando documento de prueba: {}", ex.getMessage());
+            }
         }
 
         if (generateCitasCount > 0) {
