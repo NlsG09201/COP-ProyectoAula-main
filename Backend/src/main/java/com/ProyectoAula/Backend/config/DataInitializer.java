@@ -3,14 +3,12 @@ package com.ProyectoAula.Backend.config;
 import com.ProyectoAula.Backend.model.Diente;
 import com.ProyectoAula.Backend.model.Persona;
 import com.ProyectoAula.Backend.model.Servicio;
-import com.ProyectoAula.Backend.model.Testimonio;
 import com.ProyectoAula.Backend.model.TipoServicio;
 import com.ProyectoAula.Backend.model.Persona.Rol;
 import com.ProyectoAula.Backend.repository.DienteRepository;
 import com.ProyectoAula.Backend.repository.PersonaRepository;
 import com.ProyectoAula.Backend.repository.ServicioRepository;
 import com.ProyectoAula.Backend.repository.TipoServicioRepository;
-import com.ProyectoAula.Backend.repository.TestimonioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -23,16 +21,14 @@ public class DataInitializer implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final TipoServicioRepository tipoRepo;
     private final ServicioRepository servicioRepo;
-    private final TestimonioRepository testimonioRepo;
 
     public DataInitializer(DienteRepository dienteRepository, PersonaRepository personaRepository, PasswordEncoder passwordEncoder,
-                           TipoServicioRepository tipoRepo, ServicioRepository servicioRepo, TestimonioRepository testimonioRepo) {
+                           TipoServicioRepository tipoRepo, ServicioRepository servicioRepo) {
         this.dienteRepository = dienteRepository;
         this.personaRepository = personaRepository;
         this.passwordEncoder = passwordEncoder;
         this.tipoRepo = tipoRepo;
         this.servicioRepo = servicioRepo;
-        this.testimonioRepo = testimonioRepo;
     }
 
     @Override
@@ -170,73 +166,5 @@ public class DataInitializer implements CommandLineRunner {
         s.setNombre(nombre);
         s.setTipoServicio(tipo);
         servicioRepo.save(s);
-    }
-
-    private void seedMedicosExtra() {
-        var existentes = personaRepository.findByRol(Rol.MEDICO);
-        if (existentes.size() >= 5) return;
-        var servicios = servicioRepo.findAll();
-        java.util.Random rnd = new java.util.Random(42);
-        int start = existentes.size();
-        for (int i = start; i < 5; i++) {
-            Persona m = new Persona();
-            m.setRol(Rol.MEDICO);
-            m.setDocIden("MED-" + String.format("%03d", i+1));
-            m.setNombreCompleto("Médico " + (i+1));
-            m.setTelefono("311" + String.format("%07d", i+1));
-            m.setEmail("medico" + (i+1) + "@example.com");
-            m.setDireccion("Sede Principal");
-            m.setUsername("medico" + (i+1));
-            m.setPasswordHash(passwordEncoder.encode("medico" + (i+1) + "123"));
-            m.setHoraInicioDisponibilidad(java.time.LocalTime.of(8, 0));
-            m.setHoraFinDisponibilidad(java.time.LocalTime.of(17, 0));
-            m.setDiasDisponibles("MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
-            if (!servicios.isEmpty()) {
-                int n = 1 + rnd.nextInt(Math.max(1, Math.min(3, servicios.size())));
-                java.util.ArrayList<Servicio> ss = new java.util.ArrayList<>();
-                for (int k = 0; k < n; k++) ss.add(servicios.get(rnd.nextInt(servicios.size())));
-                m.setServicios(ss);
-            }
-            personaRepository.save(m);
-        }
-    }
-
-    private void seedTestimonios() {
-        long count = testimonioRepo.count();
-        if (count >= 2000) return;
-        var servicios = servicioRepo.findAll();
-        if (servicios.isEmpty()) return;
-        int toCreate = (int)(2000 - count);
-        java.util.Random rnd = new java.util.Random(12345);
-        java.util.ArrayList<Testimonio> batch = new java.util.ArrayList<>();
-        for (int i = 0; i < toCreate; i++) {
-            Testimonio t = new Testimonio();
-            t.setNombre("Usuario " + (count + i + 1));
-            t.setComentario("Excelente atención y servicio " + (count + i + 1));
-            t.setCalificacion(1 + rnd.nextInt(5));
-            Servicio s = servicios.get(rnd.nextInt(servicios.size()));
-            t.setServicio(s);
-            batch.add(t);
-        }
-        testimonioRepo.saveAll(batch);
-    }
-
-    private void seedPacientes() {
-        int existentes = personaRepository.findByRol(Rol.PACIENTE).size();
-        if (existentes >= 2000) return;
-        int toCreate = 2000 - existentes;
-        java.util.ArrayList<Persona> nuevos = new java.util.ArrayList<>();
-        for (int i = 0; i < toCreate; i++) {
-            int idx = existentes + i + 1;
-            Persona p = new Persona();
-            p.setRol(Rol.PACIENTE);
-            p.setDocIden(String.format("DOC-%07d", idx));
-            p.setNombreCompleto("Paciente " + idx);
-            p.setTelefono(String.format("300%07d", idx));
-            p.setEmail("paciente" + idx + "@example.com");
-            p.setDireccion("Ciudad COP");
-            nuevos.add(p);
-        }
-        personaRepository.saveAll(nuevos);
     }
 }

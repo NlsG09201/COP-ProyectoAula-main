@@ -46,12 +46,6 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
-		<!-- Soporte de fechas Java 8+ en Jackson -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-		</dependency>
-
 		<!-- Spring Data MongoDB -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
