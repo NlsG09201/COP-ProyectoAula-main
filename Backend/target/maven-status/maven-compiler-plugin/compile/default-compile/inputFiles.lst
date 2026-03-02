@@ -8,6 +8,7 @@ C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\c
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\CitaController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\DetalleOdontogramaController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\DienteController.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\DienteMongoController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\MedicoController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\NotificacionController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\OdontogramaController.java
@@ -24,6 +25,8 @@ C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\c
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\Servicio.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\Testimonio.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\TipoServicio.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\mongo\model\DienteDoc.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\mongo\repository\DienteMongoRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\CitaRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\DetalleOdontogramaRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\DienteRepository.java

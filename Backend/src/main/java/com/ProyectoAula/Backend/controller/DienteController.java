@@ -2,12 +2,14 @@ package com.ProyectoAula.Backend.controller;
 
 import com.ProyectoAula.Backend.model.Diente;
 import com.ProyectoAula.Backend.repository.DienteRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/dientes")
 @CrossOrigin(origins = "*")
+@Profile("!mongo")
 public class DienteController {
 
     private final DienteRepository repo;
