@@ -26,7 +26,8 @@ import { FormsModule } from '@angular/forms';
               <button class="md:hidden btn-outline btn-sm" (click)="mobileMenu = !mobileMenu">Menú</button>
               <div class="text-slate-700 font-semibold">Gestión Clínica</div>
             </div>
-            <div class="sm:col-span-6 grid grid-cols-5 gap-2">
+            <div class="sm:col-span-6 grid grid-cols-6 gap-2">
+              <button class="col-span-1 btn-outline btn-sm" (click)="cycleTheme()">{{ themeText }}</button>
               <input class="col-span-2 nav-input" placeholder="usuario" [(ngModel)]="user" />
               <input class="col-span-2 nav-input" type="password" placeholder="clave" [(ngModel)]="pass" />
               <div class="col-span-1 flex gap-2">
@@ -62,6 +63,22 @@ export class AppComponent {
   user = '';
   pass = '';
   mobileMenu = false;
+  theme: 'light'|'dark'|'dark-green' = 'light';
+  get themeText() { return this.theme === 'light' ? 'Claro' : (this.theme === 'dark' ? 'Oscuro' : 'Verde'); }
+  constructor() {
+    try {
+      const stored = localStorage.getItem('theme');
+      if (stored === 'dark' || stored === 'dark-green') this.theme = stored;
+      else this.theme = 'light';
+      this.applyTheme();
+    } catch {}
+  }
+  cycleTheme() { this.theme = this.theme === 'light' ? 'dark' : (this.theme === 'dark' ? 'dark-green' : 'light'); try { localStorage.setItem('theme', this.theme); } catch {}; this.applyTheme(); }
+  private applyTheme() {
+    const el = document && (document.documentElement || document.body);
+    if (!el) return;
+    if (this.theme === 'light') el.removeAttribute('data-theme'); else el.setAttribute('data-theme', this.theme);
+  }
   login() {
     if (!this.user || !this.pass) return;
     const token = btoa(`${this.user}:${this.pass}`);
