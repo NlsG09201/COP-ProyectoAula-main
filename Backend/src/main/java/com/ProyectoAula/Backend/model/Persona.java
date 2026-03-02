@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 public class Persona {
 
-    public enum Rol { MEDICO, PACIENTE }
+    public enum Rol { MEDICO, PACIENTE, CLIENTE }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

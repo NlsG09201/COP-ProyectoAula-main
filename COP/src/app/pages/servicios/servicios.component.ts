@@ -30,16 +30,38 @@ export class ServiciosComponent implements AfterViewInit {
         bookingContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
-    const ctaButtons = Array.from(document.querySelectorAll('button'))
-      .filter(b => (b as HTMLButtonElement).innerText.toLowerCase().includes('solicitar cita'));
-    ctaButtons.forEach(btn => {
+    // Botones de las tarjetas para preseleccionar servicio
+    document.querySelectorAll('.service-category .btn-primary').forEach(btn => {
       btn.addEventListener('click', () => {
+        const card = btn.closest('.bg-white.p-6.rounded-lg.shadow-md');
+        const serviceName = card?.querySelector('h3')?.textContent?.trim() || '';
+        const category = btn.closest('.service-category')?.id === 'odontologia' ? 'Odontología' : 'Psicologia';
+        
         if (bookingContainer) {
           bookingContainer.classList.add('open');
+          
+          // 1. Seleccionar categoría
+          if (categoriaSelect) {
+            categoriaSelect.value = category;
+            renderServicios(category);
+          }
+          
+          // 2. Seleccionar servicio específico (si coincide por nombre)
+          setTimeout(() => {
+            if (servicioSelect) {
+              const id = nameToId[serviceName.toLowerCase()];
+              if (id) {
+                servicioSelect.value = String(id);
+                fetchMedicosPorServicio(String(id));
+              }
+            }
+          }, 100);
+
           bookingContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
     });
+
     const renderServicios = (categoria: string) => {
       if (!servicioSelect) return;
       const odontoGroup = [

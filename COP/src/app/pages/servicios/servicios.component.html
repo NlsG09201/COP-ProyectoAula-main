@@ -11,11 +11,25 @@
     .booking-container{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
     .booking-container.open{grid-template-rows:1fr}
     .booking-section{overflow:hidden}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 10px 18px rgba(17,24,39,.08)}
+    .card-header{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:18px 20px;border-bottom:1px solid #e5e7eb;background:linear-gradient(180deg,#f8fafc 0%,#ffffff 70%)}
+    .card-icon{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:10px;background:#2563eb;color:#fff;font-size:20px}
+    .card-title{font-size:1.25rem;font-weight:700;color:#1f2937}
+    .card-sub{font-size:.875rem;color:#64748b}
+    .card-body{padding:20px}
+    .card-footer{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f9fafb;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .btn-primary{display:inline-flex;align-items:center;gap:8px}
   </style>
   <div id="bookingContainer" class="booking-container max-w-2xl mx-auto mb-8">
-    <section class="booking-section bg-white rounded-lg shadow p-6">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">Agendar Cita</h2>
-      <form id="citaForm">
+    <section class="booking-section card">
+      <div class="card-header">
+        <div class="card-icon">🗓️</div>
+        <div>
+          <div class="card-title">Agendar Cita</div>
+          <div class="card-sub">Completa tus datos y selecciona fecha y servicio</div>
+        </div>
+      </div>
+      <form id="citaForm" class="card-body">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label class="block text-gray-700 mb-1">Nombre</label>
@@ -60,121 +74,74 @@
             <select id="servicioSelect" class="w-full border rounded px-3 py-2" required></select>
           </div>
         </div>
-        
-        <div class="text-sm text-gray-600 mb-3">Un médico disponible asignará y confirmará tu cita por correo.</div>
-        <button type="submit" class="btn-primary px-6 py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Agendar</button>
-        <div id="citaMsg" class="mt-3 text-sm"></div>
+        <div id="citaMsg" class="mt-2 text-sm"></div>
       </form>
+      <div class="card-footer">
+        <div class="text-sm text-gray-600">Un médico disponible asignará y confirmará tu cita por correo.</div>
+        <button type="submit" form="citaForm" class="btn-primary px-6 py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Agendar</button>
+      </div>
     </section>
   </div>
 
   <section id="odontologia" class="service-category">
-    <div class="container mx-auto py-16">
-      <h2 class="text-4xl font-bold text-gray-800 text-center mb-12">Servicios Odontológicos</h2>
+    <div class="container mx-auto py-16 px-4">
+      <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Odontología</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="service-detail-card">
-          <img src="/assets/img/Atendiendo pacientes en cali.jpg" alt="Odontología General" class="rounded-t-lg mb-4">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Odontología General</h3>
-          <p class="text-gray-600 mb-4">Realizamos diagnósticos, limpiezas profesionales, empastes, extracciones y tratamientos de conducto. Mantenemos tu salud bucal en óptimas condiciones.</p>
-          <ul class="list-disc list-inside text-gray-700 mb-4">
-            <li>Limpieza y Profilaxis</li>
-            <li>Empastes y Restauraciones</li>
-            <li>Endodoncias (tratamientos de conducto)</li>
-            <li>Extracciones Dentales</li>
-          </ul>
-          <button class="btn-primary">Solicitar Cita</button>
+        <!-- Servicio 1 -->
+        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
+            <span class="text-3xl">🦷</span>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Limpieza y Profilaxis</h3>
+          <p class="text-gray-600 mb-6">Mantenimiento preventivo para una sonrisa saludable y libre de sarro.</p>
+          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
         </div>
-        <div class="service-detail-card">
-          <img src="/assets/imgS/Logo.png" alt="Ortodoncia" class="rounded-t-lg mb-4">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Ortodoncia</h3>
-          <p class="text-gray-600 mb-4">Corrección de la posición de los dientes y la mandíbula con brackets tradicionales, estéticos o alineadores invisibles.</p>
-          <ul class="list-disc list-inside text-gray-700 mb-4">
-            <li>Brackets Metálicos</li>
-            <li>Brackets Estéticos (Cerámica, Zafiro)</li>
-            <li>Ortodoncia Invisible (Aligners)</li>
-            <li>Retenedores</li>
-          </ul>
-          <button class="btn-primary">Solicitar Cita</button>
+
+        <!-- Servicio 2 -->
+        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
+            <span class="text-3xl">✨</span>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Estética Dental</h3>
+          <p class="text-gray-600 mb-6">Blanqueamientos y carillas para mejorar la apariencia de tu sonrisa.</p>
+          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
         </div>
-        <div class="service-detail-card">
-          <img src="/assets/img/Captura de pantalla 2025-05-29 150338.png" alt="Estética Dental" class="rounded-t-lg mb-4">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Estética Dental</h3>
-          <p class="text-gray-600 mb-4">Mejora la apariencia de tu sonrisa con blanqueamientos, carillas, coronas y contorneado dental.</p>
-          <ul class="list-disc list-inside text-gray-700 mb-4">
-            <li>Blanqueamiento Dental</li>
-            <li>Carillas de Porcelana y Resina</li>
-            <li>Coronas Dentales</li>
-            <li>Contorneado Estético</li>
-          </ul>
-          <button class="btn-primary">Solicitar Cita</button>
-        </div>
-        <div class="service-detail-card">
-          <img src="/assets/img/Gemini.png" alt="Implantes Dentales" class="rounded-t-lg mb-4">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Implantes Dentales</h3>
-          <p class="text-gray-600 mb-4">Soluciones permanentes para reemplazar dientes perdidos, restaurando la función y la estética.</p>
-          <ul class="list-disc list-inside text-gray-700 mb-4">
-            <li>Implantes de Titanio</li>
-            <li>Coronas sobre Implantes</li>
-            <li>Puentes sobre Implantes</li>
-            <li>Regeneración Ósea</li>
-          </ul>
-          <button class="btn-primary">Solicitar Cita</button>
+
+        <!-- Servicio 3 -->
+        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
+            <span class="text-3xl">📏</span>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Ortodoncia</h3>
+          <p class="text-gray-600 mb-6">Alineación perfecta con brackets o alineadores invisibles.</p>
+          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="psicologia" class="service-category bg-gray-100">
-    <div class="container mx-auto py-16">
-      <h2 class="text-4xl font-bold text-gray-800 text-center mb-12">Servicios Psicológicos</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="service-detail-card">
-          <img src="/assets/img/Solicita con nosotros tu servicio de psicología, estamos atendiendo con todos los protocolos te esperamos.....jpg" alt="Terapia Individual" class="rounded-t-lg mb-4">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Terapia Individual</h3>
-          <p class="text-gray-600 mb-4">Sesiones personalizadas para abordar problemas de ansiedad, depresión, estrés, duelos y crecimiento personal.</p>
-          <ul class="list-disc list-inside text-gray-700 mb-4">
-            <li>Manejo de Ansiedad y Estrés</li>
-            <li>Terapia para la Depresión</li>
-            <li>Apoyo en Duelos</li>
-            <li>Desarrollo Personal</li>
-          </ul>
-          <button class="btn-primary">Solicitar Cita</button>
+  <section id="psicologia" class="service-category bg-gray-50">
+    <div class="container mx-auto py-16 px-4">
+      <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Psicología</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 max-w-4xl mx-auto">
+        <!-- Servicio 1 -->
+        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
+            <span class="text-3xl">🧠</span>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Terapia Individual</h3>
+          <p class="text-gray-600 mb-6">Apoyo profesional para el manejo de estrés, ansiedad y crecimiento personal.</p>
+          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
         </div>
-        <div class="service-detail-card">
-          <img src="/assets/img/Logo.png" alt="Terapia de Pareja" class="rounded-t-lg mb-4">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Terapia de Pareja</h3>
-          <p class="text-gray-600 mb-4">Ayudamos a las parejas a mejorar la comunicación, resolver conflictos y fortalecer su relación.</p>
-          <ul class="list-disc list-inside text-gray-700 mb-4">
-            <li>Mejora de la Comunicación</li>
-            <li>Resolución de Conflictos</li>
-            <li>Fortalecimiento de Vínculos</li>
-            <li>Terapia Prematrimonial</li>
-          </ul>
-          <button class="btn-primary">Solicitar Cita</button>
-        </div>
-        <div class="service-detail-card">
-          <img src="/assets/img/Captura de pantalla 2025-05-29 150338.png" alt="Terapia Familiar" class="rounded-t-lg mb-4">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Terapia Familiar</h3>
-          <p class="text-gray-600 mb-4">Intervenciones para mejorar la dinámica familiar, afrontar cambios y superar crisis.</p>
-          <ul class="list-disc list-inside text-gray-700 mb-4">
-            <li>Dinámicas Familiares</li>
-            <li>Adaptación a Cambios</li>
-            <li>Apoyo en Crisis Familiares</li>
-            <li>Comunicación Familiar</li>
-          </ul>
-          <button class="btn-primary">Solicitar Cita</button>
-        </div>
-        <div class="service-detail-card">
-          <img src="/assets/img/Gemini.png" alt="Psicología Infantil" class="rounded-t-lg mb-4">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Psicología Infantil y Adolescente</h3>
-          <p class="text-gray-600 mb-4">Apoyo a niños y adolescentes en el manejo de emociones, problemas de conducta y desarrollo.</p>
-          <ul class="list-disc list-inside text-gray-700 mb-4">
-            <li>Problemas de Conducta</li>
-            <li>Manejo de Emociones</li>
-            <li>Dificultades de Aprendizaje</li>
-            <li>Orientación a Padres</li>
-          </ul>
-          <button class="btn-primary">Solicitar Cita</button>
+
+        <!-- Servicio 2 -->
+        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
+            <span class="text-3xl">👨‍👩‍👧‍👦</span>
+          </div>
+          <h3 class="text-2xl font-bold text-gray-800 mb-4">Terapia Infantil</h3>
+          <p class="text-gray-600 mb-6">Manejo de emociones, conducta y aprendizaje para los más pequeños.</p>
+          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
         </div>
       </div>
     </div>

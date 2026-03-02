@@ -24,6 +24,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, 
                     "/api/servicios/**", 
                     "/api/dientes/**",
@@ -31,11 +32,6 @@ public class SecurityConfig {
                     "/api/medicos/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/pacientes").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/citas").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/citas/*/asignar").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/citas/*/confirmar").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/odontogramas").authenticated()
-                .requestMatchers(HttpMethod.POST, "/api/detalles-odontograma").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/medicos/**").authenticated()
                 .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults()); // Volver a Basic para compatibilidad con el front actual
@@ -47,15 +43,19 @@ public class SecurityConfig {
         return username -> {
             Persona p = repo.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
-            if (p.getRol() != Rol.MEDICO) {
-                throw new UsernameNotFoundException("Usuario no es médico");
+            
+            // Permitimos acceso a MÉDICO (Dashboard) y CLIENTE (Portal público)
+            if (p.getRol() == Rol.PACIENTE) {
+                throw new UsernameNotFoundException("Los pacientes sin cuenta de usuario no pueden loguearse.");
             }
+            
             if (p.getPasswordHash() == null || p.getPasswordHash().isBlank()) {
                 throw new UsernameNotFoundException("Usuario sin contraseña configurada");
             }
+            
             return User.withUsername(p.getUsername())
                     .password(p.getPasswordHash())
-                    .roles("MEDICO")
+                    .roles(p.getRol().name())
                     .build();
         };
     }

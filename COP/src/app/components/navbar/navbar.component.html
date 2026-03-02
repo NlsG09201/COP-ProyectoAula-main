@@ -14,6 +14,11 @@
         <li><a routerLink="/nosotros" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Nosotros</a></li>
         <li><a routerLink="/testimonios" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Testimonios</a></li>
         <li><a routerLink="/contacto" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Contacto</a></li>
+        <li *ngIf="!isLoggedIn()"><a routerLink="/auth" class="btn-primary px-4 py-1 rounded-lg text-white bg-blue-600 hover:bg-blue-700 ml-4 block text-center" (click)="closeMenu()">Entrar</a></li>
+        <li *ngIf="isLoggedIn()" class="flex items-center space-x-2 ml-4">
+          <span class="text-sm font-medium text-gray-700 hidden lg:inline">{{ getUserName() }}</span>
+          <button (click)="logout()" class="text-sm text-red-600 hover:text-red-800 font-semibold px-2 py-1">Salir</button>
+        </li>
       </ul>
     </nav>
   </div>
