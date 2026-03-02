@@ -5,13 +5,14 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: copdb
+      MYSQL_DATABASE: COP_db
       MYSQL_USER: copuser
       MYSQL_PASSWORD: coppass
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$MYSQL_ROOT_PASSWORD || exit 1"]
       interval: 10s
@@ -60,7 +61,7 @@ services:
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/copdb?useUnicode=true&characterEncoding=utf8&serverTimezone=America/Bogota&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/COP_db?useUnicode=true&characterEncoding=utf8&serverTimezone=America/Bogota&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true
       SPRING_DATASOURCE_USERNAME: copuser
       SPRING_DATASOURCE_PASSWORD: coppass
       SPRING_RABBITMQ_HOST: rabbitmq

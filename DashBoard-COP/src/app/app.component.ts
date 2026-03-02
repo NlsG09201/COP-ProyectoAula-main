@@ -7,45 +7,66 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [RouterModule, FormsModule],
   template: `
-    <header class="bg-white shadow">
-      <div class="max-w-7xl mx-auto px-4 py-3">
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-          <div class="md:col-span-4 flex items-center gap-2">
-            <div class="w-9 h-9 rounded-lg bg-blue-600 text-white grid place-items-center font-bold">COP</div>
-            <div class="text-slate-700 font-semibold hidden sm:block">Dashboard de Gestión</div>
-          </div>
-          <nav class="md:col-span-5 flex flex-wrap gap-2 text-sm">
-            <a class="btn-link" routerLink="/citas" routerLinkActive="active">Citas</a>
-            <a class="btn-link" routerLink="/pacientes" routerLinkActive="active">Pacientes</a>
-            <a class="btn-link" routerLink="/odontograma" routerLinkActive="active">Odontograma</a>
-            <a class="btn-link" routerLink="/medicos" routerLinkActive="active">Médicos</a>
-            <a class="btn-link" routerLink="/notificaciones" routerLinkActive="active">Notificaciones</a>
-          </nav>
-          <div class="md:col-span-3 grid grid-cols-5 gap-2">
-            <input class="col-span-2 nav-input" placeholder="usuario" [(ngModel)]="user" />
-            <input class="col-span-2 nav-input" type="password" placeholder="clave" [(ngModel)]="pass" />
-            <div class="col-span-1 flex gap-2">
-              <button (click)="login()" class="btn">Entrar</button>
-              <button (click)="logout()" class="btn secondary">Salir</button>
+    <div class="min-h-screen grid md:grid-cols-[220px_1fr] grid-cols-1">
+      <aside class="bg-slate-900 text-white p-4 hidden md:flex md:flex-col gap-2">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-9 h-9 rounded-lg bg-blue-600 text-white grid place-items-center font-bold">COP</div>
+          <div class="font-semibold">Dashboard</div>
+        </div>
+        <a class="px-3 py-2 rounded hover:bg-slate-800" routerLink="/citas" routerLinkActive="bg-slate-800">Citas</a>
+        <a class="px-3 py-2 rounded hover:bg-slate-800" routerLink="/pacientes" routerLinkActive="bg-slate-800">Pacientes</a>
+        <a class="px-3 py-2 rounded hover:bg-slate-800" routerLink="/odontograma" routerLinkActive="bg-slate-800">Odontograma</a>
+        <a class="px-3 py-2 rounded hover:bg-slate-800" routerLink="/medicos" routerLinkActive="bg-slate-800">Médicos</a>
+        <a class="px-3 py-2 rounded hover:bg-slate-800" routerLink="/notificaciones" routerLinkActive="bg-slate-800">Notificaciones</a>
+      </aside>
+      <div class="flex flex-col">
+        <header class="bg-white shadow px-4 py-3">
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+            <div class="sm:col-span-6 flex items-center gap-2">
+              <button class="md:hidden btn-outline btn-sm" (click)="mobileMenu = !mobileMenu">Menú</button>
+              <div class="text-slate-700 font-semibold">Gestión Clínica</div>
+            </div>
+            <div class="sm:col-span-6 grid grid-cols-5 gap-2">
+              <input class="col-span-2 nav-input" placeholder="usuario" [(ngModel)]="user" />
+              <input class="col-span-2 nav-input" type="password" placeholder="clave" [(ngModel)]="pass" />
+              <div class="col-span-1 flex gap-2">
+                <button (click)="login()" class="btn btn-sm">Entrar</button>
+                <button (click)="logout()" class="btn btn-sm secondary">Salir</button>
+              </div>
             </div>
           </div>
-        </div>
+          <nav class="mt-3 grid grid-cols-2 gap-2 md:hidden" *ngIf="mobileMenu">
+            <a class="btn-outline text-center" routerLink="/citas" routerLinkActive="active">Citas</a>
+            <a class="btn-outline text-center" routerLink="/pacientes" routerLinkActive="active">Pacientes</a>
+            <a class="btn-outline text-center" routerLink="/odontograma" routerLinkActive="active">Odontograma</a>
+            <a class="btn-outline text-center" routerLink="/medicos" routerLinkActive="active">Médicos</a>
+            <a class="btn-outline text-center" routerLink="/notificaciones" routerLinkActive="active">Notificaciones</a>
+          </nav>
+        </header>
+        <main class="px-4 py-4">
+          <div class="grid gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="card stat"><div class="stat-title">Panel</div><div class="stat-value">Gestión</div></div>
+              <div class="card stat"><div class="stat-title">Citas</div><div class="stat-value">Sección</div></div>
+              <div class="card stat"><div class="stat-title">Pacientes</div><div class="stat-value">Sección</div></div>
+              <div class="card stat"><div class="stat-title">Médicos</div><div class="stat-value">Sección</div></div>
+            </div>
+            <router-outlet></router-outlet>
+          </div>
+        </main>
       </div>
-    </header>
-    <div class="container mx-auto px-4 py-4">
-      <router-outlet></router-outlet>
     </div>
   `,
 })
 export class AppComponent {
   user = '';
   pass = '';
+  mobileMenu = false;
   login() {
     if (!this.user || !this.pass) return;
     const token = btoa(`${this.user}:${this.pass}`);
     sessionStorage.setItem('auth', token);
-    // Verificar si el token es válido intentando cargar pacientes
-    location.reload(); // Recargar para que ApiService tome el nuevo token
+    location.reload();
   }
   logout() {
     sessionStorage.removeItem('auth');
