@@ -8,6 +8,8 @@ import { Component, AfterViewInit } from '@angular/core';
 export class ServiciosComponent implements AfterViewInit {
   async ngAfterViewInit() {
     const form = document.getElementById('citaForm') as HTMLFormElement | null;
+    const toggleBtn = document.getElementById('toggleBooking') as HTMLButtonElement | null;
+    const bookingContainer = document.getElementById('bookingContainer') as HTMLElement | null;
     const servicioSelect = document.getElementById('servicioSelect') as HTMLSelectElement | null;
     const categoriaSelect = document.getElementById('categoriaSelect') as HTMLSelectElement | null;
     const medicoSelect = document.getElementById('medicoSelect') as HTMLSelectElement | null;
@@ -21,6 +23,23 @@ export class ServiciosComponent implements AfterViewInit {
     if (medicoSelect) medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>';
     const medicoAvail: Record<string, { inicio?: string; fin?: string; dias?: string }> = {};
     const tiposDisponibles = new Set<string>();
+    if (bookingContainer) bookingContainer.classList.remove('open');
+    if (toggleBtn && bookingContainer) {
+      toggleBtn.addEventListener('click', () => {
+        bookingContainer.classList.add('open');
+        bookingContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    const ctaButtons = Array.from(document.querySelectorAll('button'))
+      .filter(b => (b as HTMLButtonElement).innerText.toLowerCase().includes('solicitar cita'));
+    ctaButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (bookingContainer) {
+          bookingContainer.classList.add('open');
+          bookingContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
     const renderServicios = (categoria: string) => {
       if (!servicioSelect) return;
       const odontoGroup = [
@@ -209,6 +228,7 @@ export class ServiciosComponent implements AfterViewInit {
           if (citaRes.ok) {
             if (msg) msg.textContent = 'Cita registrada. Un médico confirmará por correo.';
             form.reset();
+            if (bookingContainer) bookingContainer.classList.remove('open');
           } else {
             if (msg) msg.textContent = (cita?.message || 'Error registrando cita');
           }
