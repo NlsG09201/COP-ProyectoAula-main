@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/medicos/**").authenticated()
                 .anyRequest().authenticated()
             )
-            .httpBasic(Customizer.withDefaults());
+            .formLogin(Customizer.withDefaults()); // Habilitar autenticación por formulario
         return http.build();
     }
 
