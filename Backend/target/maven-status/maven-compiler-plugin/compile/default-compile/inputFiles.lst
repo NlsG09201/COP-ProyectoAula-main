@@ -10,9 +10,11 @@ C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\c
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\DienteController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\DienteMongoController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\MedicoController.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\MedicoMongoController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\NotificacionController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\OdontogramaController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\PacienteController.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\PacienteMongoController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\ServicioController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\TestimonioController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\event\CitaEvent.java
@@ -26,7 +28,9 @@ C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\c
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\Testimonio.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\TipoServicio.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\mongo\model\DienteDoc.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\mongo\model\PersonaDoc.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\mongo\repository\DienteMongoRepository.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\mongo\repository\PersonaMongoRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\CitaRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\DetalleOdontogramaRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\DienteRepository.java

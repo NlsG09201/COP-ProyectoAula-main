@@ -14,6 +14,9 @@ import com.ProyectoAula.Backend.model.Persona.Rol;
 import com.ProyectoAula.Backend.repository.PersonaRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.context.annotation.Profile;
+import com.ProyectoAula.Backend.mongo.repository.PersonaMongoRepository;
+import com.ProyectoAula.Backend.mongo.model.PersonaDoc;
 
 @Configuration
 public class SecurityConfig {
@@ -39,6 +42,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Profile("!mongo")
     public UserDetailsService users(PersonaRepository repo, PasswordEncoder encoder) {
         return username -> {
             Persona p = repo.findByUsername(username)
@@ -53,6 +57,25 @@ public class SecurityConfig {
                 throw new UsernameNotFoundException("Usuario sin contraseña configurada");
             }
             
+            return User.withUsername(p.getUsername())
+                    .password(p.getPasswordHash())
+                    .roles(p.getRol().name())
+                    .build();
+        };
+    }
+
+    @Bean
+    @Profile("mongo")
+    public UserDetailsService mongoUsers(PersonaMongoRepository repo, PasswordEncoder encoder) {
+        return username -> {
+            PersonaDoc p = repo.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+            if (p.getRol() == PersonaDoc.Rol.PACIENTE) {
+                throw new UsernameNotFoundException("Los pacientes sin cuenta de usuario no pueden loguearse.");
+            }
+            if (p.getPasswordHash() == null || p.getPasswordHash().isBlank()) {
+                throw new UsernameNotFoundException("Usuario sin contraseña configurada");
+            }
             return User.withUsername(p.getUsername())
                     .password(p.getPasswordHash())
                     .roles(p.getRol().name())
