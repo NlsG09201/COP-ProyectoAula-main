@@ -3,6 +3,7 @@ package com.ProyectoAula.Worker.listener;
 import com.ProyectoAula.Worker.event.CitaEvent;
 import com.ProyectoAula.Worker.mongo.ReminderLog;
 import com.ProyectoAula.Worker.mongo.ReminderLogRepository;
+import com.ProyectoAula.Worker.service.TwilioService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +17,18 @@ import java.util.List;
 @Component
 public class CitaEventListener {
     private final ReminderLogRepository repo;
+    private final TwilioService twilioService;
+    
     @Autowired(required = false)
     private JavaMailSender mailSender;
+    
     @Value("${spring.mail.from:}")
     private String fromAddress;
 
-    public CitaEventListener(ReminderLogRepository repo) { this.repo = repo; }
+    public CitaEventListener(ReminderLogRepository repo, TwilioService twilioService) { 
+        this.repo = repo; 
+        this.twilioService = twilioService;
+    }
 
     @RabbitListener(queues = "cop.cita.events")
     public void onMessage(CitaEvent evt) {
@@ -42,7 +49,10 @@ public class CitaEventListener {
 
         if ("CONFIRMED".equalsIgnoreCase(evt.getTipo())) {
             String email = evt.getPacienteEmail();
+            String telefono = evt.getPacienteTelefono();
             String pacienteNombre = evt.getPacienteNombre();
+
+            // 1. Notificación por Correo
             if (email != null && !email.isBlank() && mailSender != null && fromAddress != null && !fromAddress.isBlank()) {
                 try {
                     SimpleMailMessage msg = new SimpleMailMessage();
@@ -60,8 +70,21 @@ public class CitaEventListener {
                     ));
                     mailSender.send(msg);
                 } catch (Exception ex) {
-                    // Silenciar errores de correo en listener; quedan registrados en logs
+                    // Silenciar errores de correo
                 }
+            }
+
+            // 2. Notificación por WhatsApp
+            if (telefono != null && !telefono.isBlank()) {
+                String mensaje = String.format(
+                        "Hola %s, tu cita ha sido confirmada: %s a las %s en %s. Servicio: %s",
+                        pacienteNombre,
+                        evt.getFecha(),
+                        evt.getHora(),
+                        evt.getDireccion(),
+                        evt.getServicioNombre()
+                );
+                twilioService.enviarWhatsApp(telefono, mensaje);
             }
         }
     }

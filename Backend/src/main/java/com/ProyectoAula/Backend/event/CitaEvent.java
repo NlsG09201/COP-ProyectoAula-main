@@ -10,6 +10,7 @@ public class CitaEvent {
     private String direccion;
     private String pacienteNombre;
     private String pacienteEmail;
+    private String pacienteTelefono;
     private String medicoNombre;
     private String servicioNombre;
     private String tipo;
@@ -17,14 +18,15 @@ public class CitaEvent {
     public CitaEvent() {}
 
     public CitaEvent(Long idCita, LocalDate fecha, LocalTime hora, String direccion,
-                     String pacienteNombre, String pacienteEmail, String medicoNombre,
-                     String servicioNombre, String tipo) {
+                     String pacienteNombre, String pacienteEmail, String pacienteTelefono,
+                     String medicoNombre, String servicioNombre, String tipo) {
         this.idCita = idCita;
         this.fecha = fecha;
         this.hora = hora;
         this.direccion = direccion;
         this.pacienteNombre = pacienteNombre;
         this.pacienteEmail = pacienteEmail;
+        this.pacienteTelefono = pacienteTelefono;
         this.medicoNombre = medicoNombre;
         this.servicioNombre = servicioNombre;
         this.tipo = tipo;
@@ -42,6 +44,8 @@ public class CitaEvent {
     public void setPacienteNombre(String pacienteNombre) { this.pacienteNombre = pacienteNombre; }
     public String getPacienteEmail() { return pacienteEmail; }
     public void setPacienteEmail(String pacienteEmail) { this.pacienteEmail = pacienteEmail; }
+    public String getPacienteTelefono() { return pacienteTelefono; }
+    public void setPacienteTelefono(String pacienteTelefono) { this.pacienteTelefono = pacienteTelefono; }
     public String getMedicoNombre() { return medicoNombre; }
     public void setMedicoNombre(String medicoNombre) { this.medicoNombre = medicoNombre; }
     public String getServicioNombre() { return servicioNombre; }

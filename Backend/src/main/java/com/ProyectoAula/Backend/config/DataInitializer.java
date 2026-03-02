@@ -41,34 +41,25 @@ public class DataInitializer implements CommandLineRunner {
         if (dienteRepository.count() == 0) {
             initializeDientes();
         }
+        
+        // Crear un usuario médico/admin por defecto si no existe ninguno
         if (personaRepository.findByRol(Rol.MEDICO).isEmpty()) {
             Persona m = new Persona();
             m.setRol(Rol.MEDICO);
-            m.setNombreCompleto("Dr. Demo");
-            m.setEmail("medico@example.com");
+            m.setNombreCompleto("Administrador Sistema");
+            m.setEmail("admin@cop.local");
             m.setTelefono("3000000000");
-            m.setDireccion("Clínica COP");
-            m.setUsername("medico1");
-            m.setPasswordHash(passwordEncoder.encode("medico123"));
+            m.setDireccion("Clínica COP Sede Principal");
+            m.setUsername("admin");
+            m.setPasswordHash(passwordEncoder.encode("admin123"));
             personaRepository.save(m);
-        }
-
-        if (personaRepository.findByUsername("testmedico").isEmpty()) {
-            Persona t = new Persona();
-            t.setRol(Rol.MEDICO);
-            t.setNombreCompleto("Medico Test");
-            t.setEmail("tester@example.com");
-            t.setTelefono("3001111111");
-            t.setDireccion("Clínica COP");
-            t.setUsername("testmedico");
-            t.setPasswordHash(passwordEncoder.encode("test123"));
-            personaRepository.save(t);
+            System.out.println("✅ Usuario admin creado: user=admin pass=admin123");
         }
 
         seedServiciosOdonto();
-        seedTestimonios();
-        seedPacientes();
-        seedMedicosExtra();
+        
+        // Se han eliminado las inyecciones de datos de prueba (pacientes, testimonios, médicos extra)
+        // para mantener la base de datos limpia según requerimiento.
     }
 
     private void initializeDientes() {

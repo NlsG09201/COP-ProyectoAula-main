@@ -48,6 +48,9 @@ public class PacienteController {
 
     @PostMapping
     public Persona crear(@RequestBody Persona paciente) {
+        if (paciente.getNombreCompleto() == null || paciente.getNombreCompleto().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El nombre completo es obligatorio");
+        }
         paciente.setRol(Rol.PACIENTE);
         String doc = paciente.getDocIden();
         if (doc != null && !doc.isBlank()) {

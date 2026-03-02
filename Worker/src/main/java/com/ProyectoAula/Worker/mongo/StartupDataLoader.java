@@ -43,74 +43,7 @@ public class StartupDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("[GEN Citas] count={}", generateCitasCount);
-        if (testInsert) {
-            try {
-                ReminderLog doc = new ReminderLog(
-                        System.currentTimeMillis(),
-                        "Tester",
-                        "tester@example.com",
-                        LocalDateTime.now().plusDays(1),
-                        List.of("Consulta", "Limpieza"),
-                        "TEST",
-                        null,
-                        LocalDateTime.now()
-                );
-                ReminderLog saved = repository.save(doc);
-                log.info("[Mongo TEST] Insertado documento de prueba en reminder_logs con id={}", saved.getId());
-            } catch (Exception ex) {
-                log.error("[Mongo TEST] Error insertando documento de prueba: {}", ex.getMessage());
-            }
-        }
-
-        if (generateCitasCount > 0) {
-            try {
-                ResponseEntity<List> pacientesResp = restTemplate.getForEntity(backendBaseUrl + "/pacientes", List.class);
-                ResponseEntity<List> serviciosResp = restTemplate.getForEntity(backendBaseUrl + "/servicios", List.class);
-                List<?> pacientes = pacientesResp.getBody() != null ? pacientesResp.getBody() : List.of();
-                List<?> servicios = serviciosResp.getBody() != null ? serviciosResp.getBody() : List.of();
-                if (pacientes.isEmpty() || servicios.isEmpty()) {
-                    log.warn("[GEN Citas] Sin pacientes o servicios disponibles");
-                    return;
-                }
-                ArrayList<String> horas = new ArrayList<>();
-                for (int h = 8; h <= 17; h++) {
-                    for (int m = 0; m < 60; m += 30) {
-                        String hh = String.format("%02d", h);
-                        String mm = String.format("%02d", m);
-                        horas.add(hh + ":" + mm + ":00");
-                    }
-                }
-                Random rnd = new Random(1001);
-                HttpHeaders headers = new HttpHeaders();
-                headers.setContentType(MediaType.APPLICATION_JSON);
-                int creadas = 0;
-                for (int i = 0; i < generateCitasCount; i++) {
-                    Object p = pacientes.get(rnd.nextInt(pacientes.size()));
-                    Object s = servicios.get(rnd.nextInt(servicios.size()));
-                    Number pid = (Number)((Map<?,?>)p).get("idPersona");
-                    Number sid = (Number)((Map<?,?>)s).get("idServicio");
-                    LocalDate fecha = LocalDate.now().plusDays(rnd.nextInt(60));
-                    String hora = horas.get(rnd.nextInt(horas.size()));
-                    String body = "{" +
-                            "\"fecha\":\"" + fecha.toString() + "\"," +
-                            "\"hora\":\"" + hora + "\"," +
-                            "\"direccion\":\"Clinica COP\"," +
-                            "\"paciente\":{\"idPersona\":" + pid.longValue() + "}," +
-                            "\"servicio\":{\"idServicio\":" + sid.longValue() + "}" +
-                            "}";
-                    try {
-                        HttpEntity<String> entity = new HttpEntity<>(body, headers);
-                        ResponseEntity<Map> resp = restTemplate.postForEntity(backendBaseUrl + "/citas", entity, Map.class);
-                        if (resp.getStatusCode().is2xxSuccessful()) creadas++;
-                    } catch (Exception ex) {
-                        // continuar
-                    }
-                }
-                log.info("[GEN Citas] Creadas {} citas via Backend", creadas);
-            } catch (Exception ex) {
-                log.error("[GEN Citas] Error generando citas: {}", ex.getMessage());
-            }
-        }
+        log.info("Worker iniciado correctamente. Esperando tareas...");
+        // Se ha eliminado la generación automática de datos de prueba.
     }
 }

@@ -7,6 +7,8 @@ import com.ProyectoAula.Backend.repository.CitaRepository;
 import com.ProyectoAula.Backend.repository.PersonaRepository;
 import com.ProyectoAula.Backend.repository.ServicioRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 import com.ProyectoAula.Backend.service.EventPublisher;
 import com.ProyectoAula.Backend.event.CitaEvent;
 
@@ -44,7 +46,7 @@ public class CitaController {
     @GetMapping("/{id}")
     public Cita obtener(@PathVariable Long id) {
         return citaRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada"));
     }
 
     @PostMapping
@@ -54,26 +56,28 @@ public class CitaController {
         }
         if (cita.getPaciente() != null && cita.getPaciente().getIdPersona() != null) {
             Persona paciente = personaRepo.findById(cita.getPaciente().getIdPersona())
-                    .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado"));
             cita.setPaciente(paciente);
-        }
-
-        if (cita.getMedico() != null && cita.getMedico().getIdPersona() != null) {
-            Persona medico = personaRepo.findById(cita.getMedico().getIdPersona())
-                    .orElseThrow(() -> new RuntimeException("Médico no encontrado"));
-            cita.setMedico(medico);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El paciente es obligatorio");
         }
 
         if (cita.getServicio() != null && cita.getServicio().getIdServicio() != null) {
             Servicio servicio = servicioRepo.findById(cita.getServicio().getIdServicio())
-                    .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Servicio no encontrado"));
             cita.setServicio(servicio);
+        } else {
+             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El servicio es obligatorio");
         }
 
-        if (cita.getMedico() != null) {
-            Persona m = cita.getMedico();
+        if (cita.getMedico() != null && cita.getMedico().getIdPersona() != null) {
+            Persona medico = personaRepo.findById(cita.getMedico().getIdPersona())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Médico no encontrado"));
+            cita.setMedico(medico);
+            
+            // Validar disponibilidad del médico
             DayOfWeek dia = cita.getFecha().getDayOfWeek();
-            String dias = Optional.ofNullable(m.getDiasDisponibles()).orElse("");
+            String dias = Optional.ofNullable(medico.getDiasDisponibles()).orElse("");
             String diaEs = switch (dia) {
                 case MONDAY -> "Lunes";
                 case TUESDAY -> "Martes";
@@ -85,20 +89,20 @@ public class CitaController {
             };
             boolean diaDisponible = dias.isEmpty() || dias.contains(dia.name()) || dias.toLowerCase().contains(diaEs.toLowerCase());
             if (!diaDisponible) {
-                throw new RuntimeException("El médico no está disponible en el día seleccionado");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "El médico no está disponible en el día seleccionado (" + diaEs + ")");
             }
-            if (m.getHoraInicioDisponibilidad() != null && cita.getHora().isBefore(m.getHoraInicioDisponibilidad())) {
-                throw new RuntimeException("Hora fuera del rango de disponibilidad del médico");
+            if (medico.getHoraInicioDisponibilidad() != null && cita.getHora().isBefore(medico.getHoraInicioDisponibilidad())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Hora fuera del rango de disponibilidad del médico (Inicio: " + medico.getHoraInicioDisponibilidad() + ")");
             }
-            if (m.getHoraFinDisponibilidad() != null && cita.getHora().isAfter(m.getHoraFinDisponibilidad())) {
-                throw new RuntimeException("Hora fuera del rango de disponibilidad del médico");
+            if (medico.getHoraFinDisponibilidad() != null && cita.getHora().isAfter(medico.getHoraFinDisponibilidad())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Hora fuera del rango de disponibilidad del médico (Fin: " + medico.getHoraFinDisponibilidad() + ")");
             }
 
-            List<Cita> existentes = citaRepo.findByMedico(m).stream()
+            List<Cita> existentes = citaRepo.findByMedico(medico).stream()
                     .filter(c -> c.getFecha().equals(cita.getFecha()) && c.getHora().equals(cita.getHora()))
                     .toList();
             if (!existentes.isEmpty()) {
-                throw new RuntimeException("Ya existe una cita para el médico en esa fecha y hora");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una cita para el médico en esa fecha y hora");
             }
         }
 
@@ -112,6 +116,7 @@ public class CitaController {
                 creada.getDireccion(),
                 creada.getPaciente() != null ? creada.getPaciente().getNombreCompleto() : null,
                 creada.getPaciente() != null ? creada.getPaciente().getEmail() : null,
+                creada.getPaciente() != null ? creada.getPaciente().getTelefono() : null,
                 creada.getMedico() != null ? creada.getMedico().getNombreCompleto() : null,
                 creada.getServicio() != null ? creada.getServicio().getTipoServicio().getNombre() : null,
                 "CREATED"
@@ -124,7 +129,7 @@ public class CitaController {
     @PutMapping("/{id}")
     public Cita actualizar(@PathVariable Long id, @RequestBody Cita datos) {
         Cita c = citaRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada"));
         c.setFecha(datos.getFecha());
         c.setHora(datos.getHora());
         c.setDireccion(datos.getDireccion());
@@ -136,6 +141,7 @@ public class CitaController {
                 actualizada.getDireccion(),
                 actualizada.getPaciente() != null ? actualizada.getPaciente().getNombreCompleto() : null,
                 actualizada.getPaciente() != null ? actualizada.getPaciente().getEmail() : null,
+                actualizada.getPaciente() != null ? actualizada.getPaciente().getTelefono() : null,
                 actualizada.getMedico() != null ? actualizada.getMedico().getNombreCompleto() : null,
                 actualizada.getServicio() != null ? actualizada.getServicio().getTipoServicio().getNombre() : null,
                 "UPDATED"
@@ -147,6 +153,9 @@ public class CitaController {
     // 🔹 Eliminar cita
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
+        if (!citaRepo.existsById(id)) {
+             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada");
+        }
         citaRepo.deleteById(id);
     }
 
@@ -154,7 +163,7 @@ public class CitaController {
     @PostMapping("/{id}/confirmar")
     public Cita confirmar(@PathVariable Long id) {
         Cita c = citaRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada"));
         c.setEstado("CONFIRMED");
         c.setConfirmado(Boolean.TRUE);
         c = citaRepo.save(c);
@@ -165,6 +174,7 @@ public class CitaController {
                 c.getDireccion(),
                 c.getPaciente() != null ? c.getPaciente().getNombreCompleto() : null,
                 c.getPaciente() != null ? c.getPaciente().getEmail() : null,
+                c.getPaciente() != null ? c.getPaciente().getTelefono() : null,
                 c.getMedico() != null ? c.getMedico().getNombreCompleto() : null,
                 c.getServicio() != null ? c.getServicio().getTipoServicio().getNombre() : null,
                 "CONFIRMED"
@@ -175,8 +185,8 @@ public class CitaController {
     // 🔹 Asignar médico y confirmar cita
     @PostMapping("/{id}/asignar")
     public Cita asignar(@PathVariable Long id, @RequestParam Long medicoId, @RequestParam(defaultValue = "false") boolean confirmar) {
-        Cita c = citaRepo.findById(id).orElseThrow(() -> new RuntimeException("Cita no encontrada"));
-        Persona m = personaRepo.findById(medicoId).orElseThrow(() -> new RuntimeException("Médico no encontrado"));
+        Cita c = citaRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada"));
+        Persona m = personaRepo.findById(medicoId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Médico no encontrado"));
 
         if (!confirmar) {
             DayOfWeek dia = c.getFecha().getDayOfWeek();
@@ -191,15 +201,15 @@ public class CitaController {
                 case SUNDAY -> "Domingo";
             };
             boolean diaDisponible = dias.isEmpty() || dias.contains(dia.name()) || dias.toLowerCase().contains(diaEs.toLowerCase());
-            if (!diaDisponible) throw new RuntimeException("El médico no está disponible en el día seleccionado");
-            if (m.getHoraInicioDisponibilidad() != null && c.getHora().isBefore(m.getHoraInicioDisponibilidad())) throw new RuntimeException("Hora fuera del rango de disponibilidad del médico");
-            if (m.getHoraFinDisponibilidad() != null && c.getHora().isAfter(m.getHoraFinDisponibilidad())) throw new RuntimeException("Hora fuera del rango de disponibilidad del médico");
+            if (!diaDisponible) throw new ResponseStatusException(HttpStatus.CONFLICT, "El médico no está disponible en el día seleccionado");
+            if (m.getHoraInicioDisponibilidad() != null && c.getHora().isBefore(m.getHoraInicioDisponibilidad())) throw new ResponseStatusException(HttpStatus.CONFLICT, "Hora fuera del rango de disponibilidad del médico");
+            if (m.getHoraFinDisponibilidad() != null && c.getHora().isAfter(m.getHoraFinDisponibilidad())) throw new ResponseStatusException(HttpStatus.CONFLICT, "Hora fuera del rango de disponibilidad del médico");
         }
 
         List<Cita> existentes = citaRepo.findByMedico(m).stream()
                 .filter(ci -> !ci.getIdCita().equals(c.getIdCita()) && ci.getFecha().equals(c.getFecha()) && ci.getHora().equals(c.getHora()))
                 .toList();
-        if (!existentes.isEmpty()) throw new RuntimeException("Ya existe una cita para el médico en esa fecha y hora");
+        if (!existentes.isEmpty()) throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una cita para el médico en esa fecha y hora");
 
         c.setMedico(m);
         if (confirmar) { c.setEstado("CONFIRMED"); c.setConfirmado(Boolean.TRUE); }
@@ -213,6 +223,7 @@ public class CitaController {
                     actualizada.getDireccion(),
                     actualizada.getPaciente() != null ? actualizada.getPaciente().getNombreCompleto() : null,
                     actualizada.getPaciente() != null ? actualizada.getPaciente().getEmail() : null,
+                    actualizada.getPaciente() != null ? actualizada.getPaciente().getTelefono() : null,
                     actualizada.getMedico() != null ? actualizada.getMedico().getNombreCompleto() : null,
                     actualizada.getServicio() != null ? actualizada.getServicio().getTipoServicio().getNombre() : null,
                     "CONFIRMED"

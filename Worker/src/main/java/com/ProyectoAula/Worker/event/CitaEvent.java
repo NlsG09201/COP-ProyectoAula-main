@@ -10,6 +10,7 @@ public class CitaEvent {
     private String direccion;
     private String pacienteNombre;
     private String pacienteEmail;
+    private String pacienteTelefono;
     private String medicoNombre;
     private String servicioNombre;
     private String tipo;
@@ -26,6 +27,8 @@ public class CitaEvent {
     public void setPacienteNombre(String pacienteNombre) { this.pacienteNombre = pacienteNombre; }
     public String getPacienteEmail() { return pacienteEmail; }
     public void setPacienteEmail(String pacienteEmail) { this.pacienteEmail = pacienteEmail; }
+    public String getPacienteTelefono() { return pacienteTelefono; }
+    public void setPacienteTelefono(String pacienteTelefono) { this.pacienteTelefono = pacienteTelefono; }
     public String getMedicoNombre() { return medicoNombre; }
     public void setMedicoNombre(String medicoNombre) { this.medicoNombre = medicoNombre; }
     public String getServicioNombre() { return servicioNombre; }

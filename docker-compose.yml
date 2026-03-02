@@ -85,15 +85,25 @@ services:
       SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/workerdb
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
-      # SMTP para pruebas (MailHog)
-      SPRING_MAIL_HOST: mailhog
+      # Configuración de Correo (MailHog por defecto, cambiar para Gmail/SendGrid)
+      SPRING_MAIL_HOST: "mailhog"
       SPRING_MAIL_PORT: 1025
       SPRING_MAIL_USERNAME: ""
       SPRING_MAIL_PASSWORD: ""
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
       SPRING_MAIL_FROM: "no-reply@cop.local"
-      WORKER_GENERATE_CITAS_COUNT: 2000
+      # Para usar Gmail/SendGrid, descomenta y rellena estas líneas (esto sobreescribirá lo anterior):
+      # SPRING_MAIL_HOST: "smtp.gmail.com"
+      # SPRING_MAIL_PORT: 587
+      # SPRING_MAIL_USERNAME: "tu-correo@gmail.com"
+      # SPRING_MAIL_PASSWORD: "tu-contraseña-de-aplicacion"
+      # SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      # SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      # Configuración Twilio WhatsApp
+      TWILIO_ACCOUNT_SID: "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      TWILIO_AUTH_TOKEN: "your_auth_token"
+      TWILIO_WHATSAPP_FROM: "+14155238886" # Número de Twilio Sandbox
     depends_on:
       backend:
         condition: service_started

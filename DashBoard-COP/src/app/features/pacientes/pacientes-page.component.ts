@@ -22,7 +22,8 @@ interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCo
       <div class="field"><label>Email</label><div class="flex items-center gap-2"><input class="flex-1" [(ngModel)]="form.email" (ngModelChange)="emailChanged($event)" /><span *ngIf="emailValid===true" class="text-green-600">✓</span><span *ngIf="emailValid===false" class="text-red-600">✗</span></div><div *ngIf="emailMsg" class="text-xs mt-1" [class.text-red-600]="emailValid===false" [class.text-green-600]="emailValid===true">{{ emailMsg }}</div></div>
       <div class="field"><label>Dirección</label><input [(ngModel)]="form.direccion" /></div>
     </div>
-    <button class="btn" (click)="guardar()" [disabled]="loading || docValid===false || emailValid===false">Guardar</button>
+    <button class="btn" (click)="guardar()" [disabled]="loading || (editingId===null && (docValid===false || emailValid===false))">{{ editingId ? 'Actualizar' : 'Guardar' }}</button>
+    <button *ngIf="editingId" class="btn btn-secondary ml-2" (click)="cancelarEdicion()">Cancelar</button>
     <div *ngIf="msg" class="mt-2">{{ msg }}</div>
 
     <h3 class="text-xl font-semibold mt-8 mb-2">Lista de pacientes</h3>
@@ -36,6 +37,7 @@ interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCo
           <th class="px-4 py-2 text-left">Teléfono</th>
           <th class="px-4 py-2 text-left">Email</th>
           <th class="px-4 py-2 text-left">Dirección</th>
+          <th class="px-4 py-2 text-left">Acciones</th>
         </tr></thead>
         <tbody>
           <tr *ngFor="let p of filtrados" class="border-t">
@@ -45,6 +47,10 @@ interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCo
             <td class="px-4 py-2">{{ p.telefono }}</td>
             <td class="px-4 py-2">{{ p.email }}</td>
             <td class="px-4 py-2">{{ p.direccion }}</td>
+            <td class="px-4 py-2 flex gap-2">
+              <button class="text-blue-600 hover:underline" (click)="editar(p)">Editar</button>
+              <button class="text-red-600 hover:underline" (click)="eliminar(p)">Eliminar</button>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -58,6 +64,7 @@ export class PacientesPageComponent implements OnDestroy {
   pacientes: Paciente[] = [];
   filtrados: Paciente[] = [];
   filtro = '';
+  editingId: number | null = null;
   docMsg = '';
   docChecking = false;
   docValid: boolean | null = null;
@@ -77,27 +84,63 @@ export class PacientesPageComponent implements OnDestroy {
   guardar() {
     if (!this.form.docIden || !this.form.nombreCompleto) { this.msg = 'Documento y Nombre son obligatorios.'; return; }
     this.loading = true; this.msg = '';
-    this.api.get<any>(`/pacientes/by-doc/${encodeURIComponent(this.form.docIden)}`).subscribe({
-      next: () => { this.msg = 'Documento de identidad ya registrado'; this.loading = false; },
-      error: () => {
-        this.api.post<Paciente>('/pacientes', this.form).subscribe({
-          next: (p) => { this.msg = 'Paciente registrado (ID ' + (p.idP||p.idPersona||'N/A') + ')'; this.loading = false; this.cargar(); },
-          error: (err) => {
-            const status = err?.status;
-            const txt = (typeof err?.error === 'string') ? err.error : (err?.error?.message || JSON.stringify(err?.error||{}));
-            if (status === 409 || (txt && txt.toLowerCase().includes('documento de identidad ya registrado'))) {
-              this.msg = 'Documento de identidad ya registrado';
-            } else if (status === 400) {
-              this.msg = 'Solicitud inválida';
-            } else if (status === 404) {
-              this.msg = 'Paciente no encontrado';
-            } else {
-              this.msg = 'Error registrando paciente';
-            }
-            this.loading = false;
-          }
+
+    if (this.editingId) {
+        this.api.put<Paciente>(`/pacientes/${this.editingId}`, this.form).subscribe({
+            next: (p) => { this.msg = 'Paciente actualizado'; this.loading = false; this.cancelarEdicion(); this.cargar(); },
+            error: (err) => { this.handleError(err); this.loading = false; }
         });
-      }
+    } else {
+        this.api.get<any>(`/pacientes/by-doc/${encodeURIComponent(this.form.docIden)}`).subscribe({
+            next: () => { this.msg = 'Documento de identidad ya registrado'; this.loading = false; },
+            error: () => {
+                this.api.post<Paciente>('/pacientes', this.form).subscribe({
+                    next: (p) => { this.msg = 'Paciente registrado (ID ' + (p.idP||p.idPersona||'N/A') + ')'; this.loading = false; this.cargar(); this.form = { docIden: '', nombreCompleto: '' }; },
+                    error: (err) => { this.handleError(err); this.loading = false; }
+                });
+            }
+        });
+    }
+  }
+
+  handleError(err: any) {
+    const status = err?.status;
+    const txt = (typeof err?.error === 'string') ? err.error : (err?.error?.message || JSON.stringify(err?.error||{}));
+    if (status === 409 || (txt && txt.toLowerCase().includes('documento de identidad ya registrado'))) {
+        this.msg = 'Documento de identidad ya registrado';
+    } else if (status === 400) {
+        this.msg = 'Solicitud inválida: ' + txt;
+    } else if (status === 404) {
+        this.msg = 'Recurso no encontrado';
+    } else {
+        this.msg = 'Error procesando solicitud';
+    }
+  }
+
+  editar(p: Paciente) {
+    this.editingId = p.idPersona || p.idP || null;
+    this.form = { ...p };
+    this.docValid = true; 
+    this.emailValid = true;
+    this.msg = '';
+  }
+
+  cancelarEdicion() {
+    this.editingId = null;
+    this.form = { docIden: '', nombreCompleto: '' };
+    this.docValid = null;
+    this.emailValid = null;
+    this.msg = '';
+  }
+
+  eliminar(p: Paciente) {
+    if (!confirm('¿Estás seguro de eliminar a ' + p.nombreCompleto + '?')) return;
+    const id = p.idPersona || p.idP;
+    if (!id) return;
+    this.loading = true;
+    this.api.delete(`/pacientes/${id}`).subscribe({
+        next: () => { this.msg = 'Paciente eliminado'; this.loading = false; this.cargar(); },
+        error: () => { this.msg = 'Error eliminando paciente'; this.loading = false; }
     });
   }
 

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { Router } from '@angular/router';
 
-interface Cita { idCita?: number; fecha: string; hora: string; direccion: string; paciente?: any; medico?: any; servicios?: any[]; }
+interface Cita { idCita?: number; fecha: string; hora: string; direccion: string; paciente?: any; medico?: any; servicio?: any; selectedMedicoId?: number; }
 
 @Component({
   standalone: true,
@@ -46,13 +46,13 @@ interface Cita { idCita?: number; fecha: string; hora: string; direccion: string
             <td class="px-4 py-2">{{ c.hora }}</td>
             <td class="px-4 py-2">{{ c.paciente?.nombreCompleto || c.paciente?.idP }}</td>
             <td class="px-4 py-2">{{ c.medico?.nombreCompleto || c.medico?.idMedico }}</td>
-            <td class="px-4 py-2">{{ formatServicios(c) }}</td>
+            <td class="px-4 py-2">{{ c.servicio?.nombre || c.servicio?.tipoServicio?.nombre || 'N/A' }}</td>
             <td class="px-4 py-2">
-              <select [(ngModel)]="selectedMedicoId" class="border rounded px-2 py-1 mr-2">
-                <option [ngValue]="null">Selecciona médico</option>
+              <select [(ngModel)]="c.selectedMedicoId" class="border rounded px-2 py-1 mr-2 text-sm w-40">
+                <option [ngValue]="undefined">Asignar médico</option>
                 <option *ngFor="let m of medicos" [ngValue]="m.idPersona">{{ m.nombreCompleto }}</option>
               </select>
-              <button class="btn" (click)="confirmar(c.idCita)">Confirmar</button>
+              <button class="btn btn-sm" (click)="confirmar(c)" [disabled]="!c.selectedMedicoId && !c.medico">Confirmar</button>
             </td>
           </tr>
         </tbody>
@@ -98,7 +98,6 @@ export class CitasPageComponent {
   filtroHasta = '';
   filtroTexto = '';
   medicos: any[] = [];
-  selectedMedicoId: number | null = null;
   turnoMedicoId: number | null = null;
   horaInicio = '';
   horaFin = '';
@@ -115,13 +114,6 @@ export class CitasPageComponent {
       error: () => { this.error = 'Error cargando citas'; this.loading = false; }
     });
     this.api.get<any[]>('/medicos').subscribe({ next: (m) => this.medicos = m, error: () => {} });
-  }
-
-  formatServicios(c: Cita): string {
-    return (c.servicios || [])
-      .map((s: any) => s?.tipoServicio || s?.idServicio)
-      .filter((v: any) => !!v)
-      .join(', ');
   }
 
   aplicarFiltros() {
@@ -154,15 +146,25 @@ export class CitasPageComponent {
 
   
 
-  confirmar(id: number | undefined) {
-    if (!id || !this.selectedMedicoId) return;
-    const citaSel = this.citas.find(ci => ci.idCita === id);
-    const email = citaSel?.paciente?.email;
-    if (email) { try { sessionStorage.setItem('notifFilterEmail', email); } catch {}
+  confirmar(cita: Cita) {
+    const medicoId = cita.selectedMedicoId || cita.medico?.idPersona;
+    if (!cita.idCita || !medicoId) {
+        this.error = 'Debes seleccionar un médico para confirmar la cita';
+        return;
     }
-    this.api.post(`/citas/${id}/asignar?medicoId=${this.selectedMedicoId}&confirmar=true`, {}).subscribe({
-      next: () => { this.load(); try { this.router.navigate(['/notificaciones']); } catch {} },
-      error: () => this.error = 'Error confirmando la cita'
+    const email = cita.paciente?.email;
+    if (email) { try { sessionStorage.setItem('notifFilterEmail', email); } catch {} }
+    
+    this.api.post(`/citas/${cita.idCita}/asignar?medicoId=${medicoId}&confirmar=true`, {}).subscribe({
+      next: () => { 
+          alert('Cita confirmada correctamente');
+          this.load(); 
+          // try { this.router.navigate(['/notificaciones']); } catch {} 
+      },
+      error: (err) => {
+          const txt = (err?.error?.message || err?.error || 'Error desconocido');
+          this.error = 'Error confirmando: ' + txt;
+      }
     });
   }
 
