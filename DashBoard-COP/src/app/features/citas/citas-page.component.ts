@@ -4,38 +4,59 @@ import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { Router } from '@angular/router';
 
-interface Cita { idCita?: number; fecha: string; hora: string; direccion: string; paciente?: any; medico?: any; servicio?: any; selectedMedicoId?: number; }
+interface Cita { idCita?: number; fecha: string; hora: string; direccion: string; paciente?: any; medico?: any; servicio?: any; estado?: string; confirmado?: boolean; selectedMedicoId?: number; }
 
 @Component({
   standalone: true,
   selector: 'app-citas-page',
   imports: [CommonModule, FormsModule],
   template: `
-    <h2 class="text-2xl font-semibold mb-2">Gestión de Citas</h2>
-    <p class="text-slate-600 mb-4">Lista, filtra y organiza las citas agendadas.</p>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-      <div class="field"><label>Desde</label><input type="date" [(ngModel)]="filtroDesde"></div>
-      <div class="field"><label>Hasta</label><input type="date" [(ngModel)]="filtroHasta"></div>
-      <div class="field"><label>Buscar por paciente / médico</label><input placeholder="Texto" [(ngModel)]="filtroTexto"></div>
-    </div>
-    
-    <div class="flex gap-2 mb-4">
-      <button class="btn" (click)="aplicarFiltros()">Aplicar filtros</button>
-      <button class="btn secondary" (click)="resetFiltros()">Limpiar</button>
+    <div class="grid gap-2 mb-4">
+      <h2 class="text-2xl font-semibold">Gestión de Citas</h2>
+      <p class="text-slate-600">Lista, filtra y organiza las citas agendadas.</p>
     </div>
 
-    <div *ngIf="error" class="text-red-700 mb-2">{{ error }}</div>
-    <div class="overflow-x-auto rounded-lg shadow">
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+      <div class="stat card">
+        <div class="stat-title">Citas totales</div>
+        <div class="stat-value">{{ totalCitas }}</div>
+      </div>
+      <div class="stat card">
+        <div class="stat-title">Confirmadas</div>
+        <div class="stat-value">{{ totalConfirmadas }}</div>
+      </div>
+      <div class="stat card">
+        <div class="stat-title">Pendientes</div>
+        <div class="stat-value">{{ totalPendientes }}</div>
+      </div>
+      <div class="stat card">
+        <div class="stat-title">Médicos activos</div>
+        <div class="stat-value">{{ medicosActivos }}</div>
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+      <div class="md:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="field card"><label>Desde</label><input type="date" [(ngModel)]="filtroDesde"></div>
+        <div class="field card"><label>Hasta</label><input type="date" [(ngModel)]="filtroHasta"></div>
+        <div class="field card"><label>Buscar por paciente / médico</label><input placeholder="Texto" [(ngModel)]="filtroTexto"></div>
+      </div>
+      <div class="card flex items-end gap-2">
+        <button class="btn" (click)="aplicarFiltros()">Aplicar filtros</button>
+        <button class="btn secondary" (click)="resetFiltros()">Limpiar</button>
+      </div>
+    </section>
+
+    <div class="overflow-x-auto rounded-lg shadow card">
       <table *ngIf="citasFiltradas.length" class="min-w-full bg-white">
         <thead class="bg-blue-50">
           <tr>
             <th class="px-4 py-2 text-left">ID</th>
             <th class="px-4 py-2 text-left cursor-pointer" (click)="ordenarPor('fecha')">Fecha</th>
-            <th class="px-4 py-2 text-left cursor-pointer" (click)="ordenarPor('hora')">Hora</th>
+            <th class="px-4 py-2 text-left">Hora</th>
             <th class="px-4 py-2 text-left">Paciente</th>
             <th class="px-4 py-2 text-left">Médico</th>
-            <th class="px-4 py-2 text-left">Servicio(s)</th>
+            <th class="px-4 py-2 text-left">Servicio</th>
             <th class="px-4 py-2 text-left">Acciones</th>
           </tr>
         </thead>
@@ -83,7 +104,7 @@ interface Cita { idCita?: number; fecha: string; hora: string; direccion: string
           <input placeholder="Días disponibles" [(ngModel)]="diasDisponibles" class="border rounded px-2 py-1">
         </div>
       </div>
-      <button class="btn" (click)="guardarTurno()">Guardar turno</button>
+      <div class="card p-3 w-full md:w-max"><button class="btn" (click)="guardarTurno()">Guardar turno</button></div>
       <div class="text-sm text-red-700 mt-2" *ngIf="errorTurno">{{ errorTurno }}</div>
       <div class="text-sm text-green-700 mt-2" *ngIf="okTurno">{{ okTurno }}</div>
     </div>
@@ -94,6 +115,10 @@ export class CitasPageComponent {
   citasFiltradas: Cita[] = [];
   loading = false;
   error = '';
+  totalCitas = 0;
+  totalConfirmadas = 0;
+  totalPendientes = 0;
+  medicosActivos = 0;
   filtroDesde = '';
   filtroHasta = '';
   filtroTexto = '';
@@ -110,10 +135,10 @@ export class CitasPageComponent {
   load() {
     this.loading = true; this.error = '';
     this.api.get<Cita[]>('/citas').subscribe({
-      next: (data) => { this.citas = data; this.citasFiltradas = [...data]; this.loading = false; },
+      next: (data) => { this.citas = data; this.citasFiltradas = [...data]; this.updateStats(); this.loading = false; },
       error: () => { this.error = 'Error cargando citas'; this.loading = false; }
     });
-    this.api.get<any[]>('/medicos').subscribe({ next: (m) => this.medicos = m, error: () => {} });
+    this.api.get<any[]>('/medicos').subscribe({ next: (m) => { this.medicos = m; this.updateStats(); }, error: () => {} });
   }
 
   aplicarFiltros() {
@@ -135,6 +160,7 @@ export class CitasPageComponent {
       ) : true;
       return fechaValida && textoValido;
     });
+    this.updateStats();
   }
 
   resetFiltros() { this.filtroDesde = this.filtroHasta = this.filtroTexto = ''; this.citasFiltradas = [...this.citas]; }
@@ -144,6 +170,13 @@ export class CitasPageComponent {
     this.citasFiltradas.sort((a,b) => (parse(a[campo]) > parse(b[campo]) ? 1 : -1));
   }
 
+  private updateStats() {
+    this.totalCitas = this.citas.length;
+    this.totalConfirmadas = this.citas.filter(c => !!c.confirmado).length;
+    this.totalPendientes = this.citas.filter(c => !c.confirmado).length;
+    this.medicosActivos = this.medicos.length;
+  }
+ 
   
 
   confirmar(cita: Cita) {

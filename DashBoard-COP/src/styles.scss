@@ -19,6 +19,9 @@ nav a { color:#fff; text-decoration:none; padding:8px 12px; border-radius:10px; 
 nav a.active { background: linear-gradient(90deg, #1976d2 60%, #42a5f5 100%); }
 nav .nav-input { padding:8px 12px; border-radius:10px; border:1px solid #1e293b; color:#111827; background:#fff; }
 
+.btn-link { color:#0f172a; padding:8px 12px; border-radius:10px; font-weight:600; }
+.btn-link.active, .btn-link:hover { background:#e3f2fd; color:#0d47a1; }
+
 .btn { display:inline-block; padding:0.9rem 2rem; border-radius:0.8rem; font-weight:600; text-decoration:none; border:none; cursor:pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s, color 0.2s, border-color 0.2s; box-shadow:0 4px 16px rgba(33,150,243,0.10); background:#2563eb; color:#fff; }
 .btn.secondary { background:#64748b; }
 .btn:focus-visible { outline:2px solid #90caf9; outline-offset:2px; }
@@ -29,3 +32,7 @@ nav .nav-input { padding:8px 12px; border-radius:10px; border:1px solid #1e293b;
 .field input::placeholder, .field textarea::placeholder { color:#9aa9c7; }
 .field input:focus, .field textarea:focus, .field select:focus { border-color:#90caf9; box-shadow:0 0 0 4px rgba(144,202,249,0.35); outline:none; }
 .card { background:#fff; border-radius:0.8rem; box-shadow:0 6px 18px rgba(13,71,161,0.12); padding:1rem; }
+
+.stat { display:flex; flex-direction:column; gap:6px; }
+.stat-title { font-size:0.85rem; color:#64748b; font-weight:600; }
+.stat-value { font-size:1.6rem; font-weight:700; color:#0f172a; }

@@ -63,31 +63,23 @@ interface Cita {
     <div class="card mb-4" *ngIf="loading">Cargando...</div>
     <div class="card mb-4 text-red-700" *ngIf="error">{{ error }}</div>
 
-    <div class="overflow-x-auto rounded-lg shadow">
-      <table class="min-w-full bg-white" *ngIf="!loading">
-        <thead class="bg-blue-50">
-          <tr>
-            <th class="px-4 py-2 text-left">Nombre</th>
-            <th class="px-4 py-2 text-left">Email</th>
-            <th class="px-4 py-2 text-left">Teléfono</th>
-            <th class="px-4 py-2 text-left">Horario</th>
-            <th class="px-4 py-2 text-left">Días</th>
-            <th class="px-4 py-2 text-left">Disponible</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let m of medicosFiltrados" class="border-t">
-            <td class="px-4 py-2">{{ m.nombreCompleto }}</td>
-            <td class="px-4 py-2">{{ m.email || '—' }}</td>
-            <td class="px-4 py-2">{{ m.telefono || '—' }}</td>
-            <td class="px-4 py-2">{{ formatHora(m.horaInicioDisponibilidad) }} - {{ formatHora(m.horaFinDisponibilidad) }}</td>
-            <td class="px-4 py-2">{{ formatDias(m.diasDisponibles) }}</td>
-            <td class="px-4 py-2">
-              <span [style.color]="estaDisponible(m) ? '#16a34a' : '#dc2626'">{{ estaDisponible(m) ? 'Sí' : 'No' }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" *ngIf="!loading">
+      <div class="card" *ngFor="let m of medicosFiltrados">
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="font-semibold">{{ m.nombreCompleto }}</h4>
+          <span class="text-xs px-2 py-1 rounded"
+                [style.background]="estaDisponible(m) ? '#dcfce7' : '#fee2e2'"
+                [style.color]="estaDisponible(m) ? '#166534' : '#991b1b'">
+            {{ estaDisponible(m) ? 'Disponible' : 'No disponible' }}
+          </span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-sm">
+          <div><strong>Email:</strong> {{ m.email || '—' }}</div>
+          <div><strong>Teléfono:</strong> {{ m.telefono || '—' }}</div>
+          <div><strong>Horario:</strong> {{ formatHora(m.horaInicioDisponibilidad) }} - {{ formatHora(m.horaFinDisponibilidad) }}</div>
+          <div><strong>Días:</strong> {{ formatDias(m.diasDisponibles) }}</div>
+        </div>
+      </div>
     </div>
   `,
 })

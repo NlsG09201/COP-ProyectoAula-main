@@ -4,6 +4,7 @@ C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\c
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\config\RabbitConfig.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\config\SecurityConfig.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\AiAgentController.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\AuthController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\CitaController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\DetalleOdontogramaController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\DienteController.java
@@ -14,6 +15,7 @@ C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\c
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\ServicioController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\controller\TestimonioController.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\event\CitaEvent.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\exception\GlobalExceptionHandler.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\Cita.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\DetalleOdontograma.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\Diente.java
