@@ -86,13 +86,11 @@ services:
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       # Configuración de Correo (MailHog por defecto, cambiar para Gmail/SendGrid)
-      SPRING_MAIL_HOST: "mailhog"
+      SPRING_MAIL_HOST: mailhog
       SPRING_MAIL_PORT: 1025
-      SPRING_MAIL_USERNAME: ""
-      SPRING_MAIL_PASSWORD: ""
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
-      SPRING_MAIL_FROM: "no-reply@cop.local"
+      SPRING_MAIL_FROM: no-reply@cop.local
       # Para usar Gmail/SendGrid, descomenta y rellena estas líneas (esto sobreescribirá lo anterior):
       # SPRING_MAIL_HOST: "smtp.gmail.com"
       # SPRING_MAIL_PORT: 587

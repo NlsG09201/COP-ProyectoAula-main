@@ -31,19 +31,42 @@ public class NotificacionController {
             if (items.isArray()) {
                 for (JsonNode it : items) {
                     String subj = "";
-                    JsonNode subjArr = it.path("Content").path("Headers").path("Subject");
-                    if (subjArr.isArray() && subjArr.size() > 0) subj = subjArr.get(0).asText("");
+                    // MailHog v2: Content -> Headers -> Subject es un array de strings
+                    JsonNode headers = it.path("Content").path("Headers");
+                    JsonNode subjNode = headers.path("Subject");
+                    if (subjNode.isArray() && subjNode.size() > 0) {
+                        subj = subjNode.get(0).asText("");
+                    } else if (subjNode.isTextual()) {
+                        subj = subjNode.asText("");
+                    }
+                    
                     String created = it.path("Created").asText("");
-                    String from = it.path("From").asText("");
+                    
+                    // Extraer 'From' y 'To' de forma más robusta
+                    String from = it.path("Raw").path("From").asText("");
+                    if (from.isEmpty()) from = it.path("From").path("Mailbox").asText("") + "@" + it.path("From").path("Domain").asText("");
+                    
                     List<String> tos = new ArrayList<>();
-                    JsonNode toArr = it.path("To");
+                    JsonNode toArr = it.path("Raw").path("To");
                     if (toArr.isArray()) {
                         for (JsonNode t : toArr) tos.add(t.asText(""));
+                    } else {
+                        JsonNode toList = it.path("To");
+                        if (toList.isArray()) {
+                            for (JsonNode t : toList) {
+                                String m = t.path("Mailbox").asText("");
+                                String d = t.path("Domain").asText("");
+                                if (!m.isEmpty()) tos.add(m + "@" + d);
+                            }
+                        }
                     }
+
                     if (to != null && !to.isBlank()) {
-                        boolean match = tos.stream().anyMatch(x -> x != null && x.equalsIgnoreCase(to));
+                        final String filterTo = to.trim().toLowerCase();
+                        boolean match = tos.stream().anyMatch(x -> x != null && x.toLowerCase().contains(filterTo));
                         if (!match) continue;
                     }
+                    
                     out.add(Map.of(
                             "subject", subj,
                             "from", from,

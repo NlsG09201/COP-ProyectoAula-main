@@ -20,9 +20,14 @@ public class EventPublisher {
     }
 
     public void publish(String routingKey, CitaEvent event) {
+        System.out.println("DEBUG: Publicando evento a RabbitMQ -> routingKey: " + routingKey + ", citaId: " + event.getIdCita());
         try {
             rabbitTemplate.convertAndSend("cop.events", routingKey, event);
-        } catch (Exception ignored) {}
+            System.out.println("✅ Evento publicado correctamente en cop.events");
+        } catch (Exception e) {
+            System.err.println("❌ Error al publicar en RabbitMQ: " + e.getMessage());
+            e.printStackTrace();
+        }
         try {
             jmsTemplate.convertAndSend("cop.events", event, m -> { m.setStringProperty("routingKey", routingKey); return m; });
         } catch (Exception ignored) {}

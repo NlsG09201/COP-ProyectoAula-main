@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -32,52 +34,50 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
         // Solo inicializar si no hay dientes en la base de datos
         if (dienteRepository.count() == 0) {
             initializeDientes();
         }
         
+        // Limpiar médicos existentes para asegurar un estado limpio para las pruebas
+        personaRepository.deleteAllByRol(Rol.MEDICO);
+        
         // Crear un usuario médico/admin por defecto si no existe ninguno
-        if (personaRepository.findByRol(Rol.MEDICO).isEmpty()) {
-            Persona m = new Persona();
-            m.setRol(Rol.MEDICO);
-            m.setNombreCompleto("Dr. Juan Pérez");
-            m.setEmail("juan.perez@cop.local");
-            m.setTelefono("3111234567");
-            m.setDireccion("Clínica COP Sede Principal");
-            m.setUsername("juanperez");
-            m.setPasswordHash(passwordEncoder.encode("perez123"));
-            personaRepository.save(m);
-            System.out.println("✅ Médico creado: user=juanperez pass=perez123");
-        }
+        // (Ahora se creará siempre después de la limpieza)
+        Persona m1 = new Persona();
+        m1.setRol(Rol.MEDICO);
+        m1.setNombreCompleto("Dr. Juan Pérez");
+        m1.setEmail("juan.perez@cop.local");
+        m1.setTelefono("3111234567");
+        m1.setDireccion("Clínica COP Sede Principal");
+        m1.setUsername("juanperez");
+        m1.setPasswordHash(passwordEncoder.encode("perez123"));
+        personaRepository.save(m1);
+        System.out.println("✅ Médico creado: user=juanperez pass=perez123");
 
-        if (personaRepository.findByUsername("admin").isEmpty()) {
-            Persona a = new Persona();
-            a.setRol(Rol.MEDICO);
-            a.setNombreCompleto("Administrador Sistema");
-            a.setEmail("admin@cop.local");
-            a.setTelefono("3000000000");
-            a.setDireccion("Clínica COP Sede Principal");
-            a.setUsername("admin");
-            a.setPasswordHash(passwordEncoder.encode("admin123"));
-            personaRepository.save(a);
-            System.out.println("✅ Usuario admin creado: user=admin pass=admin123");
-        }
+        Persona m2 = new Persona();
+        m2.setRol(Rol.MEDICO);
+        m2.setNombreCompleto("Dra. Ana López");
+        m2.setEmail("ana.lopez@cop.local");
+        m2.setTelefono("3201234567");
+        m2.setDireccion("Clínica COP Sede Norte");
+        m2.setUsername("analopez");
+        m2.setPasswordHash(passwordEncoder.encode("lopez123"));
+        personaRepository.save(m2);
+        System.out.println("✅ Médica creada: user=analopez pass=lopez123");
 
-        // Crear una doctora adicional (Dra. Ana López)
-        if (personaRepository.findByUsername("analopez").isEmpty()) {
-            Persona m = new Persona();
-            m.setRol(Rol.MEDICO);
-            m.setNombreCompleto("Dra. Ana López");
-            m.setEmail("ana.lopez@cop.local");
-            m.setTelefono("3201234567");
-            m.setDireccion("Clínica COP Sede Norte");
-            m.setUsername("analopez");
-            m.setPasswordHash(passwordEncoder.encode("lopez123"));
-            personaRepository.save(m);
-            System.out.println("✅ Médica creada: user=analopez pass=lopez123");
-        }
+        Persona admin = new Persona();
+        admin.setRol(Rol.MEDICO); // Asignamos rol MEDICO para que pueda loguearse en el dashboard
+        admin.setNombreCompleto("Administrador Sistema");
+        admin.setEmail("admin@cop.local");
+        admin.setTelefono("3000000000");
+        admin.setDireccion("Clínica COP Sede Principal");
+        admin.setUsername("admin");
+        admin.setPasswordHash(passwordEncoder.encode("admin123"));
+        personaRepository.save(admin);
+        System.out.println("✅ Usuario admin creado: user=admin pass=admin123");
 
         seedServiciosOdonto();
         

@@ -177,7 +177,10 @@ export class CitasPageComponent {
       diasDisponibles: this.diasDisponibles || null
     };
     this.api.put(`/medicos/${this.turnoMedicoId}`, body).subscribe({
-      next: () => { this.okTurno = 'Turno actualizado'; },
+      next: () => { 
+        this.okTurno = 'Turno actualizado'; 
+        this.load(); // Recargar para actualizar la lista de médicos en el selector
+      },
       error: () => { this.errorTurno = 'Error actualizando turno'; }
     });
   }

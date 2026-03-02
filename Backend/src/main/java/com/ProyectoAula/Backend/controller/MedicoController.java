@@ -43,13 +43,15 @@ public class MedicoController {
     @PutMapping("/{id}")
     public Persona actualizar(@PathVariable Long id, @RequestBody Persona datos) {
         Persona m = repo.findById(id).orElseThrow(() -> new RuntimeException("Médico no encontrado"));
-        m.setNombreCompleto(datos.getNombreCompleto());
-        m.setTelefono(datos.getTelefono());
-        m.setEmail(datos.getEmail());
-        m.setCertificado(datos.getCertificado());
-        m.setHoraInicioDisponibilidad(datos.getHoraInicioDisponibilidad());
-        m.setHoraFinDisponibilidad(datos.getHoraFinDisponibilidad());
-        m.setDiasDisponibles(datos.getDiasDisponibles());
+        
+        if (datos.getNombreCompleto() != null) m.setNombreCompleto(datos.getNombreCompleto());
+        if (datos.getTelefono() != null) m.setTelefono(datos.getTelefono());
+        if (datos.getEmail() != null) m.setEmail(datos.getEmail());
+        if (datos.getCertificado() != null) m.setCertificado(datos.getCertificado());
+        if (datos.getHoraInicioDisponibilidad() != null) m.setHoraInicioDisponibilidad(datos.getHoraInicioDisponibilidad());
+        if (datos.getHoraFinDisponibilidad() != null) m.setHoraFinDisponibilidad(datos.getHoraFinDisponibilidad());
+        if (datos.getDiasDisponibles() != null) m.setDiasDisponibles(datos.getDiasDisponibles());
+        
         return repo.save(m);
     }
 
