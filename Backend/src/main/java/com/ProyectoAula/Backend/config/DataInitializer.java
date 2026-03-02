@@ -46,13 +46,26 @@ public class DataInitializer implements CommandLineRunner {
         if (personaRepository.findByRol(Rol.MEDICO).isEmpty()) {
             Persona m = new Persona();
             m.setRol(Rol.MEDICO);
-            m.setNombreCompleto("Administrador Sistema");
-            m.setEmail("admin@cop.local");
-            m.setTelefono("3000000000");
+            m.setNombreCompleto("Dr. Juan Pérez");
+            m.setEmail("juan.perez@cop.local");
+            m.setTelefono("3111234567");
             m.setDireccion("Clínica COP Sede Principal");
-            m.setUsername("admin");
-            m.setPasswordHash(passwordEncoder.encode("admin123"));
+            m.setUsername("juanperez");
+            m.setPasswordHash(passwordEncoder.encode("perez123"));
             personaRepository.save(m);
+            System.out.println("✅ Médico creado: user=juanperez pass=perez123");
+        }
+
+        if (personaRepository.findByUsername("admin").isEmpty()) {
+            Persona a = new Persona();
+            a.setRol(Rol.MEDICO);
+            a.setNombreCompleto("Administrador Sistema");
+            a.setEmail("admin@cop.local");
+            a.setTelefono("3000000000");
+            a.setDireccion("Clínica COP Sede Principal");
+            a.setUsername("admin");
+            a.setPasswordHash(passwordEncoder.encode("admin123"));
+            personaRepository.save(a);
             System.out.println("✅ Usuario admin creado: user=admin pass=admin123");
         }
 

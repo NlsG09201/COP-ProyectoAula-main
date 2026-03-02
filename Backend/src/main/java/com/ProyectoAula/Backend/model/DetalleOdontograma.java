@@ -1,6 +1,7 @@
 package com.ProyectoAula.Backend.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "DETALLE_ODONTOGRAMA")
@@ -12,6 +13,7 @@ public class DetalleOdontograma {
 
     @ManyToOne
     @JoinColumn(name = "ID_Odontograma", nullable = false)
+    @JsonIgnore
     private Odontograma odontograma;
 
     @ManyToOne

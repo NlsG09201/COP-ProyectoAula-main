@@ -44,6 +44,14 @@ public class OdontogramaController {
         Persona p = personaRepo.findById(odontograma.getPaciente().getIdPersona())
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
         odontograma.setPaciente(p);
+
+        // Asegurar que cada detalle tenga la referencia al odontograma (necesario para JPA bidirectional)
+        if (odontograma.getDetalles() != null) {
+            odontograma.getDetalles().forEach(detalle -> {
+                detalle.setOdontograma(odontograma);
+            });
+        }
+
         return repo.save(odontograma);
     }
 

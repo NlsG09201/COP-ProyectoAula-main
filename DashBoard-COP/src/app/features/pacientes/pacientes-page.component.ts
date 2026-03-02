@@ -4,13 +4,14 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
+import { Router, RouterModule } from '@angular/router';
 
 interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCompleto: string; telefono?: string; email?: string; direccion?: string; }
 
 @Component({
   standalone: true,
   selector: 'app-pacientes-page',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   template: `
     <h2 class="text-2xl font-semibold mb-2">Pacientes</h2>
     <p class="text-slate-600 mb-4">Registra y administra pacientes.</p>
@@ -47,8 +48,9 @@ interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCo
             <td class="px-4 py-2">{{ p.telefono }}</td>
             <td class="px-4 py-2">{{ p.email }}</td>
             <td class="px-4 py-2">{{ p.direccion }}</td>
-            <td class="px-4 py-2 flex gap-2">
+            <td class="px-4 py-2 flex gap-2 flex-wrap">
               <button class="text-blue-600 hover:underline" (click)="editar(p)">Editar</button>
+              <button class="text-green-600 hover:underline" (click)="verOdontograma(p)">Odontograma</button>
               <button class="text-red-600 hover:underline" (click)="eliminar(p)">Eliminar</button>
             </td>
           </tr>
@@ -75,10 +77,17 @@ export class PacientesPageComponent implements OnDestroy {
   private emailInput$ = new Subject<string>();
   private emailSub?: Subscription;
 
-  constructor(private api: ApiService) {
+  constructor(private api: ApiService, private router: Router) {
     this.cargar();
     this.docSub = this.docInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(v => this.verificarDocDebounced(v));
     this.emailSub = this.emailInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(v => this.verificarEmailDebounced(v));
+  }
+
+  verOdontograma(p: Paciente) {
+    const id = p.idPersona || p.idP;
+    if (id) {
+      this.router.navigate(['/odontograma'], { queryParams: { pacienteId: id } });
+    }
   }
 
   guardar() {

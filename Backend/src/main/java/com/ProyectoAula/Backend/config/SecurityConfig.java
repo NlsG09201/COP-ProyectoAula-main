@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/odontogramas").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/detalles-odontograma").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/medicos/**").authenticated()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults());
         return http.build();

@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../core/services/api.service';
 import { firstValueFrom } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 interface Diente { idDiente: number; codigoFDI: string; nombre: string; }
 interface PiezaSel { diente: Diente; seleccionada: boolean; estado?: string; observacion?: string; }
@@ -58,9 +59,9 @@ interface PiezaSel { diente: Diente; seleccionada: boolean; estado?: string; obs
 
     <div class="card" style="margin-top:16px" *ngIf="historial.length">
       <h3 class="text-xl font-semibold mb-2">Historial odontológico</h3>
-      <div *ngFor="let h of historial; let i = index" class="mb-4">
-        <div class="font-medium">Registro {{ i+1 }} — {{ h.o.fechaRegistro }} <span class="text-slate-500">ID {{ h.o.idOdontograma }}</span></div>
-        <div class="text-slate-600 mb-2">{{ h.o.observacionesGenerales || 'Sin observaciones' }}</div>
+      <div *ngFor="let h of historial; let i = index" class="mb-4 border-b pb-4">
+        <div class="font-medium text-lg">Registro {{ historial.length - i }} — {{ h.o.fechaRegistro }} <span class="text-slate-500 text-sm">ID {{ h.o.idOdontograma }}</span></div>
+        <div class="text-slate-700 bg-slate-50 p-2 rounded my-2 italic">{{ h.o.observacionesGenerales || 'Sin observaciones generales' }}</div>
         <div class="overflow-x-auto rounded">
           <table class="min-w-full bg-white">
             <thead class="bg-blue-50">
@@ -74,9 +75,17 @@ interface PiezaSel { diente: Diente; seleccionada: boolean; estado?: string; obs
             </thead>
             <tbody>
               <tr *ngFor="let d of h.detalles" class="border-t">
-                <td class="px-3 py-2">{{ d.diente?.codigoFDI }}</td>
+                <td class="px-3 py-2 font-bold">{{ d.diente?.codigoFDI }}</td>
                 <td class="px-3 py-2">{{ d.diente?.nombre }}</td>
-                <td class="px-3 py-2">{{ d.estado }}</td>
+                <td class="px-3 py-2">
+                  <span class="px-2 py-1 rounded text-xs font-semibold" 
+                    [class.bg-green-100]="d.estado==='Sano'" [class.text-green-800]="d.estado==='Sano'"
+                    [class.bg-red-100]="d.estado==='Cariado'||d.estado==='Fractura'" [class.text-red-800]="d.estado==='Cariado'||d.estado==='Fractura'"
+                    [class.bg-blue-100]="d.estado==='Obturado'" [class.text-blue-800]="d.estado==='Obturado'"
+                    [class.bg-gray-100]="d.estado==='Extracción'" [class.text-gray-800]="d.estado==='Extracción'">
+                    {{ d.estado }}
+                  </span>
+                </td>
                 <td class="px-3 py-2">{{ d.observacion || '—' }}</td>
                 <td class="px-3 py-2">
                   <span [style.color]="d._cambio ? (d._cambio.includes('→') ? '#16a34a' : '#64748b') : '#64748b'">{{ d._cambio || '—' }}</span>
@@ -89,18 +98,27 @@ interface PiezaSel { diente: Diente; seleccionada: boolean; estado?: string; obs
     </div>
   `,
 })
-export class OdontogramaPageComponent {
+export class OdontogramaPageComponent implements OnInit {
   superiores: PiezaSel[] = [];
   inferiores: PiezaSel[] = [];
   estado = 'Sano';
   observacion = '';
   pacienteId = 0;
-  fecha = '';
+  fecha = new Date().toISOString().split('T')[0];
   observaciones = '';
   loading = false; msg = '';
   historial: { o: any, detalles: any[] }[] = [];
 
-  constructor(private api: ApiService) { this.cargarDientes(); }
+  constructor(private api: ApiService, private route: ActivatedRoute) { this.cargarDientes(); }
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['pacienteId']) {
+        this.pacienteId = Number(params['pacienteId']);
+        this.cargarHistorial();
+      }
+    });
+  }
 
   toggle(p: PiezaSel) { p.seleccionada = !p.seleccionada; }
   aplicarASeleccion() {
@@ -112,32 +130,30 @@ export class OdontogramaPageComponent {
     const seleccionadas: PiezaSel[] = [...this.superiores, ...this.inferiores].filter(p => p.estado);
     if (!seleccionadas.length) { this.msg = 'Selecciona al menos un diente con estado.'; return; }
     this.loading = true; this.msg = '';
+
+    const detalles = seleccionadas.map(sel => ({
+      diente: { idDiente: sel.diente.idDiente },
+      estado: sel.estado,
+      observacion: sel.observacion || ''
+    }));
+
     const odontogramaBody = {
       fechaRegistro: this.fecha,
       observacionesGenerales: this.observaciones,
-      paciente: { idPersona: this.pacienteId }
+      paciente: { idPersona: this.pacienteId },
+      detalles: detalles
     };
+
     this.api.post<any>('/odontogramas', odontogramaBody).subscribe({
       next: (od) => {
-        const idO = od?.idOdontograma;
-        if (!idO) { this.msg = 'Odontograma creado sin ID'; this.loading = false; return; }
-        // Crear detalles por cada pieza seleccionada
-        const requests = seleccionadas.map(sel => {
-          const body = {
-            odontograma: { idOdontograma: idO },
-            diente: { idDiente: sel.diente.idDiente },
-            estado: sel.estado,
-            observacion: sel.observacion || ''
-          };
-          return this.api.post<any>('/detalles-odontograma', body);
-        });
-        let completadas = 0;
-        requests.forEach(r => r.subscribe({
-          next: () => { completadas++; if (completadas === requests.length) { this.msg = 'Odontograma guardado con detalles'; this.loading = false; } },
-          error: () => { this.msg = 'Error guardando algunos detalles'; this.loading = false; }
-        }));
+        this.msg = 'Odontograma guardado correctamente';
+        this.loading = false;
+        this.cargarHistorial(); // Recargar historial automáticamente
       },
-      error: () => { this.msg = 'Error creando odontograma'; this.loading = false; }
+      error: (err) => {
+        this.msg = 'Error al guardar el odontograma: ' + (err?.error?.message || 'Error del servidor');
+        this.loading = false;
+      }
     });
   }
 
