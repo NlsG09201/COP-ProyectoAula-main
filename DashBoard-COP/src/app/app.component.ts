@@ -31,11 +31,11 @@ export class AppComponent {
     if (!this.user || !this.pass) return;
     const token = btoa(`${this.user}:${this.pass}`);
     sessionStorage.setItem('auth', token);
-    this.pass = '';
+    // Verificar si el token es válido intentando cargar pacientes
+    location.reload(); // Recargar para que ApiService tome el nuevo token
   }
   logout() {
     sessionStorage.removeItem('auth');
-    this.user = '';
-    this.pass = '';
+    location.reload();
   }
 }

@@ -24,9 +24,10 @@ interface PiezaSel { diente: Diente; seleccionada: boolean; estado?: string; obs
 
     <div class="field"><label>Paciente ID</label>
       <div style="display:flex; gap:8px; align-items:center">
-        <input type="number" [(ngModel)]="pacienteId" style="max-width:200px">
-        <button class="btn secondary" (click)="cargarHistorial()" [disabled]="!pacienteId">Ver historial</button>
+        <input type="number" [(ngModel)]="pacienteId" min="0" step="1" (ngModelChange)="validarId($event)" style="max-width:200px">
+        <button class="btn secondary" (click)="cargarHistorial()" [disabled]="!pacienteId || pacienteId < 0">Ver historial</button>
       </div>
+      <div *ngIf="pacienteId < 0" class="text-red-600 text-xs mt-1">El ID debe ser un número positivo.</div>
     </div>
     <div class="field"><label>Fecha</label><input type="date" [(ngModel)]="fecha"></div>
     <div class="field"><label>Observaciones generales</label><textarea [(ngModel)]="observaciones"></textarea></div>
@@ -53,14 +54,21 @@ interface PiezaSel { diente: Diente; seleccionada: boolean; estado?: string; obs
     </div>
     <div class="field"><label>Observación</label><textarea [(ngModel)]="observacion"></textarea></div>
     <button class="btn" (click)="aplicarASeleccion()">Aplicar a seleccionados</button>
-    <button class="btn secondary" style="margin-left:8px" (click)="guardar()" [disabled]="loading">Guardar registro</button>
+    <button class="btn secondary" style="margin-left:8px" (click)="guardar()" [disabled]="loading">{{ editandoId ? 'Actualizar registro' : 'Guardar registro' }}</button>
+    <button *ngIf="editandoId" class="btn text-slate-600" style="margin-left:8px" (click)="cancelarEdicion()">Cancelar edición</button>
 
     <div *ngIf="msg" style="margin-top:10px">{{ msg }}</div>
 
     <div class="card" style="margin-top:16px" *ngIf="historial.length">
       <h3 class="text-xl font-semibold mb-2">Historial odontológico</h3>
       <div *ngFor="let h of historial; let i = index" class="mb-4 border-b pb-4">
-        <div class="font-medium text-lg">Registro {{ historial.length - i }} — {{ h.o.fechaRegistro }} <span class="text-slate-500 text-sm">ID {{ h.o.idOdontograma }}</span></div>
+        <div class="flex items-center justify-between mb-2">
+          <div class="font-medium text-lg">Registro {{ historial.length - i }} — {{ h.o.fechaRegistro }} <span class="text-slate-500 text-sm">ID {{ h.o.idOdontograma }}</span></div>
+          <div class="flex gap-2">
+            <button class="text-blue-600 hover:underline text-sm" (click)="cargarParaEditar(h)">Editar</button>
+            <button class="text-red-600 hover:underline text-sm" (click)="eliminar(h.o.idOdontograma)">Eliminar</button>
+          </div>
+        </div>
         <div class="text-slate-700 bg-slate-50 p-2 rounded my-2 italic">{{ h.o.observacionesGenerales || 'Sin observaciones generales' }}</div>
         <div class="overflow-x-auto rounded">
           <table class="min-w-full bg-white">
@@ -108,6 +116,7 @@ export class OdontogramaPageComponent implements OnInit {
   observaciones = '';
   loading = false; msg = '';
   historial: { o: any, detalles: any[] }[] = [];
+  editandoId: number | null = null;
 
   constructor(private api: ApiService, private route: ActivatedRoute) { this.cargarDientes(); }
 
@@ -118,6 +127,14 @@ export class OdontogramaPageComponent implements OnInit {
         this.cargarHistorial();
       }
     });
+  }
+
+  validarId(v: any) {
+    if (v < 0) {
+      this.pacienteId = 0;
+    } else {
+      this.pacienteId = Math.floor(v);
+    }
   }
 
   toggle(p: PiezaSel) { p.seleccionada = !p.seleccionada; }
@@ -144,16 +161,78 @@ export class OdontogramaPageComponent implements OnInit {
       detalles: detalles
     };
 
-    this.api.post<any>('/odontogramas', odontogramaBody).subscribe({
-      next: (od) => {
-        this.msg = 'Odontograma guardado correctamente';
-        this.loading = false;
-        this.cargarHistorial(); // Recargar historial automáticamente
-      },
-      error: (err) => {
-        this.msg = 'Error al guardar el odontograma: ' + (err?.error?.message || 'Error del servidor');
-        this.loading = false;
+    if (this.editandoId) {
+      this.api.put<any>(`/odontogramas/${this.editandoId}`, odontogramaBody).subscribe({
+        next: () => {
+          this.msg = 'Odontograma actualizado correctamente';
+          this.loading = false;
+          this.cancelarEdicion();
+          this.cargarHistorial();
+        },
+        error: (err) => {
+          this.msg = 'Error al actualizar: ' + (err?.error?.message || 'Error');
+          this.loading = false;
+        }
+      });
+    } else {
+      this.api.post<any>('/odontogramas', odontogramaBody).subscribe({
+        next: (od) => {
+          this.msg = 'Odontograma guardado correctamente';
+          this.loading = false;
+          this.limpiarForm();
+          this.cargarHistorial();
+        },
+        error: (err) => {
+          this.msg = 'Error al guardar: ' + (err?.error?.message || 'Error');
+          this.loading = false;
+        }
+      });
+    }
+  }
+
+  cargarParaEditar(h: { o: any, detalles: any[] }) {
+    this.editandoId = h.o.idOdontograma;
+    this.fecha = h.o.fechaRegistro;
+    this.observaciones = h.o.observacionesGenerales;
+    
+    // Resetear selección actual
+    [...this.superiores, ...this.inferiores].forEach(p => {
+      p.seleccionada = false;
+      const det = h.detalles.find(d => d.diente?.idDiente === p.diente.idDiente);
+      if (det) {
+        p.estado = det.estado;
+        p.observacion = det.observacion;
+      } else {
+        p.estado = undefined;
+        p.observacion = undefined;
       }
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  eliminar(id: number) {
+    if (!confirm('¿Seguro que deseas eliminar este registro del historial?')) return;
+    this.api.delete(`/odontogramas/${id}`).subscribe({
+      next: () => {
+        this.msg = 'Registro eliminado';
+        this.cargarHistorial();
+      },
+      error: () => { this.msg = 'Error al eliminar'; }
+    });
+  }
+
+  cancelarEdicion() {
+    this.editandoId = null;
+    this.limpiarForm();
+  }
+
+  limpiarForm() {
+    this.fecha = new Date().toISOString().split('T')[0];
+    this.observaciones = '';
+    [...this.superiores, ...this.inferiores].forEach(p => {
+      p.seleccionada = false;
+      p.estado = undefined;
+      p.observacion = undefined;
     });
   }
 

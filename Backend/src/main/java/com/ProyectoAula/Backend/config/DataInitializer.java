@@ -65,6 +65,20 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("✅ Usuario admin creado: user=admin pass=admin123");
         }
 
+        // Crear una doctora adicional (Dra. Ana López)
+        if (personaRepository.findByUsername("analopez").isEmpty()) {
+            Persona m = new Persona();
+            m.setRol(Rol.MEDICO);
+            m.setNombreCompleto("Dra. Ana López");
+            m.setEmail("ana.lopez@cop.local");
+            m.setTelefono("3201234567");
+            m.setDireccion("Clínica COP Sede Norte");
+            m.setUsername("analopez");
+            m.setPasswordHash(passwordEncoder.encode("lopez123"));
+            personaRepository.save(m);
+            System.out.println("✅ Médica creada: user=analopez pass=lopez123");
+        }
+
         seedServiciosOdonto();
         
         // Se han eliminado las inyecciones de datos de prueba (pacientes, testimonios, médicos extra)

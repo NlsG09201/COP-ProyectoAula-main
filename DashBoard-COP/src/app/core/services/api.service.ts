@@ -7,12 +7,12 @@ export class ApiService {
   private http = inject(HttpClient);
   private baseUrl = environment.apiUrl;
 
-  get<T>(path: string) { return this.http.get<T>(`${this.baseUrl}${path}`, { headers: this.headers }); }
-  post<T>(path: string, body: any) { return this.http.post<T>(`${this.baseUrl}${path}`, body, { headers: this.headers }); }
-  put<T>(path: string, body: any) { return this.http.put<T>(`${this.baseUrl}${path}`, body, { headers: this.headers }); }
-  delete<T>(path: string) { return this.http.delete<T>(`${this.baseUrl}${path}`, { headers: this.headers }); }
+  get<T>(path: string) { return this.http.get<T>(`${this.baseUrl}${path}`, { headers: this.getHeaders() }); }
+  post<T>(path: string, body: any) { return this.http.post<T>(`${this.baseUrl}${path}`, body, { headers: this.getHeaders() }); }
+  put<T>(path: string, body: any) { return this.http.put<T>(`${this.baseUrl}${path}`, body, { headers: this.getHeaders() }); }
+  delete<T>(path: string) { return this.http.delete<T>(`${this.baseUrl}${path}`, { headers: this.getHeaders() }); }
 
-  private get headers() {
+  private getHeaders() {
     let h = new HttpHeaders({ 'Content-Type': 'application/json' });
     const token = sessionStorage.getItem('auth');
     if (token) {

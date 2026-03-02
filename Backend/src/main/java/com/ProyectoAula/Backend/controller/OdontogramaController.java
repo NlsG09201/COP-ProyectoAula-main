@@ -60,6 +60,16 @@ public class OdontogramaController {
         Odontograma o = repo.findById(id).orElseThrow(() -> new RuntimeException("Odontograma no encontrado"));
         o.setFechaRegistro(datos.getFechaRegistro());
         o.setObservacionesGenerales(datos.getObservacionesGenerales());
+        
+        if (datos.getDetalles() != null) {
+            // Limpiar detalles anteriores y agregar nuevos
+            o.getDetalles().clear();
+            datos.getDetalles().forEach(detalle -> {
+                detalle.setOdontograma(o);
+                o.getDetalles().add(detalle);
+            });
+        }
+        
         return repo.save(o);
     }
 
