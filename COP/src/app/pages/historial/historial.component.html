@@ -1,0 +1,65 @@
+<main class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Historial de uso y cobros</h1>
+
+    <div *ngIf="loading" class="text-gray-600">Cargando historial...</div>
+    <div *ngIf="!loading && error" class="text-red-600 bg-red-50 border border-red-100 rounded-lg p-3 mb-6">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && !error">
+      <section class="mb-10">
+        <h2 class="text-xl font-semibold text-gray-800 mb-3">Consultas al asistente IA</h2>
+        <div *ngIf="consultas.length === 0" class="text-gray-500 text-sm">
+          Aún no tienes consultas registradas.
+        </div>
+        <div *ngIf="consultas.length > 0" class="space-y-4">
+          <article *ngFor="let c of consultas" class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <header class="flex justify-between items-center mb-2">
+              <span class="text-sm font-medium text-blue-700">Agente: {{ c.agente }}</span>
+              <span class="text-xs text-gray-500">{{ c.fechaHora | date:'short' }}</span>
+            </header>
+            <p class="text-sm text-gray-700"><strong>Pregunta:</strong> {{ c.pregunta }}</p>
+            <p class="text-sm text-gray-700 mt-1"><strong>Respuesta:</strong> {{ c.respuesta }}</p>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-semibold text-gray-800 mb-3">Cobros generados</h2>
+        <div *ngIf="cobros.length === 0" class="text-gray-500 text-sm">
+          Aún no se han generado cobros por tus consultas.
+        </div>
+        <div *ngIf="cobros.length > 0" class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-100">
+          <table class="min-w-full divide-y divide-gray-100 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-2 text-left font-medium text-gray-600">Fecha</th>
+                <th class="px-4 py-2 text-left font-medium text-gray-600">Tipo</th>
+                <th class="px-4 py-2 text-left font-medium text-gray-600">Monto estimado</th>
+                <th class="px-4 py-2 text-left font-medium text-gray-600">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              <tr *ngFor="let r of cobros">
+                <td class="px-4 py-2 text-gray-700">{{ r.fechaHora | date:'short' }}</td>
+                <td class="px-4 py-2 text-gray-700">{{ r.tipoServicio }}</td>
+                <td class="px-4 py-2 text-gray-700">$ {{ r.monto | number:'1.2-2' }}</td>
+                <td class="px-4 py-2">
+                  <span class="inline-flex px-2 py-1 rounded-full text-xs font-medium"
+                        [ngClass]="{
+                          'bg-yellow-50 text-yellow-700 border border-yellow-200': r.estadoPago === 'PENDIENTE',
+                          'bg-green-50 text-green-700 border border-green-200': r.estadoPago === 'PAGADO'
+                        }">
+                    {{ r.estadoPago }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+

@@ -30,28 +30,6 @@ export class AuthComponent {
 
   async onSubmit(e: Event) {
     e.preventDefault();
-    // #region agent log
-    fetch('http://127.0.0.1:7689/ingest/4c4298dd-e4e2-4442-84cf-4b75a3d32666', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Debug-Session-Id': 'e69953'
-      },
-      body: JSON.stringify({
-        sessionId: 'e69953',
-        runId: 'pre-fix',
-        hypothesisId: 'H1',
-        location: 'auth.component.ts:31',
-        message: 'Auth submit',
-        data: {
-          isLogin: this.isLogin,
-          username: this.form.username,
-          hasPassword: !!this.form.password
-        },
-        timestamp: Date.now()
-      })
-    }).catch(() => {});
-    // #endregion
     this.loading = true;
     this.error = '';
 
@@ -73,27 +51,6 @@ export class AuthComponent {
       });
 
       if (response.ok) {
-        // #region agent log
-        fetch('http://127.0.0.1:7689/ingest/4c4298dd-e4e2-4442-84cf-4b75a3d32666', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Debug-Session-Id': 'e69953'
-          },
-          body: JSON.stringify({
-            sessionId: 'e69953',
-            runId: 'pre-fix',
-            hypothesisId: 'H2',
-            location: 'auth.component.ts:53',
-            message: 'Auth success response',
-            data: {
-              isLogin: this.isLogin,
-              status: response.status
-            },
-            timestamp: Date.now()
-          })
-        }).catch(() => {});
-        // #endregion
         const user = await response.json();
         // Guardar sesión básica (en un sistema real usaríamos tokens JWT seguros)
         localStorage.setItem('client_user', JSON.stringify(user));
@@ -106,51 +63,10 @@ export class AuthComponent {
           this.error = 'Cuenta creada con éxito. Ahora inicia sesión.';
         }
       } else {
-        // #region agent log
-        fetch('http://127.0.0.1:7689/ingest/4c4298dd-e4e2-4442-84cf-4b75a3d32666', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Debug-Session-Id': 'e69953'
-          },
-          body: JSON.stringify({
-            sessionId: 'e69953',
-            runId: 'pre-fix',
-            hypothesisId: 'H3',
-            location: 'auth.component.ts:65',
-            message: 'Auth HTTP error',
-            data: {
-              isLogin: this.isLogin,
-              status: response.status
-            },
-            timestamp: Date.now()
-          })
-        }).catch(() => {});
-        // #endregion
         const errData = await response.json();
         this.error = errData.message || 'Error en la operación. Intenta de nuevo.';
       }
     } catch (err) {
-      // #region agent log
-      fetch('http://127.0.0.1:7689/ingest/4c4298dd-e4e2-4442-84cf-4b75a3d32666', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Debug-Session-Id': 'e69953'
-        },
-        body: JSON.stringify({
-          sessionId: 'e69953',
-          runId: 'pre-fix',
-          hypothesisId: 'H4',
-          location: 'auth.component.ts:69',
-          message: 'Auth network error',
-          data: {
-            isLogin: this.isLogin
-          },
-          timestamp: Date.now()
-        })
-      }).catch(() => {});
-      // #endregion
       this.error = 'No se pudo conectar con el servidor.';
     } finally {
       this.loading = false;

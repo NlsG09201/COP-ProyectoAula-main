@@ -1,6 +1,8 @@
 package com.ProyectoAula.Backend.service;
 
 import com.ProyectoAula.Backend.model.Cita;
+import com.ProyectoAula.Backend.model.ConsultaIA;
+import com.ProyectoAula.Backend.repository.ConsultaIARepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -10,6 +12,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class AiAgentService {
+
+    private final ConsultaIARepository consultaIARepository;
+
+    public AiAgentService(ConsultaIARepository consultaIARepository) {
+        this.consultaIARepository = consultaIARepository;
+    }
 
     // Organiza citas: evita solapes, sugiere reubicación en franjas de 30 min
     public List<Cita> organizarCitas(List<Cita> citas) {
@@ -48,27 +56,33 @@ public class AiAgentService {
     }
 
     // Respuestas básicas de atención al cliente (FAQ)
-    public String responder(String message) {
+    public ConsultaIA responder(String message, String clienteUsername, String agente) {
         if (message == null || message.isBlank()) return "¿Puedes detallar tu consulta?";
         String m = message.toLowerCase(Locale.ROOT);
+        String reply;
         if (m.contains("horario") || m.contains("hora")) {
-            return "Atendemos de lunes a viernes, 08:00 a 18:00.";
+            reply = "Atendemos de lunes a viernes, 08:00 a 18:00.";
+        } else if (m.contains("direccion") || m.contains("ubicacion") || m.contains("donde")) {
+            reply = "Estamos en Av. Principal 123, Centro, PB.";
+        } else if (m.contains("precio") || m.contains("costo")) {
+            reply = "Los precios dependen del servicio; te cotizamos tras evaluación inicial.";
+        } else if (m.contains("odontologia") || m.contains("caries") || m.contains("limpieza")) {
+            reply = "Ofrecemos odontología general, limpieza, restauraciones y ortodoncia.";
+        } else if (m.contains("psicologia") || m.contains("ansiedad") || m.contains("estres")) {
+            reply = "Contamos con psicología clínica para ansiedad, estrés y terapia individual.";
+        } else if (m.contains("cita") || m.contains("agendar")) {
+            reply = "Puedes agendar por el botón 'Solicitar Cita' o escribir tu disponibilidad y datos.";
+        } else {
+            reply = "Puedo ayudarte con horarios, ubicación, servicios y agendamiento. ¿Qué necesitas?";
         }
-        if (m.contains("direccion") || m.contains("ubicacion") || m.contains("donde")) {
-            return "Estamos en Av. Principal 123, Centro, PB.";
-        }
-        if (m.contains("precio") || m.contains("costo")) {
-            return "Los precios dependen del servicio; te cotizamos tras evaluación inicial.";
-        }
-        if (m.contains("odontologia") || m.contains("caries") || m.contains("limpieza")) {
-            return "Ofrecemos odontología general, limpieza, restauraciones y ortodoncia.";
-        }
-        if (m.contains("psicologia") || m.contains("ansiedad") || m.contains("estres")) {
-            return "Contamos con psicología clínica para ansiedad, estrés y terapia individual.";
-        }
-        if (m.contains("cita") || m.contains("agendar")) {
-            return "Puedes agendar por el botón 'Solicitar Cita' o escribir tu disponibilidad y datos.";
-        }
-        return "Puedo ayudarte con horarios, ubicación, servicios y agendamiento. ¿Qué necesitas?";
+        ConsultaIA consulta = new ConsultaIA();
+        consulta.setAgente(agente != null ? agente : "FAQ");
+        consulta.setPregunta(message);
+        consulta.setRespuesta(reply);
+        consulta.setClienteUsername(clienteUsername);
+        consulta.setFechaHora(java.time.LocalDateTime.now());
+        consulta.setTokensAproximados(Integer.valueOf((message.length() + reply.length()) / 4));
+        consulta.setEstado("COMPLETADA");
+        return consultaIARepository.save(consulta);
     }
 }

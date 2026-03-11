@@ -42,7 +42,7 @@ export class ChatbotComponent implements AfterViewInit {
 
     btn.onclick = () => { widget.style.display = 'flex'; };
     closeBtn.onclick = () => { widget.style.display = 'none'; };
-    send.onclick = () => {
+    const sendMessage = async () => {
       const text = input.value.trim();
       if (!text) return;
       const user = document.createElement('div');
@@ -51,14 +51,51 @@ export class ChatbotComponent implements AfterViewInit {
       messages.appendChild(user);
       messages.scrollTop = messages.scrollHeight;
       input.value = '';
-      setTimeout(() => {
-        const bot = document.createElement('div');
-        bot.style.cssText = 'margin:0.5rem 0; text-align:left';
-        bot.innerHTML = `<span style="display:inline-block;background:linear-gradient(135deg,#e0f7fa,#b2ebf2);color:#0f172a;padding:0.6rem 1rem;border-radius:1rem 1rem 1rem 0.2rem;max-width:80%">Gracias por tu mensaje. Pronto te contactaremos.</span>`;
-        messages.appendChild(bot);
-        messages.scrollTop = messages.scrollHeight;
-      }, 1000);
+      const bot = document.createElement('div');
+      bot.style.cssText = 'margin:0.5rem 0; text-align:left';
+      const bubble = document.createElement('span');
+      bubble.style.cssText = 'display:inline-block;background:linear-gradient(135deg,#e0f7fa,#b2ebf2);color:#0f172a;padding:0.6rem 1rem;border-radius:1rem 1rem 1rem 0.2rem;max-width:80%';
+      bubble.textContent = 'Pensando...';
+      bot.appendChild(bubble);
+      messages.appendChild(bot);
+      messages.scrollTop = messages.scrollHeight;
+      try {
+        const rawUser = localStorage.getItem('client_user');
+        let clienteUsername: string | null = null;
+        if (rawUser) {
+          try {
+            const parsed = JSON.parse(rawUser);
+            clienteUsername = parsed?.username ?? null;
+          } catch {
+            clienteUsername = null;
+          }
+        }
+        const resp = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, clienteUsername })
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          bubble.textContent = data.reply || 'No pude responder en este momento.';
+        } else {
+          bubble.textContent = 'Hubo un problema al contactar al asistente.';
+        }
+      } catch {
+        bubble.textContent = 'No se pudo conectar con el asistente.';
+      }
+      messages.scrollTop = messages.scrollHeight;
     };
+
+    send.onclick = () => {
+      void sendMessage();
+    };
+    input.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') {
+        ev.preventDefault();
+        void sendMessage();
+      }
+    });
 
     document.body.appendChild(btn);
     document.body.appendChild(widget);
