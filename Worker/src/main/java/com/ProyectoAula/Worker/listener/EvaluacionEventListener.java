@@ -59,7 +59,14 @@ public class EvaluacionEventListener {
                             "paciente", Map.of("idPersona", evt.getPacienteId()),
                             "servicio", Map.of("idServicio", servicioId)
                     );
-                    restTemplate.postForEntity(baseUrl + "/citas", body, Map.class);
+                    var res = restTemplate.postForEntity(baseUrl + "/citas", body, java.util.Map.class);
+                    if (res.getStatusCode().is2xxSuccessful() && res.getBody() instanceof java.util.Map<?, ?> map) {
+                        Object id = map.get("idCita");
+                        if (id instanceof Number n) {
+                            Long citaId = n.longValue();
+                            restTemplate.postForEntity(baseUrl + "/citas/" + citaId + "/auto-asignar?confirmar=true", null, java.util.Map.class);
+                        }
+                    }
                 }
             } catch (Exception ignored) {}
         }

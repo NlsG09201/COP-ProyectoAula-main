@@ -49,7 +49,36 @@ public class CitaEventListener {
         );
         repo.save(log);
 
-        if ("CONFIRMED".equalsIgnoreCase(evt.getTipo())) {
+        if ("CREATED".equalsIgnoreCase(evt.getTipo())) {
+            String email = evt.getPacienteEmail();
+            String pacienteNombre = evt.getPacienteNombre() != null ? evt.getPacienteNombre() : "Paciente";
+            if (email != null && !email.isBlank() && mailSender != null) {
+                try {
+                    MimeMessage message = mailSender.createMimeMessage();
+                    MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+                    helper.setFrom(fromAddress);
+                    helper.setTo(email);
+                    helper.setSubject("Nueva Cita - Confirma tu agendamiento");
+                    String link = "http://localhost:8080/api/citas/" + evt.getIdCita() + "/confirmar";
+                    String htmlMsg = "<div style='font-family: Arial, sans-serif; max-width:600px; margin:auto; border:1px solid #e2e8f0; border-radius:8px'>" +
+                            "<div style='background:#2563eb; color:#fff; padding:16px; text-align:center'><h2>Clínica COP</h2></div>" +
+                            "<div style='padding:16px; color:#1e293b'>" +
+                            "<h3>Hola, " + pacienteNombre + ".</h3>" +
+                            "<p>Has registrado una cita:</p>" +
+                            "<ul>" +
+                            "<li><strong>Fecha:</strong> " + evt.getFecha() + "</li>" +
+                            "<li><strong>Hora:</strong> " + evt.getHora() + "</li>" +
+                            "<li><strong>Ubicación:</strong> " + (evt.getDireccion() != null ? evt.getDireccion() : "Sede Principal") + "</li>" +
+                            "<li><strong>Servicio:</strong> " + (evt.getServicioNombre() != null ? evt.getServicioNombre() : "Consulta") + "</li>" +
+                            "</ul>" +
+                            "<p>Para confirmar, haz clic en el siguiente botón:</p>" +
+                            "<p style='text-align:center'><a href='" + link + "' style='background:#2563eb;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none'>Confirmar Cita</a></p>" +
+                            "</div></div>";
+                    helper.setText(htmlMsg, true);
+                    mailSender.send(message);
+                } catch (Exception ignored) {}
+            }
+        } else if ("CONFIRMED".equalsIgnoreCase(evt.getTipo())) {
             String email = evt.getPacienteEmail();
             String telefono = evt.getPacienteTelefono();
             String pacienteNombre = evt.getPacienteNombre() != null ? evt.getPacienteNombre() : "Paciente";

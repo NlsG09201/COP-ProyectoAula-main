@@ -182,6 +182,8 @@ public class CitaController {
         events.publish("cita.confirmed", evt);
         return c;
     }
+    @GetMapping("/{id}/confirmar")
+    public Cita confirmarGet(@PathVariable Long id) { return confirmar(id); }
     // 🔹 Asignar médico y confirmar cita
     @PostMapping("/{id}/asignar")
     public Cita asignar(@PathVariable Long id, @RequestParam Long medicoId, @RequestParam(defaultValue = "false") boolean confirmar) {
@@ -230,6 +232,57 @@ public class CitaController {
             );
             events.publish("cita.confirmed", evt);
         }
+        return actualizada;
+    }
+
+    @PostMapping("/{id}/auto-asignar")
+    public Cita autoAsignar(@PathVariable Long id, @RequestParam(defaultValue = "false") boolean confirmar) {
+        Cita c = citaRepo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada"));
+        if (c.getServicio() == null || c.getServicio().getIdServicio() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cita no tiene servicio asignado");
+        }
+        Long servicioId = c.getServicio().getIdServicio();
+        List<Persona> candidatos = personaRepo.findByRolAndServicios_IdServicio(Persona.Rol.MEDICO, servicioId);
+        if (candidatos.isEmpty()) throw new ResponseStatusException(HttpStatus.CONFLICT, "No hay médicos para el servicio seleccionado");
+        Persona elegido = null;
+        for (Persona m : candidatos) {
+            DayOfWeek dia = c.getFecha().getDayOfWeek();
+            String dias = Optional.ofNullable(m.getDiasDisponibles()).orElse("");
+            String diaEs = switch (dia) {
+                case MONDAY -> "Lunes";
+                case TUESDAY -> "Martes";
+                case WEDNESDAY -> "Miércoles";
+                case THURSDAY -> "Jueves";
+                case FRIDAY -> "Viernes";
+                case SATURDAY -> "Sábado";
+                case SUNDAY -> "Domingo";
+            };
+            boolean diaDisponible = dias.isEmpty() || dias.contains(dia.name()) || dias.toLowerCase().contains(diaEs.toLowerCase());
+            boolean horaOk = (m.getHoraInicioDisponibilidad() == null || !c.getHora().isBefore(m.getHoraInicioDisponibilidad()))
+                    && (m.getHoraFinDisponibilidad() == null || !c.getHora().isAfter(m.getHoraFinDisponibilidad()));
+            boolean sinConflicto = citaRepo.findByMedico(m).stream()
+                    .noneMatch(ci -> ci.getFecha().equals(c.getFecha()) && ci.getHora().equals(c.getHora()));
+            if (diaDisponible && horaOk && sinConflicto) { elegido = m; break; }
+        }
+        if (elegido == null) throw new ResponseStatusException(HttpStatus.CONFLICT, "No se encontró médico disponible para esa fecha y hora");
+        c.setMedico(elegido);
+        if (confirmar) { c.setEstado("CONFIRMED"); c.setConfirmado(Boolean.TRUE); }
+        Cita actualizada = citaRepo.save(c);
+        String tipoEvt = confirmar ? "CONFIRMED" : "UPDATED";
+        CitaEvent evt = new CitaEvent(
+                actualizada.getIdCita(),
+                actualizada.getFecha(),
+                actualizada.getHora(),
+                actualizada.getDireccion(),
+                actualizada.getPaciente() != null ? actualizada.getPaciente().getNombreCompleto() : null,
+                actualizada.getPaciente() != null ? actualizada.getPaciente().getEmail() : null,
+                actualizada.getPaciente() != null ? actualizada.getPaciente().getTelefono() : null,
+                actualizada.getMedico() != null ? actualizada.getMedico().getNombreCompleto() : null,
+                actualizada.getServicio() != null ? actualizada.getServicio().getTipoServicio().getNombre() : null,
+                tipoEvt
+        );
+        events.publish(confirmar ? "cita.confirmed" : "cita.updated", evt);
         return actualizada;
     }
 }
