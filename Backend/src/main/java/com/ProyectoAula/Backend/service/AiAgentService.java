@@ -57,7 +57,18 @@ public class AiAgentService {
 
     // Respuestas básicas de atención al cliente (FAQ)
     public ConsultaIA responder(String message, String clienteUsername, String agente) {
-        if (message == null || message.isBlank()) return "¿Puedes detallar tu consulta?";
+        if (message == null || message.isBlank()) {
+            String reply = "¿Puedes detallar tu consulta?";
+            ConsultaIA consulta = new ConsultaIA();
+            consulta.setAgente(agente != null ? agente : "FAQ");
+            consulta.setPregunta("");
+            consulta.setRespuesta(reply);
+            consulta.setClienteUsername(clienteUsername);
+            consulta.setFechaHora(java.time.LocalDateTime.now());
+            consulta.setTokensAproximados(Integer.valueOf(reply.length() / 4));
+            consulta.setEstado("COMPLETADA");
+            return consultaIARepository.save(consulta);
+        }
         String m = message.toLowerCase(Locale.ROOT);
         String reply;
         if (m.contains("horario") || m.contains("hora")) {

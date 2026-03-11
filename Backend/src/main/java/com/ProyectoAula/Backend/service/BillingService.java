@@ -22,7 +22,6 @@ public class BillingService {
         r.setClienteUsername(consulta.getClienteUsername());
         r.setTipoServicio(consulta.getAgente());
         r.setFechaHora(LocalDateTime.now());
-        int tokens = consulta.getTokensAproximados() != null ? consulta.getTokensAproximados() : 0;
         // Regla simple: base 1.00 + 0.01 por cada 50 caracteres de pregunta+respuesta
         int length = (consulta.getPregunta() != null ? consulta.getPregunta().length() : 0)
                 + (consulta.getRespuesta() != null ? consulta.getRespuesta().length() : 0);
@@ -33,4 +32,3 @@ public class BillingService {
         return registroCobroRepository.save(r);
     }
 }
-

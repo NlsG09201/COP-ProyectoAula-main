@@ -7,5 +7,6 @@ export const routes: Routes = [
   { path: 'odontograma', loadComponent: () => import('./features/odontograma/odontograma-page.component').then(m => m.OdontogramaPageComponent) },
   { path: 'medicos', loadComponent: () => import('./features/medicos/medicos-page.component').then(m => m.MedicosPageComponent) },
   { path: 'notificaciones', loadComponent: () => import('./features/notificaciones/notificaciones-page.component').then(m => m.NotificacionesPageComponent) },
+  { path: 'psicologia', loadComponent: () => import('./features/psicologia/evaluaciones-page.component').then(m => m.EvaluacionesPageComponent) },
   { path: '**', redirectTo: '/citas' }
 ];

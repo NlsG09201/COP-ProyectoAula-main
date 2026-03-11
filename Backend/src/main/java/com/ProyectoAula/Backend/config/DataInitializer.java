@@ -80,6 +80,8 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("✅ Usuario admin creado: user=admin pass=admin123");
 
         seedServiciosOdonto();
+        seedServiciosPsico();
+        seedProfesionalesPsico();
         
         // Se han eliminado las inyecciones de datos de prueba (pacientes, testimonios, médicos extra)
         // para mantener la base de datos limpia según requerimiento.
@@ -180,5 +182,49 @@ public class DataInitializer implements CommandLineRunner {
         s.setNombre(nombre);
         s.setTipoServicio(tipo);
         servicioRepo.save(s);
+    }
+
+    private void seedServiciosPsico() {
+        TipoServicio psClinica = tipoRepo.findByNombre("Psicología Clínica").orElseGet(() -> {
+            TipoServicio ts = new TipoServicio(); ts.setNombre("Psicología Clínica"); return tipoRepo.save(ts);
+        });
+        TipoServicio psInfantil = tipoRepo.findByNombre("Psicología Infantil").orElseGet(() -> {
+            TipoServicio ts = new TipoServicio(); ts.setNombre("Psicología Infantil"); return tipoRepo.save(ts);
+        });
+        TipoServicio psPareja = tipoRepo.findByNombre("Psicoterapia de Pareja").orElseGet(() -> {
+            TipoServicio ts = new TipoServicio(); ts.setNombre("Psicoterapia de Pareja"); return tipoRepo.save(ts);
+        });
+
+        createServicio("Terapia Individual", psClinica);
+        createServicio("Evaluación Psicológica", psClinica);
+        createServicio("Terapia Infantil", psInfantil);
+        createServicio("Terapia de Pareja", psPareja);
+    }
+
+    private void seedProfesionalesPsico() {
+        Persona psicologa = new Persona();
+        psicologa.setRol(Rol.MEDICO);
+        psicologa.setNombreCompleto("Dra. Meivi Gonzales");
+        psicologa.setEmail("meivi.gonzales@cop.local");
+        psicologa.setTelefono("3001234567");
+        psicologa.setDireccion("Clínica COP Sede Bienestar");
+        psicologa.setUsername("meivi");
+        psicologa.setPasswordHash(passwordEncoder.encode("meivi123"));
+        psicologa.setHoraInicioDisponibilidad(java.time.LocalTime.of(9, 0));
+        psicologa.setHoraFinDisponibilidad(java.time.LocalTime.of(17, 0));
+        psicologa.setDiasDisponibles("MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
+        personaRepository.save(psicologa);
+
+        Servicio s1 = servicioRepo.findByNombre("Terapia Individual").orElse(null);
+        Servicio s2 = servicioRepo.findByNombre("Evaluación Psicológica").orElse(null);
+        Servicio s3 = servicioRepo.findByNombre("Terapia Infantil").orElse(null);
+        Servicio s4 = servicioRepo.findByNombre("Terapia de Pareja").orElse(null);
+        java.util.List<Servicio> lista = new java.util.ArrayList<>();
+        if (s1 != null) lista.add(s1);
+        if (s2 != null) lista.add(s2);
+        if (s3 != null) lista.add(s3);
+        if (s4 != null) lista.add(s4);
+        psicologa.setServicios(lista);
+        personaRepository.save(psicologa);
     }
 }

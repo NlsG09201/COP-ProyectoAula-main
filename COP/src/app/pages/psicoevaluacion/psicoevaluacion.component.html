@@ -1,0 +1,216 @@
+<main class="main-content">
+  <section class="hero">
+    <div class="container mx-auto text-center py-12 px-4">
+      <h1 class="text-4xl font-bold text-gray-800 mb-3">Autoevaluación Psicológica</h1>
+      <p class="text-lg text-gray-600">Completa las escalas y recibe orientación para agendar terapia.</p>
+    </div>
+  </section>
+
+  <div class="container mx-auto max-w-4xl px-4">
+    <div class="card p-6 mb-6">
+      <h2 class="text-2xl font-semibold mb-4">Datos de contacto</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-gray-700 mb-1">Nombre completo</label>
+          <input id="evalNombre" class="w-full border rounded px-3 py-2" required>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 mb-1">Correo</label>
+          <input id="evalEmail" type="email" class="w-full border rounded px-3 py-2" required>
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 mb-1">Documento (opcional)</label>
+          <input id="evalDoc" class="w-full border rounded px-3 py-2">
+        </div>
+        <div>
+          <label class="block text-sm text-gray-700 mb-1">Teléfono (opcional)</label>
+          <input id="evalTelefono" class="w-full border rounded px-3 py-2">
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm text-gray-700 mb-1">Dirección (opcional)</label>
+          <input id="evalDireccion" class="w-full border rounded px-3 py-2">
+        </div>
+      </div>
+    </div>
+
+    <div id="evalMsg" class="text-sm mb-4"></div>
+
+    <section class="card p-6 mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-semibold">PHQ-9 (Depresión)</h3>
+      </div>
+      <form id="phq9Form">
+        <div class="grid grid-cols-1 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>1. Poco interés o placer en hacer cosas</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="phq9_q1" value="0"> 0</label>
+              <label><input type="radio" name="phq9_q1" value="1"> 1</label>
+              <label><input type="radio" name="phq9_q1" value="2"> 2</label>
+              <label><input type="radio" name="phq9_q1" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>2. Se siente desanimado, deprimido o sin esperanza</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="phq9_q2" value="0"> 0</label>
+              <label><input type="radio" name="phq9_q2" value="1"> 1</label>
+              <label><input type="radio" name="phq9_q2" value="2"> 2</label>
+              <label><input type="radio" name="phq9_q2" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>3. Dificultad para dormir o dormir demasiado</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="phq9_q3" value="0"> 0</label>
+              <label><input type="radio" name="phq9_q3" value="1"> 1</label>
+              <label><input type="radio" name="phq9_q3" value="2"> 2</label>
+              <label><input type="radio" name="phq9_q3" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>4. Cansancio o falta de energía</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="phq9_q4" value="0"> 0</label>
+              <label><input type="radio" name="phq9_q4" value="1"> 1</label>
+              <label><input type="radio" name="phq9_q4" value="2"> 2</label>
+              <label><input type="radio" name="phq9_q4" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>5. Poco apetito o comer en exceso</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="phq9_q5" value="0"> 0</label>
+              <label><input type="radio" name="phq9_q5" value="1"> 1</label>
+              <label><input type="radio" name="phq9_q5" value="2"> 2</label>
+              <label><input type="radio" name="phq9_q5" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>6. Se siente mal consigo mismo</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="phq9_q6" value="0"> 0</label>
+              <label><input type="radio" name="phq9_q6" value="1"> 1</label>
+              <label><input type="radio" name="phq9_q6" value="2"> 2</label>
+              <label><input type="radio" name="phq9_q6" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>7. Dificultad para concentrarse</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="phq9_q7" value="0"> 0</label>
+              <label><input type="radio" name="phq9_q7" value="1"> 1</label>
+              <label><input type="radio" name="phq9_q7" value="2"> 2</label>
+              <label><input type="radio" name="phq9_q7" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>8. Se mueve o habla tan lento o inquieto</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="phq9_q8" value="0"> 0</label>
+              <label><input type="radio" name="phq9_q8" value="1"> 1</label>
+              <label><input type="radio" name="phq9_q8" value="2"> 2</label>
+              <label><input type="radio" name="phq9_q8" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>9. Pensamientos de hacerse daño</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="phq9_q9" value="0"> 0</label>
+              <label><input type="radio" name="phq9_q9" value="1"> 1</label>
+              <label><input type="radio" name="phq9_q9" value="2"> 2</label>
+              <label><input type="radio" name="phq9_q9" value="3"> 3</label>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <label class="block text-sm text-gray-700 mb-1">Notas</label>
+          <textarea id="phq9Notas" class="w-full border rounded px-3 py-2"></textarea>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button class="btn-primary px-6 py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Enviar PHQ-9</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card p-6 mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-semibold">GAD-7 (Ansiedad)</h3>
+      </div>
+      <form id="gad7Form">
+        <div class="grid grid-cols-1 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>1. Sentirse nervioso o ansioso</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="gad7_q1" value="0"> 0</label>
+              <label><input type="radio" name="gad7_q1" value="1"> 1</label>
+              <label><input type="radio" name="gad7_q1" value="2"> 2</label>
+              <label><input type="radio" name="gad7_q1" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>2. No poder parar de preocuparse</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="gad7_q2" value="0"> 0</label>
+              <label><input type="radio" name="gad7_q2" value="1"> 1</label>
+              <label><input type="radio" name="gad7_q2" value="2"> 2</label>
+              <label><input type="radio" name="gad7_q2" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>3. Preocuparse demasiado por distintas cosas</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="gad7_q3" value="0"> 0</label>
+              <label><input type="radio" name="gad7_q3" value="1"> 1</label>
+              <label><input type="radio" name="gad7_q3" value="2"> 2</label>
+              <label><input type="radio" name="gad7_q3" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>4. Dificultad para relajarse</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="gad7_q4" value="0"> 0</label>
+              <label><input type="radio" name="gad7_q4" value="1"> 1</label>
+              <label><input type="radio" name="gad7_q4" value="2"> 2</label>
+              <label><input type="radio" name="gad7_q4" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>5. Estar tan inquieto que es difícil quedarse quieto</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="gad7_q5" value="0"> 0</label>
+              <label><input type="radio" name="gad7_q5" value="1"> 1</label>
+              <label><input type="radio" name="gad7_q5" value="2"> 2</label>
+              <label><input type="radio" name="gad7_q5" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>6. Irritarse con facilidad</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="gad7_q6" value="0"> 0</label>
+              <label><input type="radio" name="gad7_q6" value="1"> 1</label>
+              <label><input type="radio" name="gad7_q6" value="2"> 2</label>
+              <label><input type="radio" name="gad7_q6" value="3"> 3</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+            <div>7. Sentir miedo como si algo terrible fuera a pasar</div>
+            <div class="flex gap-2">
+              <label><input type="radio" name="gad7_q7" value="0"> 0</label>
+              <label><input type="radio" name="gad7_q7" value="1"> 1</label>
+              <label><input type="radio" name="gad7_q7" value="2"> 2</label>
+              <label><input type="radio" name="gad7_q7" value="3"> 3</label>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <label class="block text-sm text-gray-700 mb-1">Notas</label>
+          <textarea id="gad7Notas" class="w-full border rounded px-3 py-2"></textarea>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button class="btn-primary px-6 py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Enviar GAD-7</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>

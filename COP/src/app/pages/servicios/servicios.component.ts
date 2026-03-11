@@ -33,7 +33,7 @@ export class ServiciosComponent implements AfterViewInit {
     // Botones de las tarjetas para preseleccionar servicio
     document.querySelectorAll('.service-category .btn-primary').forEach(btn => {
       btn.addEventListener('click', () => {
-        const card = btn.closest('.bg-white.p-6.rounded-lg.shadow-md');
+        const card = btn.closest('.service-card') as HTMLElement | null;
         const serviceName = card?.querySelector('h3')?.textContent?.trim() || '';
         const category = btn.closest('.service-category')?.id === 'odontologia' ? 'Odontología' : 'Psicologia';
         

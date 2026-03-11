@@ -33,5 +33,13 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue evalEventsQueue() { return new Queue("cop.eval.events", true); }
+
+    @Bean
+    public Binding evalSubmittedBinding(Queue evalEventsQueue, TopicExchange eventsExchange) {
+        return BindingBuilder.bind(evalEventsQueue).to(eventsExchange).with("eval.submitted");
+    }
+
+    @Bean
     public Jackson2JsonMessageConverter jacksonConverter() { return new Jackson2JsonMessageConverter(); }
 }

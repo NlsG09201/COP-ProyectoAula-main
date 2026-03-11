@@ -6,6 +6,7 @@ import { TestimoniosComponent } from './pages/testimonios/testimonios.component'
 import { ContactoComponent } from './pages/contacto/contacto.component';
 import { AuthComponent } from './pages/auth/auth.component';
 import { HistorialComponent } from './pages/historial/historial.component';
+import { PsicoEvaluacionComponent } from './pages/psicoevaluacion/psicoevaluacion.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'contacto', component: ContactoComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'historial', component: HistorialComponent },
+  { path: 'psico-evaluacion', component: PsicoEvaluacionComponent },
   { path: '**', redirectTo: '' }
 ];

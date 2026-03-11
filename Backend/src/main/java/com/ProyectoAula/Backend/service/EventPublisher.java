@@ -1,6 +1,5 @@
 package com.ProyectoAula.Backend.service;
 
-import com.ProyectoAula.Backend.event.CitaEvent;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.jms.core.JmsTemplate;
@@ -19,8 +18,8 @@ public class EventPublisher {
         this.rabbitTemplate.setMessageConverter(rabbitConverter);
     }
 
-    public void publish(String routingKey, CitaEvent event) {
-        System.out.println("DEBUG: Publicando evento a RabbitMQ -> routingKey: " + routingKey + ", citaId: " + event.getIdCita());
+    public void publish(String routingKey, Object event) {
+        System.out.println("DEBUG: Publicando evento a RabbitMQ -> routingKey: " + routingKey);
         try {
             rabbitTemplate.convertAndSend("cop.events", routingKey, event);
             System.out.println("✅ Evento publicado correctamente en cop.events");

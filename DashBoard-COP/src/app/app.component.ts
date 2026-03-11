@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
         <a class="px-3 py-2 rounded hover:bg-slate-800" routerLink="/odontograma" routerLinkActive="bg-slate-800">Odontograma</a>
         <a class="px-3 py-2 rounded hover:bg-slate-800" routerLink="/medicos" routerLinkActive="bg-slate-800">Médicos</a>
         <a class="px-3 py-2 rounded hover:bg-slate-800" routerLink="/notificaciones" routerLinkActive="bg-slate-800">Notificaciones</a>
+        <a class="px-3 py-2 rounded hover:bg-slate-800" routerLink="/psicologia" routerLinkActive="bg-slate-800">Psicología</a>
       </aside>
       <div class="flex flex-col">
         <header class="bg-white shadow px-4 py-3">
@@ -42,6 +43,7 @@ import { FormsModule } from '@angular/forms';
             <a class="btn-outline text-center" routerLink="/odontograma" routerLinkActive="active">Odontograma</a>
             <a class="btn-outline text-center" routerLink="/medicos" routerLinkActive="active">Médicos</a>
             <a class="btn-outline text-center" routerLink="/notificaciones" routerLinkActive="active">Notificaciones</a>
+            <a class="btn-outline text-center" routerLink="/psicologia" routerLinkActive="active">Psicología</a>
           </nav>
         </header>
         <main class="px-4 py-4">
