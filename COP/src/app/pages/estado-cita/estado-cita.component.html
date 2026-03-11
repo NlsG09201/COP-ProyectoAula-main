@@ -1,0 +1,39 @@
+<main class="main-content">
+  <section class="container mx-auto py-16 px-4">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Estado de Cita</h1>
+    <div *ngIf="loading" class="text-gray-600">Cargando...</div>
+    <div *ngIf="!loading && error" class="text-red-600">{{ error }}</div>
+    <div *ngIf="!loading && !error && cita" class="bg-white rounded-xl shadow p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <div class="text-sm text-gray-500">ID</div>
+          <div class="font-semibold">{{ cita.idCita }}</div>
+        </div>
+        <div>
+          <div class="text-sm text-gray-500">Estado</div>
+          <div class="font-semibold">{{ cita.estado }} <span *ngIf="cita.confirmado" class="text-green-600">(Confirmada)</span></div>
+        </div>
+        <div>
+          <div class="text-sm text-gray-500">Fecha</div>
+          <div class="font-semibold">{{ cita.fecha }}</div>
+        </div>
+        <div>
+          <div class="text-sm text-gray-500">Hora</div>
+          <div class="font-semibold">{{ cita.hora }}</div>
+        </div>
+        <div>
+          <div class="text-sm text-gray-500">Servicio</div>
+          <div class="font-semibold">{{ cita.servicio?.tipoServicio?.nombre || cita.servicio?.nombre || '—' }}</div>
+        </div>
+        <div>
+          <div class="text-sm text-gray-500">Médico</div>
+          <div class="font-semibold">{{ cita.medico?.nombreCompleto || 'Pendiente' }}</div>
+        </div>
+      </div>
+      <div class="mt-6 flex gap-3">
+        <a [href]="'/api/citas/' + cita.idCita + '/confirmar'" class="btn-primary px-6 py-2 rounded text-white bg-green-600 hover:bg-green-700" *ngIf="!cita.confirmado">Confirmar</a>
+        <a routerLink="/servicios" class="btn-secondary px-6 py-2 rounded border border-gray-300">Volver a Servicios</a>
+      </div>
+    </div>
+  </section>
+</main>

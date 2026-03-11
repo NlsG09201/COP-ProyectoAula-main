@@ -6,6 +6,8 @@ import com.ProyectoAula.Backend.model.Servicio;
 import com.ProyectoAula.Backend.repository.CitaRepository;
 import com.ProyectoAula.Backend.repository.PersonaRepository;
 import com.ProyectoAula.Backend.repository.ServicioRepository;
+import com.ProyectoAula.Backend.model.ConfirmationToken;
+import com.ProyectoAula.Backend.repository.ConfirmationTokenRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
@@ -25,15 +27,18 @@ public class CitaController {
     private final PersonaRepository personaRepo;
     private final ServicioRepository servicioRepo;
     private final EventPublisher events;
+    private final ConfirmationTokenRepository tokenRepo;
 
     public CitaController(CitaRepository citaRepo,
                           PersonaRepository personaRepo,
                           ServicioRepository servicioRepo,
-                          EventPublisher events) {
+                          EventPublisher events,
+                          ConfirmationTokenRepository tokenRepo) {
         this.citaRepo = citaRepo;
         this.personaRepo = personaRepo;
         this.servicioRepo = servicioRepo;
         this.events = events;
+        this.tokenRepo = tokenRepo;
     }
 
     // 🔹 Listar todas las citas
@@ -184,6 +189,34 @@ public class CitaController {
     }
     @GetMapping("/{id}/confirmar")
     public Cita confirmarGet(@PathVariable Long id) { return confirmar(id); }
+
+    @PostMapping("/{id}/confirm-token")
+    public java.util.Map<String, Object> createConfirmToken(@PathVariable Long id) {
+        Cita c = citaRepo.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada"));
+        String token = java.util.UUID.randomUUID().toString().replace("-", "");
+        ConfirmationToken ct = new ConfirmationToken();
+        ct.setCita(c);
+        ct.setToken(token);
+        ct.setExpiresAt(java.time.LocalDateTime.now().plusDays(1));
+        ct.setUsed(false);
+        tokenRepo.save(ct);
+        String url = "/api/citas/confirm?token=" + token;
+        return java.util.Map.of("token", token, "url", url, "expiresAt", ct.getExpiresAt().toString(), "idCita", c.getIdCita());
+    }
+
+    @GetMapping("/confirm")
+    public Cita confirmByToken(@RequestParam String token) {
+        ConfirmationToken ct = tokenRepo.findByToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Token no válido"));
+        if (ct.isUsed()) throw new ResponseStatusException(HttpStatus.CONFLICT, "Token ya utilizado");
+        if (ct.getExpiresAt() != null && ct.getExpiresAt().isBefore(java.time.LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Token expirado");
+        }
+        Cita c = confirmar(ct.getCita().getIdCita());
+        ct.setUsed(true);
+        tokenRepo.save(ct);
+        return c;
+    }
     // 🔹 Asignar médico y confirmar cita
     @PostMapping("/{id}/asignar")
     public Cita asignar(@PathVariable Long id, @RequestParam Long medicoId, @RequestParam(defaultValue = "false") boolean confirmar) {

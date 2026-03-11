@@ -25,6 +25,8 @@ public class CitaEventListener {
     
     @Value("${spring.mail.from:no-reply@cop.local}")
     private String fromAddress;
+    @Value("${public.cop.base:http://localhost:8086}")
+    private String publicCopBase;
 
     public CitaEventListener(ReminderLogRepository repo, TwilioService twilioService) { 
         this.repo = repo; 
@@ -59,7 +61,7 @@ public class CitaEventListener {
                     helper.setFrom(fromAddress);
                     helper.setTo(email);
                     helper.setSubject("Nueva Cita - Confirma tu agendamiento");
-                    String link = "http://localhost:8080/api/citas/" + evt.getIdCita() + "/confirmar";
+                    String link = publicCopBase + "/estado-cita?id=" + evt.getIdCita();
                     String htmlMsg = "<div style='font-family: Arial, sans-serif; max-width:600px; margin:auto; border:1px solid #e2e8f0; border-radius:8px'>" +
                             "<div style='background:#2563eb; color:#fff; padding:16px; text-align:center'><h2>Clínica COP</h2></div>" +
                             "<div style='padding:16px; color:#1e293b'>" +
@@ -97,6 +99,18 @@ public class CitaEventListener {
                         helper.setTo(email);
                         helper.setSubject("🦷 Confirmación de Cita - Clínica COP");
 
+                        String confirmUrl = null;
+                        try {
+                            var tokenResp = new org.springframework.web.client.RestTemplate()
+                                    .postForEntity("http://backend:8080/api/citas/" + evt.getIdCita() + "/confirm-token", null, java.util.Map.class);
+                            if (tokenResp.getStatusCode().is2xxSuccessful() && tokenResp.getBody() instanceof java.util.Map<?, ?> map) {
+                                Object urlObj = map.get("url");
+                                if (urlObj != null) {
+                                    confirmUrl = publicCopBase + "/estado-cita?token=" + String.valueOf(map.get("token"));
+                                }
+                            }
+                        } catch (Exception ignored) {}
+
                         String htmlMsg = "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;'>" +
                                 "<div style='background-color: #2563eb; color: white; padding: 20px; text-align: center;'>" +
                                 "<h1>Clínica COP</h1>" +
@@ -112,6 +126,7 @@ public class CitaEventListener {
                                 "<strong>🦷 Servicio:</strong> " + (evt.getServicioNombre() != null ? evt.getServicioNombre() : "Consulta General") +
                                 "</div>" +
                                 "<p>Por favor, llega 10 minutos antes de tu cita. Si necesitas reprogramar, contáctanos lo antes posible.</p>" +
+                                (confirmUrl != null ? "<p style='text-align:center'><a href='" + confirmUrl + "' style='background:#16a34a;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none'>Confirmar Cita</a></p>" : "") +
                                 "</div>" +
                                 "<div style='background-color: #f1f5f9; color: #64748b; padding: 15px; text-align: center; font-size: 12px;'>" +
                                 "© 2026 Clínica COP. Este es un mensaje automático, por favor no respondas." +

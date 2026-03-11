@@ -23,6 +23,7 @@ com\ProyectoAula\Backend\controller\MedicoMongoController.class
 com\ProyectoAula\Backend\repository\PersonaRepository.class
 com\ProyectoAula\Backend\controller\ServicioController.class
 com\ProyectoAula\Backend\model\EvaluacionPsicologica.class
+com\ProyectoAula\Backend\model\ConfirmationToken.class
 com\ProyectoAula\Backend\model\Testimonio.class
 com\ProyectoAula\Backend\controller\PacienteController.class
 com\ProyectoAula\Backend\service\OdontogramaService.class
@@ -57,6 +58,7 @@ com\ProyectoAula\Backend\repository\TestimonioRepository.class
 com\ProyectoAula\Backend\model\RegistroCobro.class
 com\ProyectoAula\Backend\mongo\model\PersonaDoc$Rol.class
 com\ProyectoAula\Backend\service\DienteService.class
+com\ProyectoAula\Backend\repository\ConfirmationTokenRepository.class
 com\ProyectoAula\Backend\BackendApplication.class
 com\ProyectoAula\Backend\controller\DetalleOdontogramaController.class
 com\ProyectoAula\Backend\controller\NotificacionController.class

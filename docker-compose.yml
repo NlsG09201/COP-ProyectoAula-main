@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: COP_db
+      MYSQL_DATABASE: COP_secure_db
       MYSQL_USER: copuser
       MYSQL_PASSWORD: coppass
     ports:
@@ -61,7 +61,7 @@ services:
     restart: unless-stopped
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/COP_db?useUnicode=true&characterEncoding=utf8&serverTimezone=America/Bogota&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/COP_secure_db?useUnicode=true&characterEncoding=utf8&serverTimezone=America/Bogota&useSSL=false&allowPublicKeyRetrieval=true&autoReconnect=true
       SPRING_DATASOURCE_USERNAME: copuser
       SPRING_DATASOURCE_PASSWORD: coppass
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -111,6 +111,7 @@ services:
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
       SPRING_MAIL_FROM: no-reply@cop.local
+      public.cop.base: "http://localhost:8086"
       # Para usar Gmail/SendGrid, descomenta y rellena estas líneas (esto sobreescribirá lo anterior):
       # SPRING_MAIL_HOST: "smtp.gmail.com"
       # SPRING_MAIL_PORT: 587

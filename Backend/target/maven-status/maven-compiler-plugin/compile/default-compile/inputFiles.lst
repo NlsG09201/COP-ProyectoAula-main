@@ -23,6 +23,7 @@ C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\c
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\event\EvaluacionEvent.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\exception\GlobalExceptionHandler.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\Cita.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\ConfirmationToken.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\ConsultaIA.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\DetalleOdontograma.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\model\Diente.java
@@ -38,6 +39,7 @@ C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\c
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\mongo\repository\DienteMongoRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\mongo\repository\PersonaMongoRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\CitaRepository.java
+C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\ConfirmationTokenRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\ConsultaIARepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\DetalleOdontogramaRepository.java
 C:\Users\nelso\OneDrive\Escritorio\COP-ProyectoAula-main\Backend\src\main\java\com\ProyectoAula\Backend\repository\DienteRepository.java
