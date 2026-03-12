@@ -8,13 +8,14 @@ public class Diente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_Diente", columnDefinition = "INT UNSIGNED")
     private Long idDiente;
 
-    @Column(nullable = false, unique = true)
-    private String codigoFDI;  // Código internacional de diente (ej: 11, 12, 21...)
+    @Column(name = "CodigoFDI", nullable = false, unique = true)
+    private String codigoFDI;
 
-    @Column(nullable = false)
-    private String nombre;     // Ejemplo: Incisivo central superior derecho
+    @Column(name = "Nombre", nullable = false)
+    private String nombre;
 
     public Long getIdDiente() {
         return idDiente;

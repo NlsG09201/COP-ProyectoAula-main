@@ -10,17 +10,17 @@ public class Odontograma {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_Odontograma", columnDefinition = "INT UNSIGNED")
     private Long idOdontograma;
 
-    @Column(nullable = false)
+    @Column(name = "FechaRegistro", nullable = false)
     private LocalDate fechaRegistro;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "ObservacionesGenerales", columnDefinition = "TEXT")
     private String observacionesGenerales;
 
     @ManyToOne
-    // tabla SQL usa "ID_P" para referirse al paciente
-    @JoinColumn(name = "ID_P", nullable = false)
+    @JoinColumn(name = "ID_Paciente", nullable = false, columnDefinition = "INT UNSIGNED")
     private Persona paciente;
 
     @OneToMany(mappedBy = "odontograma", cascade = CascadeType.ALL, orphanRemoval = true)

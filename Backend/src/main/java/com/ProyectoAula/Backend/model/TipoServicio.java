@@ -3,12 +3,12 @@ package com.ProyectoAula.Backend.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "TIPO_SERVICIO")
+@Table(name = "TIPOSERVICIO")
 public class TipoServicio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_TipoServicio")
+    @Column(name = "ID_TipoServicio", columnDefinition = "INT UNSIGNED")
     private Long idTipoServicio;
 
     @Column(name = "Nombre")

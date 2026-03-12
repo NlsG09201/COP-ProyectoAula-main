@@ -38,6 +38,12 @@ public class PacienteController {
         return p;
     }
 
+    @GetMapping("/exists/{doc}")
+    public Map<String, Boolean> existePorDocumento(@PathVariable String doc) {
+        boolean existe = repo.findByDocIden(doc).isPresent();
+        return Map.of("exists", existe);
+    }
+
     @GetMapping("/{id}")
     public Persona obtener(@PathVariable Long id) {
         if (id == null) {

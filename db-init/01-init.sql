@@ -150,5 +150,5 @@ CREATE TABLE IF NOT EXISTS `TESTIMONIOS` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Índices adicionales de seguridad y rendimiento
-CREATE INDEX IF NOT EXISTS `idx_persona_email` ON `PERSONAS` (`Email`);
-CREATE INDEX IF NOT EXISTS `idx_servicio_tipo` ON `SERVICIOS` (`ID_TipoServicio`);
+CREATE INDEX `idx_persona_email` ON `PERSONAS` (`Email`);
+CREATE INDEX `idx_servicio_tipo` ON `SERVICIOS` (`ID_TipoServicio`);

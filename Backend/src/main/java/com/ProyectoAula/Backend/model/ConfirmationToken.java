@@ -4,16 +4,24 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "CONFIRMATION_TOKEN")
 public class ConfirmationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID", columnDefinition = "INT UNSIGNED")
     private Long id;
-    @Column(unique = true, nullable = false)
+
+    @Column(name = "Token", unique = true, nullable = false)
     private String token;
+
+    @Column(name = "ExpiresAt")
     private LocalDateTime expiresAt;
+
+    @Column(name = "Used")
     private boolean used;
+
     @ManyToOne
-    @JoinColumn(name = "ID_Cita", nullable = false)
+    @JoinColumn(name = "ID_Cita", nullable = false, columnDefinition = "INT UNSIGNED")
     private Cita cita;
 
     public Long getId() { return id; }

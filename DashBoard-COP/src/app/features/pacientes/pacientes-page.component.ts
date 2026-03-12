@@ -193,14 +193,19 @@ export class PacientesPageComponent implements OnDestroy {
             error: (err) => { this.handleError(err); this.loading = false; }
         });
     } else {
-        this.api.get<any>(`/pacientes/by-doc/${encodeURIComponent(this.form.docIden)}`).subscribe({
-            next: () => { this.msg = 'Documento de identidad ya registrado'; this.loading = false; },
-            error: () => {
-                this.api.post<Paciente>('/pacientes', this.form).subscribe({
-                    next: (p) => { this.msg = 'Paciente registrado (ID ' + (p.idP||p.idPersona||'N/A') + ')'; this.loading = false; this.cargar(); this.form = { docIden: '', nombreCompleto: '' }; },
-                    error: (err) => { this.handleError(err); this.loading = false; }
-                });
-            }
+        this.api.get<{exists: boolean}>(`/pacientes/exists/${encodeURIComponent(this.form.docIden)}`).subscribe({
+            next: (res) => {
+                if (res.exists) {
+                    this.msg = 'Documento de identidad ya registrado';
+                    this.loading = false;
+                } else {
+                    this.api.post<Paciente>('/pacientes', this.form).subscribe({
+                        next: (p) => { this.msg = 'Paciente registrado (ID ' + (p.idP||p.idPersona||'N/A') + ')'; this.loading = false; this.cargar(); this.form = { docIden: '', nombreCompleto: '' }; },
+                        error: (err) => { this.handleError(err); this.loading = false; }
+                    });
+                }
+            },
+            error: (err) => { this.handleError(err); this.loading = false; }
         });
     }
   }
@@ -265,9 +270,18 @@ export class PacientesPageComponent implements OnDestroy {
     const d = (this.form.docIden||'').trim();
     if (!d) { this.docMsg = ''; this.docValid = null; return; }
     this.docChecking = true; this.docMsg = '';
-    this.api.get<any>(`/pacientes/by-doc/${encodeURIComponent(d)}`).subscribe({
-      next: () => { this.docMsg = 'Documento de identidad ya registrado'; this.docValid = false; this.docChecking = false; },
-      error: () => { this.docMsg = 'Documento disponible'; this.docValid = true; this.docChecking = false; }
+    this.api.get<{exists: boolean}>(`/pacientes/exists/${encodeURIComponent(d)}`).subscribe({
+      next: (res) => { 
+          if (res.exists) {
+              this.docMsg = 'Documento de identidad ya registrado'; 
+              this.docValid = false; 
+          } else {
+              this.docMsg = 'Documento disponible'; 
+              this.docValid = true; 
+          }
+          this.docChecking = false; 
+      },
+      error: () => { this.docMsg = 'Error verificando documento'; this.docValid = null; this.docChecking = false; }
     });
   }
 
@@ -276,9 +290,18 @@ export class PacientesPageComponent implements OnDestroy {
   verificarDocDebounced(d: string) {
     if (!d) { this.docMsg = ''; this.docValid = null; return; }
     this.docChecking = true; this.docMsg = '';
-    this.api.get<any>(`/pacientes/by-doc/${encodeURIComponent(d)}`).subscribe({
-      next: () => { this.docMsg = 'Documento de identidad ya registrado'; this.docValid = false; this.docChecking = false; },
-      error: () => { this.docMsg = 'Documento disponible'; this.docValid = true; this.docChecking = false; }
+    this.api.get<{exists: boolean}>(`/pacientes/exists/${encodeURIComponent(d)}`).subscribe({
+      next: (res) => { 
+          if (res.exists) {
+              this.docMsg = 'Documento de identidad ya registrado'; 
+              this.docValid = false; 
+          } else {
+              this.docMsg = 'Documento disponible'; 
+              this.docValid = true; 
+          }
+          this.docChecking = false; 
+      },
+      error: () => { this.docMsg = 'Error verificando documento'; this.docValid = null; this.docChecking = false; }
     });
   }
 

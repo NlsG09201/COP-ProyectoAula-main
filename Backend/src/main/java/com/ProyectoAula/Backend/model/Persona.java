@@ -15,8 +15,7 @@ public class Persona {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // el script SQL original usaba ID_P tanto para paciente como para médico
-    @Column(name = "ID_P")
+    @Column(name = "ID_Persona", columnDefinition = "INT UNSIGNED")
     private Long idPersona;
 
     @Column(name = "Doc_Iden", unique = true)

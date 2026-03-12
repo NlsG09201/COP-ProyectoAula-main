@@ -9,21 +9,22 @@ public class DetalleOdontograma {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_Detalle", columnDefinition = "INT UNSIGNED")
     private Long idDetalle;
 
     @ManyToOne
-    @JoinColumn(name = "ID_Odontograma", nullable = false)
+    @JoinColumn(name = "ID_Odontograma", nullable = false, columnDefinition = "INT UNSIGNED")
     @JsonIgnore
     private Odontograma odontograma;
 
     @ManyToOne
-    @JoinColumn(name = "ID_Diente", nullable = false)
+    @JoinColumn(name = "ID_Diente", nullable = false, columnDefinition = "INT UNSIGNED")
     private Diente diente;
 
-    @Column(nullable = false)
-    private String estado; // Ejemplo: "Cariado", "Obturado", "Sano", etc.
+    @Column(name = "Estado", nullable = false)
+    private String estado;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "Observacion", columnDefinition = "TEXT")
     private String observacion;
 
     public Long getIdDetalle() {

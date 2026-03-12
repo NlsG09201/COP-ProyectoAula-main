@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pacientes")
@@ -28,6 +29,12 @@ public class PacienteMongoController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado"));
         if (p.getRol() != PersonaDoc.Rol.PACIENTE) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No es un paciente");
         return p;
+    }
+
+    @GetMapping("/exists/{doc}")
+    public Map<String, Boolean> existePorDocumento(@PathVariable String doc) {
+        boolean existe = repo.findByDocIden(doc).isPresent();
+        return Map.of("exists", existe);
     }
 
     @GetMapping("/{id}")

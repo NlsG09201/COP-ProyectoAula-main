@@ -10,14 +10,14 @@ public class Servicio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_Servicio")
+    @Column(name = "ID_Servicio", columnDefinition = "INT UNSIGNED")
     private Long idServicio;
 
-    @Column(name = "TipoServicio", nullable = true)
+    @Column(name = "Nombre", nullable = true)
     private String nombre;
 
     @ManyToOne
-    @JoinColumn(name = "ID_TipoServicio", nullable = false)
+    @JoinColumn(name = "ID_TipoServicio", nullable = false, columnDefinition = "INT UNSIGNED")
     private TipoServicio tipoServicio;
 
     @ManyToMany(mappedBy = "servicios")

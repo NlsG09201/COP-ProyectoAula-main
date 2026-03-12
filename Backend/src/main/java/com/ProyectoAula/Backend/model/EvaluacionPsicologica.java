@@ -4,21 +4,30 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "EVALUACIONES_PSICO")
 public class EvaluacionPsicologica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_Evaluacion", columnDefinition = "INT UNSIGNED")
     private Long idEvaluacion;
 
+    @Column(name = "Tipo", nullable = false)
     private String tipo;
+
+    @Column(name = "Puntaje")
     private Integer puntaje;
+
+    @Column(name = "Fecha")
     private LocalDate fecha;
-    @Column(length = 4000)
+
+    @Column(name = "RespuestasJson", length = 4000)
     private String respuestasJson;
-    @Column(length = 1000)
+
+    @Column(name = "Notas", length = 1000)
     private String notas;
 
     @ManyToOne
-    @JoinColumn(name = "ID_Paciente", nullable = false)
+    @JoinColumn(name = "ID_Paciente", nullable = false, columnDefinition = "INT UNSIGNED")
     private Persona paciente;
 
     public Long getIdEvaluacion() { return idEvaluacion; }

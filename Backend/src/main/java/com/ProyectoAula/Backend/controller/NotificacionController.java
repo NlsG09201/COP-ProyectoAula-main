@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,16 +22,25 @@ public class NotificacionController {
 
     @GetMapping
     public ResponseEntity<List<Map<String,Object>>> listar(@RequestParam(required=false) String to) {
-        RestTemplate rt = new RestTemplate();
-        String url = mailhogBase + "/api/v2/messages";
-        String json = rt.getForObject(url, String.class);
-        ObjectMapper om = new ObjectMapper();
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(3000);
+        factory.setReadTimeout(3000);
+        RestTemplate rt = new RestTemplate(factory);
+        
+        // MailHog v2: Limit results to 50 for performance
+        String url = mailhogBase + "/api/v2/messages?limit=50";
         List<Map<String,Object>> out = new ArrayList<>();
         try {
+            String json = rt.getForObject(url, String.class);
+            if (json == null) return ResponseEntity.ok(new ArrayList<>());
+            
+            ObjectMapper om = new ObjectMapper();
             JsonNode root = om.readTree(json);
             JsonNode items = root.path("items");
             if (items.isArray()) {
+                int count = 0;
                 for (JsonNode it : items) {
+                    if (count++ > 50) break;
                     String subj = "";
                     // MailHog v2: Content -> Headers -> Subject es un array de strings
                     JsonNode headers = it.path("Content").path("Headers");

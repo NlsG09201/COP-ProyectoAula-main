@@ -4,27 +4,28 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "testimonios")
+@Table(name = "TESTIMONIOS")
 public class Testimonio {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_Testimonio")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "Nombre", nullable = false)
     private String nombre;
 
-    @Column(nullable = false, length = 1000)
+    @Column(name = "Comentario", nullable = false, length = 1000)
     private String comentario;
 
-    @Column(nullable = false)
+    @Column(name = "Calificacion", nullable = false)
     private int calificacion; // 1-5 estrellas
 
-    @Column(nullable = false)
+    @Column(name = "FechaCreacion", nullable = false)
     private LocalDateTime fechaCreacion;
 
     @ManyToOne
-    @JoinColumn(name = "id_servicio")
+    @JoinColumn(name = "ID_Servicio")
     private Servicio servicio;
 
     // Constructor por defecto

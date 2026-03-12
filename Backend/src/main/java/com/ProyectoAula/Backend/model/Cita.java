@@ -10,31 +10,30 @@ public class Cita {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_Cita")
+    @Column(name = "ID_Cita", columnDefinition = "INT UNSIGNED")
     private Long idCita;
 
-    @Column(nullable = false)
+    @Column(name = "Fecha", nullable = false)
     private LocalDate fecha;
 
-    @Column(nullable = false)
+    @Column(name = "Hora", nullable = false)
     private LocalTime hora;
 
-    @Column(nullable = true)
+    @Column(name = "Direccion", nullable = true)
     private String direccion;
 
     @ManyToOne
-    // la columna en la base de datos SQL original se llama ID_P (paciente)
-    @JoinColumn(name = "ID_P", nullable = false)
+    @JoinColumn(name = "ID_Paciente", nullable = false, columnDefinition = "INT UNSIGNED")
     private Persona paciente;
 
     @ManyToOne
-    @JoinColumn(name = "ID_Medico", nullable = true)
+    @JoinColumn(name = "ID_Medico", nullable = true, columnDefinition = "INT UNSIGNED")
     private Persona medico;
 
     @ManyToOne
     // añadimos el servicio como llave foránea adicional; la tabla SQL creada por JPA
     // usa ID_Servicio, por lo que la consulta manual también deberá incluirla.
-    @JoinColumn(name = "ID_Servicio", nullable = false)
+    @JoinColumn(name = "ID_Servicio", nullable = false, columnDefinition = "INT UNSIGNED")
     private Servicio servicio;
 
     @Column(name = "Estado", nullable = true)
