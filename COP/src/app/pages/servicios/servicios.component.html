@@ -14,6 +14,18 @@
           <p class="lead text-muted mb-5 px-md-5">
             Ofrecemos soluciones integrales con tecnología de vanguardia y un equipo humano excepcional para tu salud dental y mental.
           </p>
+          
+          <!-- Search Bar -->
+          <div class="max-w-2xl mx-auto mb-5">
+            <div class="input-group input-group-lg shadow-sm rounded-pill overflow-hidden border-0 bg-white">
+              <span class="input-group-text bg-white border-0 ps-4 text-muted">
+                <i class="fas fa-search"></i>
+              </span>
+              <input id="serviceSearch" type="text" class="form-control border-0 py-3 shadow-none" placeholder="Buscar servicios (ej: Limpieza, Terapia, Ortodoncia)...">
+              <button class="btn btn-primary px-4 fw-bold" type="button">Buscar</button>
+            </div>
+          </div>
+
           <div class="d-flex justify-content-center gap-3">
             <button id="toggleBooking" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm d-flex align-items-center gap-3">
               <i class="fas fa-calendar-alt"></i>
@@ -32,8 +44,8 @@
   </section>
 
   <!-- Booking Section (Bootstrap Card + Tailwind Form) -->
-  <div id="bookingContainer" class="container mt-n5 position-relative z-2 transition-all duration-700 opacity-0 translate-y-5 pointer-events-none [&.open]:opacity-100 [&.open]:translate-y-0 [&.open]:pointer-events-auto">
-    <div class="card border-0 shadow-lg rounded-5 overflow-hidden max-w-4xl mx-auto">
+  <div id="bookingContainer" class="container mt-n5 position-relative z-2" [class.d-none]="!isBookingOpen()">
+    <div class="card border-0 shadow-lg rounded-5 overflow-hidden max-w-4xl mx-auto border-4 border-primary border-opacity-10 animate-fade-in">
       <div class="card-header bg-primary p-4 p-md-5 border-0 text-white d-flex align-items-center gap-4">
         <div class="d-flex align-items-center justify-content-center bg-white bg-opacity-20 rounded-4 w-16 h-16 backdrop-blur-md">
           <i class="fas fa-edit fa-2x"></i>
@@ -91,6 +103,23 @@
                   <option value="" disabled selected>Selecciona una opción...</option>
                 </select>
               </div>
+              <div id="precioContainer" class="col-12 d-none">
+                <div class="p-3 rounded-4 bg-primary bg-opacity-10 border border-primary border-opacity-20 d-flex justify-content-between align-items-center">
+                  <div>
+                    <span class="text-primary fw-bold small text-uppercase tracking-widest d-block mb-1">Tarifa del Servicio</span>
+                    <h4 id="servicioPrecio" class="h2 fw-black text-primary mb-0">$0.00</h4>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge bg-primary rounded-pill px-3 py-2 fw-bold shadow-sm">Pago en clínica</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Médico (Opcional)</label>
+                <select id="medicoSelect" class="form-select form-select-lg rounded-3 border-light bg-light">
+                  <option value="">Cualquier médico disponible</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -118,18 +147,8 @@
         <p class="lead text-muted">Tratamientos avanzados para una sonrisa radiante y saludable.</p>
       </div>
     </div>
-
     <div class="row g-4 service-category" id="odontologia-list">
-      <div class="col-md-4 col-lg-3">
-        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift transition-all animate-reveal">
-          <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3 w-12 h-12 mb-4">
-            <i class="fas fa-tooth fa-lg"></i>
-          </div>
-          <h3 class="h5 fw-black text-dark mb-3">Limpieza Dental</h3>
-          <p class="text-muted small mb-4">Eliminación de placa y sarro para prevenir enfermedades gingivales.</p>
-          <button class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold mt-auto">Agendar</button>
-        </div>
-      </div>
+      <!-- Se llenará dinámicamente -->
     </div>
   </section>
 
@@ -140,18 +159,8 @@
         <p class="lead text-muted">Acompañamiento profesional para tu bienestar emocional y mental.</p>
       </div>
     </div>
-
     <div class="row g-4 service-category justify-content-center px-4 pb-5" id="psicologia-list">
-      <div class="col-md-4 col-lg-3">
-        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift transition-all animate-reveal">
-          <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3 w-12 h-12 mb-4">
-            <i class="fas fa-brain fa-lg"></i>
-          </div>
-          <h3 class="h5 fw-black text-dark mb-3">Terapia Individual</h3>
-          <p class="text-muted small mb-4">Espacio seguro para explorar tus emociones y superar desafíos personales.</p>
-          <button class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold mt-auto">Agendar</button>
-        </div>
-      </div>
+      <!-- Se llenará dinámicamente -->
     </div>
   </section>
 </main>

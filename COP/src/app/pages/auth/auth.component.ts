@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './auth.component.html'
 })
 export class AuthComponent {
@@ -53,7 +53,11 @@ export class AuthComponent {
       if (response.ok) {
         const user = await response.json();
         // Guardar sesión básica (en un sistema real usaríamos tokens JWT seguros)
-        localStorage.setItem('client_user', JSON.stringify(user));
+        try {
+          localStorage.setItem('client_user', JSON.stringify(user));
+        } catch (err) {
+          console.error('Error saving to localStorage:', err);
+        }
         
         if (this.isLogin) {
           this.router.navigate(['/servicios']);

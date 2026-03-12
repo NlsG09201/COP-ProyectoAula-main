@@ -1,8 +1,10 @@
 import { Component, AfterViewInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-testimonios',
   standalone: true,
+  imports: [RouterLink],
   templateUrl: './testimonios.component.html'
 })
 export class TestimoniosComponent implements AfterViewInit {

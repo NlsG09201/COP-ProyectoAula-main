@@ -7,6 +7,7 @@ import { ChatbotComponent } from './components/chatbot/chatbot.component';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [RouterOutlet, NavbarComponent, FooterComponent, WhatsappFabComponent, ChatbotComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'

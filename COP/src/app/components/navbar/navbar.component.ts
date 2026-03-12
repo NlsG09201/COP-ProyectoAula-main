@@ -20,16 +20,28 @@ export class NavbarComponent {
   }
 
   isLoggedIn() {
-    return localStorage.getItem('client_user') !== null;
+    try {
+      return localStorage.getItem('client_user') !== null;
+    } catch {
+      return false;
+    }
   }
 
   getUserName() {
-    const user = localStorage.getItem('client_user');
-    return user ? JSON.parse(user).nombreCompleto : '';
+    try {
+      const user = localStorage.getItem('client_user');
+      if (!user) return '';
+      const parsed = JSON.parse(user);
+      return parsed.nombreCompleto || parsed.username || 'Paciente';
+    } catch {
+      return 'Paciente';
+    }
   }
 
   logout() {
-    localStorage.removeItem('client_user');
+    try {
+      localStorage.removeItem('client_user');
+    } catch {}
     this.router.navigate(['/auth']);
   }
 

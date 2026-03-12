@@ -1,11 +1,16 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-servicios',
   standalone: true,
+  imports: [RouterLink, CommonModule],
   templateUrl: './servicios.component.html'
 })
 export class ServiciosComponent implements AfterViewInit {
+  isBookingOpen = signal(false);
+
   async ngAfterViewInit() {
     const form = document.getElementById('citaForm') as HTMLFormElement | null;
     const toggleBtn = document.getElementById('toggleBooking') as HTMLButtonElement | null;
@@ -17,23 +22,192 @@ export class ServiciosComponent implements AfterViewInit {
     const horaInput = document.getElementById('citaHora') as HTMLInputElement | null;
     const msg = document.getElementById('citaMsg');
     const booking = document.querySelector('.booking-section') as HTMLElement | null;
+    const searchInput = document.getElementById('serviceSearch') as HTMLInputElement | null;
+    const precioContainer = document.getElementById('precioContainer') as HTMLElement | null;
+    const precioDisplay = document.getElementById('servicioPrecio') as HTMLElement | null;
     const nameToId: Record<string, number> = {};
     const typeToFirstId: Record<string, number> = {};
     let serviciosCache: any[] = [];
-    if (medicoSelect) medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>';
     const medicoAvail: Record<string, { inicio?: string; fin?: string; dias?: string }> = {};
     const tiposDisponibles = new Set<string>();
+    if (medicoSelect) medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>';
+
+    // Simulación de tarifas para los servicios
+    const getTarifa = (nombre: string) => {
+      const n = nombre.toLowerCase();
+      if (n.includes('limpieza')) return 85000;
+      if (n.includes('ortodoncia')) return 1500000;
+      if (n.includes('blanqueamiento')) return 350000;
+      if (n.includes('terapia') || n.includes('consulta')) return 120000;
+      if (n.includes('cirugía')) return 800000;
+      if (n.includes('implante')) return 2500000;
+      return 100000; // Tarifa base
+    };
+
+    const formatMoney = (amount: number) => {
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+        minimumFractionDigits: 0
+      }).format(amount);
+    };
+
+    const filterServices = () => {
+      const term = searchInput?.value.toLowerCase() || '';
+      renderServicios(categoriaSelect?.value || '', term);
+      renderCards(term);
+    };
+
+    const renderCards = (term: string = '') => {
+      const odontoList = document.getElementById('odontologia-list');
+      const psicoList = document.getElementById('psicologia-list');
+      
+      if (!odontoList || !psicoList) return;
+
+      // Servicios psicológicos predeterminados si el backend no devuelve suficientes
+      const defaultPsico = [
+        { idServicio: 101, nombre: 'Terapia Individual', descripcion: 'Espacio de acompañamiento personal para superar desafíos emocionales.', tipoServicio: { nombre: 'Psicologia' } },
+        { idServicio: 102, nombre: 'Terapia de Pareja', descripcion: 'Mejora la comunicación y resuelve conflictos en tu relación.', tipoServicio: { nombre: 'Psicologia' } },
+        { idServicio: 103, nombre: 'Psicología Infantil', descripcion: 'Atención especializada para el desarrollo emocional de los niños.', tipoServicio: { nombre: 'Psicologia' } },
+        { idServicio: 104, nombre: 'Evaluación Cognitiva', descripcion: 'Pruebas especializadas para medir funciones mentales superiores.', tipoServicio: { nombre: 'Psicologia' } },
+        { idServicio: 105, nombre: 'Terapia de Ansiedad', descripcion: 'Herramientas para gestionar el estrés y los ataques de pánico.', tipoServicio: { nombre: 'Psicologia' } }
+      ];
+
+      const allServices = [...serviciosCache];
+      // Si no hay servicios de psicología, agregar los predeterminados
+      if (!allServices.some(s => {
+        const cat = (s?.tipoServicio?.nombre || '').toLowerCase();
+        return cat === 'psicologia' || cat === 'psicología';
+      })) {
+        allServices.push(...defaultPsico);
+      }
+
+      const odontoItems = allServices.filter(s => {
+        const cat = s?.tipoServicio?.nombre || '';
+        const name = (s.nombre || '').toLowerCase();
+        const matchesCat = cat === 'Odontología' || cat.includes('Odonto');
+        return matchesCat && name.includes(term);
+      });
+
+      const psicoItems = allServices.filter(s => {
+        const cat = s?.tipoServicio?.nombre || '';
+        const name = (s.nombre || '').toLowerCase();
+        const matchesCat = cat.toLowerCase() === 'psicologia' || cat.toLowerCase() === 'psicología' || cat.toLowerCase().includes('psico');
+        return matchesCat && name.includes(term);
+      });
+
+      const createCard = (s: any) => {
+        const tarifa = getTarifa(s.nombre);
+        const icon = (s.tipoServicio?.nombre || '').toLowerCase().includes('odonto') ? 'fa-tooth' : 'fa-brain';
+        return `
+          <div class="col-md-4 col-lg-3">
+            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift transition-all animate-reveal">
+              <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3 w-12 h-12 mb-4">
+                <i class="fas ${icon} fa-lg"></i>
+              </div>
+              <h3 class="h5 fw-black text-dark mb-2">${s.nombre}</h3>
+              <p class="text-primary fw-bold mb-3">${formatMoney(tarifa)}</p>
+              <p class="text-muted small mb-4">${s.descripcion || 'Servicio profesional especializado.'}</p>
+              <button class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold mt-auto btn-agendar-card" data-id="${s.idServicio}" data-name="${s.nombre}" data-cat="${s.tipoServicio?.nombre}">
+                Agendar
+              </button>
+            </div>
+          </div>
+        `;
+      };
+
+      odontoList.innerHTML = odontoItems.map(createCard).join('') || '<div class="col-12 text-center text-muted">No se encontraron servicios de odontología.</div>';
+      psicoList.innerHTML = psicoItems.map(createCard).join('') || '<div class="col-12 text-center text-muted">No se encontraron servicios de psicología.</div>';
+
+      // Re-asignar eventos a los nuevos botones
+      document.querySelectorAll('.btn-agendar-card').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const id = btn.getAttribute('data-id');
+          const cat = btn.getAttribute('data-cat');
+          
+          if (bookingContainer) {
+            // Verificar login
+            if (localStorage.getItem('client_user') === null) {
+              alert('Debes iniciar sesión para agendar una cita.');
+              window.location.href = '/auth';
+              return;
+            }
+
+            this.isBookingOpen.set(true);
+            if (categoriaSelect) {
+              const isOdonto = (cat === 'Odontología' || cat?.toLowerCase().includes('odonto'));
+              categoriaSelect.value = isOdonto ? 'Odontología' : 'Psicologia';
+              renderServicios(categoriaSelect.value);
+            }
+            if (servicioSelect && id) {
+              setTimeout(() => {
+                servicioSelect.value = id;
+                updatePrice(id);
+                fetchMedicosPorServicio(id);
+              }, 100);
+            }
+            // Asegurar que el contenedor sea visible y hacer scroll
+            setTimeout(() => {
+              window.scrollTo({
+                top: bookingContainer.offsetTop - 100,
+                behavior: 'smooth'
+              });
+            }, 50);
+          }
+        });
+      });
+    };
+
+    if (searchInput) {
+      searchInput.addEventListener('input', filterServices);
+      searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') filterServices();
+      });
+    }
+
+    const updatePrice = (id: string) => {
+      if (!precioContainer || !precioDisplay) return;
+      const servicio = serviciosCache.find(s => String(s.idServicio) === id);
+      if (servicio) {
+        const tarifa = getTarifa(servicio.nombre || '');
+        precioDisplay.textContent = formatMoney(tarifa);
+        precioContainer.classList.remove('d-none');
+      } else {
+        precioContainer.classList.add('d-none');
+      }
+    };
+
+    if (servicioSelect) {
+      servicioSelect.addEventListener('change', () => {
+        const id = servicioSelect.value;
+        if (id) {
+          fetchMedicosPorServicio(id);
+          updatePrice(id);
+        } else {
+          if (medicoSelect) medicoSelect.innerHTML = '<option value="">Cualquier médico disponible</option>';
+          if (precioContainer) precioContainer.classList.add('d-none');
+        }
+      });
+    }
+
     if (bookingContainer) bookingContainer.classList.remove('open');
     if (toggleBtn && bookingContainer) {
       toggleBtn.addEventListener('click', () => {
-        bookingContainer.classList.add('open');
-        bookingContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Verificar login antes de abrir formulario
+        if (localStorage.getItem('client_user') === null) {
+          alert('Debes iniciar sesión para agendar una cita.');
+          window.location.href = '/auth';
+          return;
+        }
+        this.isBookingOpen.set(true);
+        setTimeout(() => bookingContainer.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
       });
     }
     // Botones de las tarjetas para preseleccionar servicio
-    document.querySelectorAll('.service-category .btn-primary').forEach(btn => {
+    document.querySelectorAll('.service-category .btn-outline-primary').forEach(btn => {
       btn.addEventListener('click', () => {
-        const card = btn.closest('.service-card') as HTMLElement | null;
+        const card = btn.closest('.card') as HTMLElement | null;
         const serviceName = card?.querySelector('h3')?.textContent?.trim() || '';
         const category = btn.closest('.service-category')?.id === 'odontologia' ? 'Odontología' : 'Psicologia';
         
@@ -53,6 +227,7 @@ export class ServiciosComponent implements AfterViewInit {
               if (id) {
                 servicioSelect.value = String(id);
                 fetchMedicosPorServicio(String(id));
+                updatePrice(String(id));
               }
             }
           }, 100);
@@ -62,33 +237,51 @@ export class ServiciosComponent implements AfterViewInit {
       });
     });
 
-    const renderServicios = (categoria: string) => {
+    const renderServicios = (categoria: string, term: string = '') => {
       if (!servicioSelect) return;
-      const odontoGroup = [
-        'Odontología General',
-        'Ortodoncia',
-        'Estética Dental',
-        'Implantes Dentales'
+      
+      const defaultPsico = [
+        { idServicio: 101, nombre: 'Terapia Individual', descripcion: 'Espacio de acompañamiento personal para superar desafíos emocionales.', tipoServicio: { nombre: 'Psicologia' } },
+        { idServicio: 102, nombre: 'Terapia de Pareja', descripcion: 'Mejora la comunicación y resuelve conflictos en tu relación.', tipoServicio: { nombre: 'Psicologia' } },
+        { idServicio: 103, nombre: 'Psicología Infantil', descripcion: 'Atención especializada para el desarrollo emocional de los niños.', tipoServicio: { nombre: 'Psicologia' } },
+        { idServicio: 104, nombre: 'Evaluación Cognitiva', descripcion: 'Pruebas especializadas para medir funciones mentales superiores.', tipoServicio: { nombre: 'Psicologia' } },
+        { idServicio: 105, nombre: 'Terapia de Ansiedad', descripcion: 'Herramientas para gestionar el estrés y los ataques de pánico.', tipoServicio: { nombre: 'Psicologia' } }
       ];
-      const permitidos = (cat: string) => {
-        if (!cat) return null; // null => todos
-        if (cat === 'Odontología') return new Set(odontoGroup);
-        return new Set([cat]);
-      };
-      const allowed = permitidos(categoria);
-      const list = serviciosCache
-        .filter(s => !allowed || allowed.has(String(s?.tipoServicio?.nombre || '')))
+
+      const allServices = [...serviciosCache];
+      if (!allServices.some(s => (s?.tipoServicio?.nombre || '').toLowerCase().includes('psico'))) {
+        allServices.push(...defaultPsico);
+      }
+
+      const list = allServices
+        .filter(s => {
+          const sCat = s?.tipoServicio?.nombre || '';
+          const sName = (s.nombre || '').toLowerCase();
+          
+          let matchesCat = true;
+          if (categoria) {
+            if (categoria === 'Odontología') matchesCat = sCat === 'Odontología' || sCat.includes('Odonto');
+            else matchesCat = sCat.toLowerCase().includes('psico');
+          }
+          
+          const matchesTerm = sName.includes(term.toLowerCase());
+          
+          return matchesCat && matchesTerm;
+        })
         .slice()
         .sort((a, b) => {
           const an = (a.nombre || '').toString().toLowerCase();
           const bn = (b.nombre || '').toString().toLowerCase();
           return an.localeCompare(bn);
         });
+      
       const current = servicioSelect.value || '';
       servicioSelect.innerHTML = '<option value="">Selecciona servicio</option>' + list.map(s => {
         const nombre = (s.nombre || s.idServicio + '').toString();
-        return `<option value="${s.idServicio}">${nombre}</option>`;
+        const tarifa = formatMoney(getTarifa(nombre));
+        return `<option value="${s.idServicio}">${nombre} - ${tarifa}</option>`;
       }).join('');
+      
       if (current && Array.from(servicioSelect.options).some(o => o.value === current)) {
         servicioSelect.value = current;
       }
@@ -111,25 +304,14 @@ export class ServiciosComponent implements AfterViewInit {
             });
           if (categoriaSelect) {
             const actual = categoriaSelect.value || '';
-            const baseOpts = ['<option value="">Todos</option>', '<option value="Odontología">Odontología</option>'];
-            const typeOpts = Array.from(tiposDisponibles).sort().map(t => `<option value="${t}">${t}</option>`);
-            const opts = [...baseOpts, ...typeOpts];
-            categoriaSelect.innerHTML = opts.join('');
-            const hasActual = opts.some(o => o.includes(`value="${actual}"`));
-            categoriaSelect.value = hasActual ? actual : '';
+            const baseOpts = ['<option value="">Todos</option>', '<option value="Odontología">Odontología</option>', '<option value="Psicologia">Psicología</option>'];
+            categoriaSelect.innerHTML = baseOpts.join('');
+            categoriaSelect.value = actual;
           }
           renderServicios(categoriaSelect?.value || '');
+          renderCards();
         }
-          document.querySelectorAll('.service-detail-card .btn-primary').forEach(btn => {
-            btn.addEventListener('click', () => {
-              const card = btn.closest('.service-detail-card');
-              const name = card?.querySelector('h3')?.textContent?.trim() || '';
-              const id = typeToFirstId[name] || nameToId[name.toLowerCase()];
-              if (servicioSelect && id) servicioSelect.value = String(id);
-              if (servicioSelect && id) fetchMedicosPorServicio(String(id));
-              if (booking) { booking.classList.remove('hidden'); booking.scrollIntoView({ behavior: 'smooth' }); }
-            });
-          });
+          // Quitar este bloque duplicado
           return;
         } catch {
           attempt++;
@@ -193,6 +375,25 @@ export class ServiciosComponent implements AfterViewInit {
     if (medicoSelect) medicoSelect.addEventListener('change', applyMedicoRules);
     if (fechaInput) fechaInput.addEventListener('change', applyMedicoRules);
     if (form) {
+      // Auto-completar datos si el usuario está logueado
+      const fillUserData = () => {
+        const raw = localStorage.getItem('client_user');
+        if (raw) {
+          try {
+            const user = JSON.parse(raw);
+            const nameInput = document.getElementById('pacienteNombre') as HTMLInputElement;
+            const emailInput = document.getElementById('pacienteEmail') as HTMLInputElement;
+            const docInput = document.getElementById('pacienteDoc') as HTMLInputElement;
+            
+            if (nameInput) nameInput.value = user.nombreCompleto || '';
+            if (emailInput) emailInput.value = user.email || '';
+            if (docInput) docInput.value = user.docIden || '';
+          } catch {}
+        }
+      };
+      
+      fillUserData();
+
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nombre = (document.getElementById('pacienteNombre') as HTMLInputElement)?.value || '';
@@ -248,11 +449,38 @@ export class ServiciosComponent implements AfterViewInit {
           });
           const cita = await citaRes.json();
           if (citaRes.ok) {
-            if (msg) msg.textContent = 'Cita registrada. Un médico confirmará por correo.';
+            // Simular proceso de cobro antes de confirmar
+            const servicio = serviciosCache.find(s => String(s.idServicio) === servicioId);
+            const tarifa = getTarifa(servicio?.nombre || '');
+            
+            if (msg) {
+              msg.classList.remove('d-none', 'alert-danger');
+              msg.classList.add('alert-success');
+              msg.innerHTML = `
+                <div class="d-flex flex-column gap-2">
+                  <div class="d-flex align-items-center justify-content-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Cita pre-registrada con éxito.</span>
+                  </div>
+                  <div class="small bg-white bg-opacity-25 p-2 rounded">
+                    <strong>Total a pagar en clínica:</strong> ${formatMoney(tarifa)}
+                  </div>
+                  <div class="x-small">Un médico confirmará la disponibilidad pronto.</div>
+                </div>
+              `;
+            }
             form.reset();
-            if (bookingContainer) bookingContainer.classList.remove('open');
+            if (precioContainer) precioContainer.classList.add('d-none');
+            setTimeout(() => {
+              this.isBookingOpen.set(false);
+              if (msg) msg.classList.add('d-none');
+            }, 5000);
           } else {
-            if (msg) msg.textContent = (cita?.message || 'Error registrando cita');
+            if (msg) {
+              msg.classList.remove('d-none', 'alert-success');
+              msg.classList.add('alert-danger');
+              msg.textContent = (cita?.message || 'Error registrando cita');
+            }
           }
         } catch {
           if (msg) msg.textContent = 'Backend no disponible, intenta nuevamente en unos segundos';

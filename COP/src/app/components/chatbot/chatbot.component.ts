@@ -60,16 +60,17 @@ export class ChatbotComponent implements AfterViewInit {
       messages.appendChild(bot);
       messages.scrollTop = messages.scrollHeight;
       try {
-        const rawUser = localStorage.getItem('client_user');
         let clienteUsername: string | null = null;
-        if (rawUser) {
-          try {
+        try {
+          const rawUser = localStorage.getItem('client_user');
+          if (rawUser) {
             const parsed = JSON.parse(rawUser);
             clienteUsername = parsed?.username ?? null;
-          } catch {
-            clienteUsername = null;
           }
+        } catch (e) {
+          console.warn('Error reading client_user from localStorage', e);
         }
+        
         const resp = await fetch('/api/ai/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

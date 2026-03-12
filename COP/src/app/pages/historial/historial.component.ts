@@ -30,7 +30,15 @@ export class HistorialComponent {
   cobros: RegistroCobro[] = [];
 
   async ngOnInit() {
-    const raw = localStorage.getItem('client_user');
+    let raw: string | null = null;
+    try {
+      raw = localStorage.getItem('client_user');
+    } catch {
+      this.error = 'No se puede acceder al almacenamiento local.';
+      this.loading = false;
+      return;
+    }
+    
     if (!raw) {
       this.error = 'Debes iniciar sesión para ver tu historial.';
       this.loading = false;
