@@ -41,50 +41,31 @@ public class DataInitializer implements CommandLineRunner {
             initializeDientes();
         }
         
-        // Limpiar médicos existentes para asegurar un estado limpio para las pruebas
-        personaRepository.deleteAllByRol(Rol.MEDICO);
-        
-        // Crear un usuario médico/admin por defecto si no existe ninguno
-        // (Ahora se creará siempre después de la limpieza)
-        Persona m1 = new Persona();
-        m1.setRol(Rol.MEDICO);
-        m1.setNombreCompleto("Dr. Juan Pérez");
-        m1.setEmail("juan.perez@cop.local");
-        m1.setTelefono("3111234567");
-        m1.setDireccion("Clínica COP Sede Principal");
-        m1.setUsername("juanperez");
-        m1.setPasswordHash(passwordEncoder.encode("perez123"));
-        personaRepository.save(m1);
-        System.out.println("✅ Médico creado: user=juanperez pass=perez123");
-
-        Persona m2 = new Persona();
-        m2.setRol(Rol.MEDICO);
-        m2.setNombreCompleto("Dra. Ana López");
-        m2.setEmail("ana.lopez@cop.local");
-        m2.setTelefono("3201234567");
-        m2.setDireccion("Clínica COP Sede Norte");
-        m2.setUsername("analopez");
-        m2.setPasswordHash(passwordEncoder.encode("lopez123"));
-        personaRepository.save(m2);
-        System.out.println("✅ Médica creada: user=analopez pass=lopez123");
-
-        Persona admin = new Persona();
-        admin.setRol(Rol.MEDICO); // Asignamos rol MEDICO para que pueda loguearse en el dashboard
-        admin.setNombreCompleto("Administrador Sistema");
-        admin.setEmail("admin@cop.local");
-        admin.setTelefono("3000000000");
-        admin.setDireccion("Clínica COP Sede Principal");
-        admin.setUsername("admin");
-        admin.setPasswordHash(passwordEncoder.encode("admin123"));
-        personaRepository.save(admin);
-        System.out.println("✅ Usuario admin creado: user=admin pass=admin123");
+        // Crear usuarios por defecto solo si no existen
+        createDoctorIfNotExists("juanperez", "Dr. Juan Pérez", "juan.perez@cop.local", "3111234567", "perez123");
+        createDoctorIfNotExists("analopez", "Dra. Ana López", "ana.lopez@cop.local", "3201234567", "lopez123");
+        createDoctorIfNotExists("admin", "Administrador Sistema", "admin@cop.local", "3000000000", "admin123");
 
         seedServiciosOdonto();
         seedServiciosPsico();
         seedProfesionalesPsico();
-        
-        // Se han eliminado las inyecciones de datos de prueba (pacientes, testimonios, médicos extra)
-        // para mantener la base de datos limpia según requerimiento.
+    }
+
+    private void createDoctorIfNotExists(String username, String nombre, String email, String tel, String pass) {
+        if (personaRepository.findByUsername(username).isEmpty()) {
+            Persona p = new Persona();
+            p.setRol(Rol.MEDICO);
+            p.setNombreCompleto(nombre);
+            p.setEmail(email);
+            p.setTelefono(tel);
+            p.setDireccion("Clínica COP Sede Principal");
+            p.setUsername(username);
+            p.setPasswordHash(passwordEncoder.encode(pass));
+            personaRepository.save(p);
+            System.out.println("✅ Usuario creado: user=" + username + " pass=" + pass);
+        } else {
+            System.out.println("ℹ️ El usuario " + username + " ya existe.");
+        }
     }
 
     private void initializeDientes() {
@@ -202,6 +183,10 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void seedProfesionalesPsico() {
+        if (personaRepository.findByUsername("meivi").isPresent()) {
+            System.out.println("ℹ️ La profesional meivi ya existe.");
+            return;
+        }
         Persona psicologa = new Persona();
         psicologa.setRol(Rol.MEDICO);
         psicologa.setNombreCompleto("Dra. Meivi Gonzales");
@@ -213,8 +198,7 @@ public class DataInitializer implements CommandLineRunner {
         psicologa.setHoraInicioDisponibilidad(java.time.LocalTime.of(9, 0));
         psicologa.setHoraFinDisponibilidad(java.time.LocalTime.of(17, 0));
         psicologa.setDiasDisponibles("MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY");
-        personaRepository.save(psicologa);
-
+        
         Servicio s1 = servicioRepo.findByNombre("Terapia Individual").orElse(null);
         Servicio s2 = servicioRepo.findByNombre("Evaluación Psicológica").orElse(null);
         Servicio s3 = servicioRepo.findByNombre("Terapia Infantil").orElse(null);
@@ -225,6 +209,8 @@ public class DataInitializer implements CommandLineRunner {
         if (s3 != null) lista.add(s3);
         if (s4 != null) lista.add(s4);
         psicologa.setServicios(lista);
+        
         personaRepository.save(psicologa);
+        System.out.println("✅ Profesional psicología creada: meivi");
     }
 }
