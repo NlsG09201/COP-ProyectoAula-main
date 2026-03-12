@@ -1,7 +1,7 @@
 # ProyectoAula
 
 Proyecto full-stack para gestión odontológica con:
-- Frontend Angular (`Cop-Frontend-Angular` y `DashBoard-COP`)
+- Frontend Angular (`COP` y `DashBoard-COP`)
 - Backend Spring Boot (`Backend`)
 - Worker Spring Boot para tareas programadas (`Worker`)
 - Base de datos MySQL y MongoDB
@@ -13,7 +13,7 @@ Proyecto full-stack para gestión odontológica con:
 
 ## Estructura
 - `Backend/`: API REST (Java 17, Spring Boot)
-- `Cop-Frontend-Angular/`: UI web pública (Angular 16+, Node 20)
+- `COP/`: UI web pública (Angular 16+, Node 20)
 - `DashBoard-COP/`: Panel de administración (Angular 16+)
 - `Worker/`: Recordatorios de citas (scheduler + correo)
 - `Backend.sql`: Script inicial de MySQL
@@ -52,7 +52,7 @@ Notas:
 
 ## Backend (API)
 Arranque local:
-```
+```bash
 cd Backend
 ./mvnw clean package -DskipTests
 java -jar target/Backend-0.0.1-SNAPSHOT.jar
@@ -74,8 +74,8 @@ CORS: controladores con `@CrossOrigin(origins = "*")` para facilitar desarrollo.
 
 ## Frontend (Angular)
 Desarrollo local con proxy a backend:
-```
-cd Cop-Frontend-Angular
+```bash
+cd COP
 npm install
 ng serve --proxy-config proxy.conf.json
 ```
@@ -108,19 +108,20 @@ socialMedia: {
   twitter: 'https://twitter.com/tuclínica',
   whatsapp: 'https://wa.me/tucélular'
 }
+```
 
 Docker (producción estática con Nginx):
-```
-cd Cop-Frontend-Angular
+```bash
+cd COP
 docker build -t cop-frontend:latest .
-docker run -d -p 80:80 --name cop-frontend cop-frontend:latest
+docker run -d -p 8086:80 --name cop-frontend cop-frontend:latest
 ```
 
 ## Worker (Recordatorios)
 Función: consulta `GET /api/citas` y envía/simula correos para las citas del día siguiente.
 
 Configuración en `Worker/src/main/resources/application.properties`:
-```
+```properties
 worker.backend.base-url=http://localhost:8080/api
 worker.reminders.enabled=true
 worker.reminders.cron=0 0 7 * * *
@@ -135,7 +136,7 @@ spring.mail.from=
 ```
 
 Arranque:
-```
+```bash
 cd Worker
 ./mvnw clean package -DskipTests
 java -jar target/Worker-0.0.1-SNAPSHOT.jar
@@ -159,19 +160,22 @@ docker-compose logs -f
 docker-compose down
 ```
 
-Servicios incluidos:
-- MySQL (puerto 3306)
-- MongoDB (puerto 27017)
-- Backend Spring Boot (puerto 8080)
-- Frontend público (puerto 80)
-- Panel de administración (puerto 4200)
-- Worker para recordatorios
+Servicios incluidos y puertos expuestos:
+- **MySQL**: Puerto `3306`
+- **MongoDB**: Puerto `27018` (interno 27017)
+- **RabbitMQ**: Puerto `5672` (AMQP) y `15672` (Management UI)
+- **MailHog**: Puerto `1025` (SMTP) y `8025` (Web UI)
+- **Backend (MySQL)**: Puerto `8080`
+- **Backend (MongoDB)**: Puerto `8081`
+- **Frontend Público (COP)**: Puerto `8086`
+- **Dashboard Admin**: Puerto `8085`
+- **Worker**: Servicio interno para recordatorios
 
 Las credenciales y configuraciones están definidas en el `docker-compose.yml`.
 
 ### Volúmenes Persistentes
 - `mysql_data`: Datos de MySQL
-- `mongodb_data`: Datos de MongoDB
+- `mongo_data`: Datos de MongoDB
 
 ### Redes
 - `cop_net`: Red interna para comunicación entre servicios
