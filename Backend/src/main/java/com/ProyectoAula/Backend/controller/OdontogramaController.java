@@ -6,6 +6,7 @@ import com.ProyectoAula.Backend.repository.OdontogramaRepository;
 import com.ProyectoAula.Backend.repository.PersonaRepository;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/odontogramas")
@@ -27,7 +28,7 @@ public class OdontogramaController {
 
     @GetMapping("/{id}")
     public Odontograma obtener(@PathVariable Long id) {
-        return repo.findById(id).orElseThrow(() -> new RuntimeException("Odontograma no encontrado"));
+        return repo.findById(Objects.requireNonNull(id, "ID es obligatorio")).orElseThrow(() -> new RuntimeException("Odontograma no encontrado"));
     }
 
     @GetMapping("/paciente/{idPersona}")
@@ -35,14 +36,16 @@ public class OdontogramaController {
         return repo.findByPaciente_IdPersonaOrderByFechaRegistroDesc(idPersona);
     }
 
-
     @PostMapping
     public Odontograma crear(@RequestBody Odontograma odontograma) {
         if (odontograma.getPaciente() == null || odontograma.getPaciente().getIdPersona() == null) {
             throw new RuntimeException("Paciente es obligatorio");
         }
-        Persona p = personaRepo.findById(odontograma.getPaciente().getIdPersona())
+        Long idPaciente = Objects.requireNonNull(odontograma.getPaciente().getIdPersona(),
+                "Paciente es obligatorio");
+        Persona p = personaRepo.findById(idPaciente)
                 .orElseThrow(() -> new RuntimeException("Paciente no encontrado"));
+        odontograma.setPaciente(p);
         odontograma.setPaciente(p);
 
         // Asegurar que cada detalle tenga la referencia al odontograma (necesario para JPA bidirectional)
@@ -57,7 +60,7 @@ public class OdontogramaController {
 
     @PutMapping("/{id}")
     public Odontograma actualizar(@PathVariable Long id, @RequestBody Odontograma datos) {
-        Odontograma o = repo.findById(id).orElseThrow(() -> new RuntimeException("Odontograma no encontrado"));
+        Odontograma o = repo.findById(Objects.requireNonNull(id, "ID es obligatorio")).orElseThrow(() -> new RuntimeException("Odontograma no encontrado"));
         o.setFechaRegistro(datos.getFechaRegistro());
         o.setObservacionesGenerales(datos.getObservacionesGenerales());
         
@@ -75,6 +78,6 @@ public class OdontogramaController {
 
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
-        repo.deleteById(id);
+        repo.deleteById(Objects.requireNonNull(id, "ID es obligatorio"));
     }
 }

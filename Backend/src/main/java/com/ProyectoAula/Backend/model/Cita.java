@@ -23,7 +23,8 @@ public class Cita {
     private String direccion;
 
     @ManyToOne
-    @JoinColumn(name = "ID_Paciente", nullable = false)
+    // la columna en la base de datos SQL original se llama ID_P (paciente)
+    @JoinColumn(name = "ID_P", nullable = false)
     private Persona paciente;
 
     @ManyToOne
@@ -31,6 +32,8 @@ public class Cita {
     private Persona medico;
 
     @ManyToOne
+    // añadimos el servicio como llave foránea adicional; la tabla SQL creada por JPA
+    // usa ID_Servicio, por lo que la consulta manual también deberá incluirla.
     @JoinColumn(name = "ID_Servicio", nullable = false)
     private Servicio servicio;
 

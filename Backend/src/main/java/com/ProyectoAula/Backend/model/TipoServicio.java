@@ -3,12 +3,15 @@ package com.ProyectoAula.Backend.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "TIPO_SERVICIO")
 public class TipoServicio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_TipoServicio")
     private Long idTipoServicio;
 
+    @Column(name = "Nombre")
     private String nombre;
 
     public Long getIdTipoServicio() { return idTipoServicio; }

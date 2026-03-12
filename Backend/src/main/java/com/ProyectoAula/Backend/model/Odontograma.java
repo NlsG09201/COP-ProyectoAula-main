@@ -19,7 +19,8 @@ public class Odontograma {
     private String observacionesGenerales;
 
     @ManyToOne
-    @JoinColumn(name = "ID_Paciente", nullable = false)
+    // tabla SQL usa "ID_P" para referirse al paciente
+    @JoinColumn(name = "ID_P", nullable = false)
     private Persona paciente;
 
     @OneToMany(mappedBy = "odontograma", cascade = CascadeType.ALL, orphanRemoval = true)

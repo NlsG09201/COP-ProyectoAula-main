@@ -10,6 +10,7 @@ com\ProyectoAula\Backend\controller\AuthController.class
 com\ProyectoAula\Backend\event\EvaluacionEvent.class
 com\ProyectoAula\Backend\model\Diente.class
 com\ProyectoAula\Backend\model\Odontograma.class
+com\ProyectoAula\Backend\model\Contacto.class
 com\ProyectoAula\Backend\model\TipoServicio.class
 com\ProyectoAula\Backend\model\Persona$Rol.class
 com\ProyectoAula\Backend\repository\CitaRepository.class
@@ -46,6 +47,7 @@ com\ProyectoAula\Backend\service\DetalleOdontogramaService.class
 com\ProyectoAula\Backend\controller\MedicoController.class
 com\ProyectoAula\Backend\model\Persona.class
 com\ProyectoAula\Backend\config\DataInitializer.class
+com\ProyectoAula\Backend\controller\ContactoController.class
 com\ProyectoAula\Backend\config\SecurityConfig.class
 com\ProyectoAula\Backend\config\ActiveMqConfig.class
 com\ProyectoAula\Backend\mongo\repository\DienteMongoRepository.class
@@ -59,6 +61,7 @@ com\ProyectoAula\Backend\model\RegistroCobro.class
 com\ProyectoAula\Backend\mongo\model\PersonaDoc$Rol.class
 com\ProyectoAula\Backend\service\DienteService.class
 com\ProyectoAula\Backend\repository\ConfirmationTokenRepository.class
+com\ProyectoAula\Backend\repository\ContactoRepository.class
 com\ProyectoAula\Backend\BackendApplication.class
 com\ProyectoAula\Backend\controller\DetalleOdontogramaController.class
 com\ProyectoAula\Backend\controller\NotificacionController.class

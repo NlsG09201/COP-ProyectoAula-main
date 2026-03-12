@@ -8,19 +8,26 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+@Table(name = "PERSONAS")
 public class Persona {
 
     public enum Rol { MEDICO, PACIENTE, CLIENTE }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // el script SQL original usaba ID_P tanto para paciente como para médico
+    @Column(name = "ID_P")
     private Long idPersona;
 
-    @Column(unique = true)
+    @Column(name = "Doc_Iden", unique = true)
     private String docIden;
+    @Column(name = "NombreCompleto")
     private String nombreCompleto;
+    @Column(name = "Telefono")
     private String telefono;
+    @Column(name = "Email")
     private String email;
+    @Column(name = "Direccion")
     private String direccion;
 
     private String username;

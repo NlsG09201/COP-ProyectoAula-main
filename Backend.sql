@@ -10,28 +10,39 @@ CREATE DATABASE IF NOT EXISTS `COP_db`
   COLLATE utf8mb4_unicode_ci;
 USE `COP_db`;
 
--- ============================================================
--- TABLA: PACIENTES
--- ============================================================
-CREATE TABLE IF NOT EXISTS `PACIENTES` (
+
+-- En la implementación actual todas las personas (pacientes, médicos, clientes)
+-- comparten una única tabla `PERSONAS`. La columna `rol` distingue el tipo.
+CREATE TABLE IF NOT EXISTS `PERSONAS` (
   `ID_P` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `Doc_Iden` VARCHAR(50) NOT NULL UNIQUE,
   `NombreCompleto` VARCHAR(150) NOT NULL,
   `Telefono` VARCHAR(30),
   `Email` VARCHAR(100),
-  `Direccion` VARCHAR(255)
+  `Direccion` VARCHAR(255),
+  `username` VARCHAR(50) UNIQUE,
+  `password_hash` VARCHAR(255),
+  `rol` ENUM('MEDICO','PACIENTE','CLIENTE') NOT NULL DEFAULT 'PACIENTE',
+  `certificado` VARCHAR(200),
+  `hora_inicio_disponibilidad` TIME,
+  `hora_fin_disponibilidad` TIME,
+  `dias_disponibles` VARCHAR(100)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
--- TABLA: MEDICOS
+-- TABLA: MEDICOS (obsoleta)
 -- ============================================================
-CREATE TABLE IF NOT EXISTS `MEDICOS` (
-  `ID_Medico` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  `NombreCompleto` VARCHAR(150) NOT NULL,
-  `Telefono` VARCHAR(30),
-  `Email` VARCHAR(100),
-  `Certificado` VARCHAR(200)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- La implementación actual unifica pacientes y médicos en PERSONAS,
+-- por lo que esta tabla puede omitirse. Si desea conservarla, asegúrese
+-- de sincronizarla con la tabla PERSONAS o de replicar los datos.
+--
+-- CREATE TABLE IF NOT EXISTS `MEDICOS` (
+--   `ID_Medico` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+--   `NombreCompleto` VARCHAR(150) NOT NULL,
+--   `Telefono` VARCHAR(30),
+--   `Email` VARCHAR(100),
+--   `Certificado` VARCHAR(200)
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
 -- TABLA: SERVICIOS
@@ -39,6 +50,12 @@ CREATE TABLE IF NOT EXISTS `MEDICOS` (
 CREATE TABLE IF NOT EXISTS `SERVICIOS` (
   `ID_Servicio` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `TipoServicio` VARCHAR(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- puede existir una tabla de tipo de servicio si el backend la utiliza
+CREATE TABLE IF NOT EXISTS `TIPO_SERVICIO` (
+  `ID_TipoServicio` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `Nombre` VARCHAR(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
@@ -51,23 +68,27 @@ CREATE TABLE IF NOT EXISTS `CITAS` (
   `Direccion` VARCHAR(255),
   `ID_P` INT UNSIGNED NOT NULL,
   `ID_Medico` INT UNSIGNED NOT NULL,
+  `ID_Servicio` INT UNSIGNED NOT NULL,
   CONSTRAINT `FK_CITA_PACIENTE`
-    FOREIGN KEY (`ID_P`) REFERENCES `PACIENTES` (`ID_P`)
+    FOREIGN KEY (`ID_P`) REFERENCES `PERSONAS` (`ID_P`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_CITA_MEDICO`
-    FOREIGN KEY (`ID_Medico`) REFERENCES `MEDICOS` (`ID_Medico`)
+    FOREIGN KEY (`ID_Medico`) REFERENCES `PERSONAS` (`ID_P`)
     ON DELETE CASCADE ON UPDATE CASCADE
+  ,CONSTRAINT `FK_CITA_SERVICIO`
+    FOREIGN KEY (`ID_Servicio`) REFERENCES `SERVICIOS` (`ID_Servicio`)
+    ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
 -- TABLA: MEDICO_SERVICIO (Relación N:M entre MEDICOS y SERVICIOS)
 -- ============================================================
 CREATE TABLE IF NOT EXISTS `MEDICO_SERVICIO` (
-  `ID_Medico` INT UNSIGNED NOT NULL,
+  `ID_Persona` INT UNSIGNED NOT NULL,
   `ID_Servicio` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`ID_Medico`,`ID_Servicio`),
-  CONSTRAINT `FK_MS_MEDICO`
-    FOREIGN KEY (`ID_Medico`) REFERENCES `MEDICOS` (`ID_Medico`)
+  PRIMARY KEY (`ID_Persona`,`ID_Servicio`),
+  CONSTRAINT `FK_MS_PERSONA`
+    FOREIGN KEY (`ID_Persona`) REFERENCES `PERSONAS` (`ID_P`)
     ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_MS_SERVICIO`
     FOREIGN KEY (`ID_Servicio`) REFERENCES `SERVICIOS` (`ID_Servicio`)

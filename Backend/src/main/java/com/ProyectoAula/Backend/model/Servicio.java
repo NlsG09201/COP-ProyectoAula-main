@@ -5,13 +5,15 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table(name = "SERVICIOS")
 public class Servicio {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_Servicio")
     private Long idServicio;
 
-    @Column(nullable = true)
+    @Column(name = "TipoServicio", nullable = true)
     private String nombre;
 
     @ManyToOne

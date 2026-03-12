@@ -40,6 +40,9 @@ public class PacienteController {
 
     @GetMapping("/{id}")
     public Persona obtener(@PathVariable Long id) {
+        if (id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID no puede ser nulo");
+        }
         Persona p = repo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado"));
         if (p.getRol() != Rol.PACIENTE) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No es un paciente");
@@ -62,6 +65,9 @@ public class PacienteController {
 
     @PutMapping("/{id}")
     public Persona actualizar(@PathVariable Long id, @RequestBody Persona datos) {
+        if (id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID no puede ser nulo");
+        }
         Persona p = repo.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado"));
         p.setNombreCompleto(datos.getNombreCompleto());
@@ -81,6 +87,9 @@ public class PacienteController {
 
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
+        if (id == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID no puede ser nulo");
+        }
         repo.deleteById(id);
     }
 

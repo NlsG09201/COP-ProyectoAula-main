@@ -4,7 +4,10 @@ Proyecto full-stack para gestión odontológica con:
 - Frontend Angular (`COP` y `DashBoard-COP`)
 - Backend Spring Boot (`Backend`)
 - Worker Spring Boot para tareas programadas (`Worker`)
-- Base de datos MySQL y MongoDB
+* Base de datos MySQL y MongoDB.  El backend usa JPA para generar el esquema SQL
+  automáticamente (`spring.jpa.hibernate.ddl-auto=update`). Si prefieres crear
+  las tablas manualmente puedes ejecutar el script `Backend.sql`, que ahora está
+  sincronizado con las entidades del proyecto.
 - Sistema de testimonios y calificaciones
 - Gestión de odontogramas
 - Chatbot IA para atención al cliente
@@ -19,6 +22,15 @@ Proyecto full-stack para gestión odontológica con:
 - `Backend.sql`: Script inicial de MySQL
 - `db-init/`: Scripts de inicialización de MySQL
 - `mongo-init/`: Scripts de inicialización de MongoDB
+
+### Notas sobre el esquema SQL
+
+El modelo de datos unifica pacientes y médicos en una sola tabla `PERSONAS`
+distinguida por el campo `rol`. Por ello el script `Backend.sql` define dicha
+tabla y las claves foráneas correspondientes (por ejemplo `CITAS.ID_P` y
+`CITAS.ID_Medico` ambas referencian `PERSONAS.ID_P`). También se crean las tablas
+de servicios, odontograma y el catálogo de tipos de servicio para mantener la
+compatibilidad con las entidades Java.
 - `docker-compose.yml`: Configuración de contenedores
 
 ## Prerrequisitos
