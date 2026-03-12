@@ -101,15 +101,17 @@ export class ServiciosComponent implements AfterViewInit {
         const icon = (s.tipoServicio?.nombre || '').toLowerCase().includes('odonto') ? 'fa-tooth' : 'fa-brain';
         return `
           <div class="col-md-4 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift transition-all animate-reveal">
-              <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3 w-12 h-12 mb-4">
-                <i class="fas ${icon} fa-lg"></i>
+            <div class="card h-100 border-0 shadow-sm rounded-5 p-4 hover-lift transition-all animate-reveal bg-white border border-light">
+              <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-4 w-14 h-14 mb-4 border border-primary border-opacity-10 shadow-sm">
+                <i class="fas ${icon} fa-xl"></i>
               </div>
-              <h3 class="h5 fw-black text-dark mb-2">${s.nombre}</h3>
-              <p class="text-primary fw-bold mb-3">${formatMoney(tarifa)}</p>
-              <p class="text-muted small mb-4">${s.descripcion || 'Servicio profesional especializado.'}</p>
-              <button class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold mt-auto btn-agendar-card" data-id="${s.idServicio}" data-name="${s.nombre}" data-cat="${s.tipoServicio?.nombre}">
-                Agendar
+              <h3 class="h5 fw-black text-slate-900 mb-2">${s.nombre}</h3>
+              <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-black small">${formatMoney(tarifa)}</span>
+              </div>
+              <p class="text-slate-500 small mb-4 lh-base">${s.descripcion || 'Servicio profesional especializado con los más altos estándares de calidad.'}</p>
+              <button class="btn btn-outline-primary w-100 rounded-4 py-2-5 fw-black btn-agendar-card border-2" data-id="${s.idServicio}" data-name="${s.nombre}" data-cat="${s.tipoServicio?.nombre}">
+                Agendar Cita <i class="fas fa-chevron-right ms-2 small"></i>
               </button>
             </div>
           </div>

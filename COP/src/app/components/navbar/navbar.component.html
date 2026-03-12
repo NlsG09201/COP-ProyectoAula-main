@@ -1,70 +1,73 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3 border-bottom border-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-white bg-opacity-95 sticky-top shadow-sm py-3 border-bottom border-light backdrop-blur-md">
   <div class="container px-4 px-lg-5">
     <!-- Brand -->
     <a class="navbar-brand d-flex align-items-center gap-3" routerLink="/">
       <div class="position-relative">
         <div class="position-absolute top-50 start-50 translate-middle bg-primary rounded-circle opacity-10 blur-xl" style="width: 60px; height: 60px; z-index: -1;"></div>
-        <img src="/assets/Logo.png" alt="COP" class="rounded-3 shadow-sm" style="height: 50px; width: auto; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <img src="/assets/Logo.png" alt="COP" class="rounded-3 shadow-sm brand-logo" style="height: 50px; width: auto; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
       </div>
       <div class="d-flex flex-column">
-        <span class="h3 mb-0 fw-black text-slate-900 tracking-tighter">COP</span>
-        <span class="text-uppercase fw-bold text-primary small" style="font-size: 0.6rem; letter-spacing: 0.25em;">Health Center</span>
+        <span class="h3 mb-0 fw-black text-slate-900 tracking-tighter brand-text">COP</span>
+        <span class="text-uppercase fw-bold text-primary small brand-subtext" style="font-size: 0.6rem; letter-spacing: 0.25em;">Health Center</span>
       </div>
     </a>
 
     <!-- Toggler -->
-    <button class="navbar-toggler border-0 shadow-none p-2 rounded-3 bg-light" type="button" (click)="toggleMenu()" aria-label="Toggle navigation">
-      <i class="fas fa-bars text-primary"></i>
+    <button class="navbar-toggler border-0 shadow-none p-2 rounded-4 bg-slate-50" type="button" (click)="toggleMenu()" aria-label="Toggle navigation">
+      <div class="hamburger" [class.open]="menuOpen()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </button>
 
     <!-- Nav Links -->
     <div class="collapse navbar-collapse" [class.show]="menuOpen()">
-      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1">
         <li class="nav-item">
-          <a class="nav-link fw-bold px-3 py-2 rounded-4 transition-all" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+          <a class="nav-link fw-bold px-4 py-2 rounded-pill transition-all" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link fw-bold px-3 py-2 rounded-4 transition-all" routerLink="/servicios" routerLinkActive="active">Servicios</a>
+          <a class="nav-link fw-bold px-4 py-2 rounded-pill transition-all" routerLink="/servicios" routerLinkActive="active">Servicios</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link fw-bold px-3 py-2 rounded-4 transition-all" routerLink="/nosotros" routerLinkActive="active">Nosotros</a>
+          <a class="nav-link fw-bold px-4 py-2 rounded-pill transition-all" routerLink="/nosotros" routerLinkActive="active">Nosotros</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link fw-bold px-3 py-2 rounded-4 transition-all" routerLink="/testimonios" routerLinkActive="active">Testimonios</a>
+          <a class="nav-link fw-bold px-4 py-2 rounded-pill transition-all" routerLink="/testimonios" routerLinkActive="active">Testimonios</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link fw-bold px-3 py-2 rounded-4 transition-all" routerLink="/contacto" routerLinkActive="active">Contacto</a>
+          <a class="nav-link fw-bold px-4 py-2 rounded-pill transition-all" routerLink="/contacto" routerLinkActive="active">Contacto</a>
         </li>
       </ul>
 
       <!-- Action Buttons -->
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-3 nav-actions">
         <ng-container *ngIf="!isLoggedIn()">
-          <button routerLink="/auth" class="btn btn-primary px-4 py-2-5 fw-bold rounded-4 shadow-lg hover-lift border-0">
+          <button routerLink="/auth" class="btn btn-primary px-4 py-2-5 fw-bold rounded-pill shadow-lg hover-lift border-0 btn-login">
             <i class="fas fa-user-circle me-2"></i> Acceso Pacientes
           </button>
         </ng-container>
         <ng-container *ngIf="isLoggedIn()">
           <div class="dropdown">
-            <button class="btn btn-white dropdown-toggle d-flex align-items-center gap-3 px-3 py-2 rounded-4 border shadow-sm hover-lift" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-white dropdown-toggle d-flex align-items-center gap-3 px-3 py-2 rounded-pill border shadow-sm hover-lift profile-trigger" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
               <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-black small border border-primary border-opacity-20" style="width: 36px; height: 36px;">
                 {{ getUserName().charAt(0) }}
               </div>
-              <span class="small fw-bold text-slate-700 d-none d-sm-inline">{{ getUserName() }}</span>
+              <span class="small fw-bold text-slate-700 d-none d-sm-inline">{{ getUserName().split(' ')[0] }}</span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-2xl mt-3 rounded-5 p-3 animate-fade-in" aria-labelledby="userDropdown" style="min-width: 240px;">
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-2xl mt-3 rounded-5 p-3 animate-fade-in" aria-labelledby="userDropdown" style="min-width: 260px;">
               <li>
-                <div class="px-3 py-2 mb-2">
-                  <div class="small text-muted fw-bold text-uppercase tracking-widest mb-1" style="font-size: 0.65rem;">Sesión Iniciada</div>
-                  <div class="fw-black text-dark text-truncate">{{ getUserName() }}</div>
+                <div class="px-3 py-3 mb-2 bg-slate-50 rounded-4 border border-light">
+                  <div class="small text-muted fw-bold text-uppercase tracking-widest mb-1" style="font-size: 0.6rem;">Paciente COP</div>
+                  <div class="fw-black text-slate-900 text-truncate fs-6">{{ getUserName() }}</div>
                 </div>
               </li>
-              <li><hr class="dropdown-divider bg-light opacity-50 mb-3"></li>
-              <li><a class="dropdown-item rounded-4 py-2 px-3 d-flex align-items-center gap-3 transition-all mb-1" routerLink="/historial"><div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2"><i class="fas fa-history"></i></div> <span class="fw-bold">Historial Citas</span></a></li>
-              <li><a class="dropdown-item rounded-4 py-2 px-3 d-flex align-items-center gap-3 transition-all mb-1" routerLink="/estado-cita"><div class="bg-success bg-opacity-10 text-success rounded-3 p-2"><i class="fas fa-calendar-check"></i></div> <span class="fw-bold">Estado de Cita</span></a></li>
-              <li><a class="dropdown-item rounded-4 py-2 px-3 d-flex align-items-center gap-3 transition-all mb-1" routerLink="/psico-evaluacion"><div class="bg-info bg-opacity-10 text-info rounded-3 p-2"><i class="fas fa-brain"></i></div> <span class="fw-bold">Evaluación Mental</span></a></li>
+              <li><a class="dropdown-item rounded-4 py-2-5 px-3 d-flex align-items-center gap-3 transition-all mb-1" routerLink="/historial"><div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2 w-10 h-10 d-flex align-items-center justify-content-center"><i class="fas fa-history"></i></div> <span class="fw-bold">Historial Citas</span></a></li>
+              <li><a class="dropdown-item rounded-4 py-2-5 px-3 d-flex align-items-center gap-3 transition-all mb-1" routerLink="/estado-cita"><div class="bg-success bg-opacity-10 text-success rounded-3 p-2 w-10 h-10 d-flex align-items-center justify-content-center"><i class="fas fa-calendar-check"></i></div> <span class="fw-bold">Estado de Cita</span></a></li>
+              <li><a class="dropdown-item rounded-4 py-2-5 px-3 d-flex align-items-center gap-3 transition-all mb-1" routerLink="/psico-evaluacion"><div class="bg-info bg-opacity-10 text-info rounded-3 p-2 w-10 h-10 d-flex align-items-center justify-content-center"><i class="fas fa-brain"></i></div> <span class="fw-bold">Evaluación Mental</span></a></li>
               <li><hr class="dropdown-divider bg-light opacity-50 my-3"></li>
-              <li><a class="dropdown-item rounded-4 py-2 px-3 d-flex align-items-center gap-3 text-danger fw-bold transition-all hover-danger" (click)="logout()" style="cursor: pointer;"><div class="bg-danger bg-opacity-10 text-danger rounded-3 p-2"><i class="fas fa-sign-out-alt"></i></div> <span>Cerrar Sesión</span></a></li>
+              <li><a class="dropdown-item rounded-4 py-2-5 px-3 d-flex align-items-center gap-3 text-danger fw-bold transition-all hover-danger" (click)="logout()" style="cursor: pointer;"><div class="bg-danger bg-opacity-10 text-danger rounded-3 p-2 w-10 h-10 d-flex align-items-center justify-content-center"><i class="fas fa-sign-out-alt"></i></div> <span>Cerrar Sesión</span></a></li>
             </ul>
           </div>
         </ng-container>
@@ -74,18 +77,37 @@
 </nav>
 
 <style>
-  .navbar-nav .nav-link { color: #475569; padding: 0.5rem 1rem; }
-  .navbar-nav .nav-link:hover { color: #0d6efd; background-color: rgba(13, 110, 253, 0.05); }
-  .navbar-nav .nav-link.active { color: #0d6efd !important; background-color: rgba(13, 110, 253, 0.08) !important; }
+  .navbar { transition: all 0.3s ease; }
+  .backdrop-blur-md { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .navbar-nav .nav-link { color: #475569; padding: 0.6rem 1.2rem; font-size: 0.95rem; }
+  .navbar-nav .nav-link:hover { color: #0d6efd; background-color: rgba(13, 110, 253, 0.04); }
+  .navbar-nav .nav-link.active { color: #0d6efd !important; background-color: rgba(13, 110, 253, 0.08) !important; box-shadow: inset 0 0 0 1px rgba(13, 110, 253, 0.1); }
   .fw-black { font-weight: 900; }
   .text-slate-900 { color: #0f172a; }
   .text-slate-700 { color: #334155; }
   .hover-lift:hover { transform: translateY(-3px); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
   .py-2-5 { padding-top: 0.65rem; padding-bottom: 0.65rem; }
   .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+  .dropdown-item { font-size: 0.9rem; }
   .dropdown-item:hover { background-color: #f8fafc; color: #0d6efd; }
   .dropdown-item.hover-danger:hover { background-color: #fff1f2; color: #e11d48; }
-  .animate-fade-in { animation: fadeIn 0.2s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fadeIn 0.25s ease-out; }
+  .brand-logo:hover { transform: rotate(-5deg) scale(1.1) !important; }
+  .bg-slate-50 { background-color: #f8fafc; }
+  .h-10 { width: 2.5rem; height: 2.5rem; }
+  
+  /* Hamburger Menu */
+  .hamburger { width: 24px; height: 18px; position: relative; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; }
+  .hamburger span { display: block; height: 2px; width: 100%; background: #0d6efd; border-radius: 9px; opacity: 1; transition: .25s ease-in-out; }
+  .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  
+  @media (max-width: 991.98px) {
+    .navbar-collapse { background: white; border-radius: 1.5rem; padding: 1.5rem; margin-top: 1rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); border: 1px solid #f1f5f9; }
+    .nav-actions { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9; }
+  }
 </style>
 

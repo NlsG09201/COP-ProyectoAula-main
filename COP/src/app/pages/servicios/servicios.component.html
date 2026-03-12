@@ -45,99 +45,137 @@
 
   <!-- Booking Section (Bootstrap Card + Tailwind Form) -->
   <div id="bookingContainer" class="container mt-n5 position-relative z-2" [class.d-none]="!isBookingOpen()">
-    <div class="card border-0 shadow-lg rounded-5 overflow-hidden max-w-4xl mx-auto border-4 border-primary border-opacity-10 animate-fade-in">
-      <div class="card-header bg-primary p-4 p-md-5 border-0 text-white d-flex align-items-center gap-4">
-        <div class="d-flex align-items-center justify-content-center bg-white bg-opacity-20 rounded-4 w-16 h-16 backdrop-blur-md">
-          <i class="fas fa-edit fa-2x"></i>
+    <div class="card border-0 shadow-2xl rounded-5 overflow-hidden max-w-4xl mx-auto border border-light animate-fade-in">
+      <div class="card-header bg-primary p-4 p-md-5 border-0 text-white d-flex align-items-center gap-4 position-relative overflow-hidden">
+        <!-- Decoración de fondo para el header -->
+        <div class="position-absolute top-0 end-0 translate-middle bg-white opacity-10 rounded-circle blur-3xl" style="width: 200px; height: 200px;"></div>
+        
+        <div class="d-flex align-items-center justify-content-center bg-white bg-opacity-20 rounded-4 w-16 h-16 backdrop-blur-md border border-white border-opacity-20 shadow-sm">
+          <i class="fas fa-calendar-plus fa-2x"></i>
         </div>
         <div>
-          <h2 class="h3 fw-black mb-1">Nueva Cita</h2>
-          <p class="text-white text-opacity-75 fw-bold text-uppercase small tracking-widest mb-0">Gestión de atención personalizada</p>
+          <h2 class="h3 fw-black mb-1 text-white">Agendar Cita</h2>
+          <p class="text-white text-opacity-75 fw-bold text-uppercase small tracking-widest mb-0">Atención personalizada y segura</p>
         </div>
       </div>
       
-      <div class="card-body p-4 p-md-5">
+      <div class="card-body p-4 p-md-5 bg-white">
         <form id="citaForm" class="row g-4">
           <div class="col-md-6">
-            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Nombre Completo</label>
-            <input id="pacienteNombre" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="Ej: Juan Pérez" required>
+            <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">Nombre Completo</label>
+            <div class="input-group">
+              <span class="input-group-text bg-slate-50 border-light border-end-0 rounded-start-4 text-muted px-3"><i class="fas fa-user"></i></span>
+              <input id="pacienteNombre" class="form-control form-control-lg rounded-end-4 border-light bg-slate-50 focus:bg-white text-dark small" placeholder="Juan Pérez" required>
+            </div>
           </div>
           <div class="col-md-6">
-            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Documento</label>
-            <input id="pacienteDoc" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="Número de identificación">
+            <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">Documento</label>
+            <div class="input-group">
+              <span class="input-group-text bg-slate-50 border-light border-end-0 rounded-start-4 text-muted px-3"><i class="fas fa-id-card"></i></span>
+              <input id="pacienteDoc" class="form-control form-control-lg rounded-end-4 border-light bg-slate-50 focus:bg-white text-dark small" placeholder="Número de identificación">
+            </div>
           </div>
           <div class="col-md-6">
-            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Email</label>
-            <input id="pacienteEmail" type="email" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="ejemplo@correo.com" required>
+            <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">Email de Contacto</label>
+            <div class="input-group">
+              <span class="input-group-text bg-slate-50 border-light border-end-0 rounded-start-4 text-muted px-3"><i class="fas fa-envelope"></i></span>
+              <input id="pacienteEmail" type="email" class="form-control form-control-lg rounded-end-4 border-light bg-slate-50 focus:bg-white text-dark small" placeholder="ejemplo@correo.com" required>
+            </div>
           </div>
           <div class="col-md-6">
-            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">WhatsApp</label>
-            <input id="pacienteTelefono" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="+57 300 000 0000">
+            <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">WhatsApp / Teléfono</label>
+            <div class="input-group">
+              <span class="input-group-text bg-slate-50 border-light border-end-0 rounded-start-4 text-muted px-3"><i class="fab fa-whatsapp"></i></span>
+              <input id="pacienteTelefono" class="form-control form-control-lg rounded-end-4 border-light bg-slate-50 focus:bg-white text-dark small" placeholder="+57 300 000 0000">
+            </div>
           </div>
           <div class="col-12">
-            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Dirección</label>
-            <input id="pacienteDireccion" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="Calle, Carrera, Barrio">
+            <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">Dirección de Residencia</label>
+            <div class="input-group">
+              <span class="input-group-text bg-slate-50 border-light border-end-0 rounded-start-4 text-muted px-3"><i class="fas fa-map-marker-alt"></i></span>
+              <input id="pacienteDireccion" class="form-control form-control-lg rounded-end-4 border-light bg-slate-50 focus:bg-white text-dark small" placeholder="Calle, Carrera, Barrio">
+            </div>
           </div>
 
-          <div class="col-12 my-4 pt-4 border-top">
+          <div class="col-12 my-4 pt-4 border-top border-light">
             <div class="row g-4">
               <div class="col-md-4">
-                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Categoría</label>
-                <select id="categoriaSelect" class="form-select form-select-lg rounded-3 border-light bg-light">
+                <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">Categoría</label>
+                <select id="categoriaSelect" class="form-select form-select-lg rounded-4 border-light bg-slate-50 text-dark small">
                   <option value="">Todos los servicios</option>
                   <option value="Odontología">Odontología</option>
                   <option value="Psicologia">Psicología</option>
                 </select>
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Fecha</label>
-                <input id="citaFecha" type="date" class="form-select form-select-lg rounded-3 border-light bg-light" required>
+                <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">Fecha Sugerida</label>
+                <input id="citaFecha" type="date" class="form-control form-control-lg rounded-4 border-light bg-slate-50 text-dark small" required>
               </div>
               <div class="col-md-4">
-                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Hora</label>
-                <input id="citaHora" type="time" class="form-select form-select-lg rounded-3 border-light bg-light" required>
+                <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">Hora</label>
+                <input id="citaHora" type="time" class="form-control form-control-lg rounded-4 border-light bg-slate-50 text-dark small" required>
               </div>
               <div class="col-12">
-                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Servicio Específico</label>
-                <select id="servicioSelect" class="form-select form-select-lg rounded-3 border-light bg-light" required>
+                <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">Servicio Específico</label>
+                <select id="servicioSelect" class="form-select form-select-lg rounded-4 border-light bg-slate-50 text-dark small" required>
                   <option value="" disabled selected>Selecciona una opción...</option>
                 </select>
               </div>
+              
               <div id="precioContainer" class="col-12 d-none">
-                <div class="p-3 rounded-4 bg-primary bg-opacity-10 border border-primary border-opacity-20 d-flex justify-content-between align-items-center">
-                  <div>
-                    <span class="text-primary fw-bold small text-uppercase tracking-widest d-block mb-1">Tarifa del Servicio</span>
-                    <h4 id="servicioPrecio" class="h2 fw-black text-primary mb-0">$0.00</h4>
+                <div class="p-4 rounded-5 bg-primary bg-opacity-5 border border-primary border-opacity-10 d-flex justify-content-between align-items-center animate-fade-in shadow-sm">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle p-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                      <i class="fas fa-tag"></i>
+                    </div>
+                    <div>
+                      <span class="text-slate-500 fw-bold small text-uppercase tracking-widest d-block mb-1" style="font-size: 0.65rem;">Tarifa del Servicio</span>
+                      <h4 id="servicioPrecio" class="h2 fw-black text-primary mb-0 tracking-tighter">$0.00</h4>
+                    </div>
                   </div>
                   <div class="text-end">
-                    <span class="badge bg-primary rounded-pill px-3 py-2 fw-bold shadow-sm">Pago en clínica</span>
+                    <span class="badge bg-white text-primary border border-primary border-opacity-20 rounded-pill px-4 py-2 fw-black shadow-sm" style="font-size: 0.7rem;">PAGO EN CLÍNICA</span>
                   </div>
                 </div>
               </div>
+
               <div class="col-12">
-                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Médico (Opcional)</label>
-                <select id="medicoSelect" class="form-select form-select-lg rounded-3 border-light bg-light">
-                  <option value="">Cualquier médico disponible</option>
+                <label class="form-label small fw-black text-slate-500 text-uppercase tracking-widest">Médico Especialista (Opcional)</label>
+                <select id="medicoSelect" class="form-select form-select-lg rounded-4 border-light bg-slate-50 text-dark small">
+                  <option value="">Cualquier especialista disponible</option>
                 </select>
               </div>
             </div>
           </div>
 
-          <div id="citaMsg" class="col-12 d-none alert rounded-3 fw-bold text-center"></div>
+          <div id="citaMsg" class="col-12 d-none alert rounded-4 fw-bold text-center py-3 animate-fade-in"></div>
 
-          <div class="col-12 d-flex flex-column flex-md-row align-items-center justify-content-between gap-4 pt-3">
-            <p class="text-muted small mb-0 max-w-sm text-center text-md-start">
-              <i class="fas fa-info-circle me-1"></i>
-              Un profesional asignado confirmará tu disponibilidad vía WhatsApp o Email.
-            </p>
-            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm">
-              Confirmar Cita
+          <div class="col-12 d-flex flex-column flex-md-row align-items-center justify-content-between gap-4 pt-4">
+            <div class="d-flex align-items-center gap-3 bg-slate-50 p-3 rounded-4 border border-light max-w-sm">
+              <div class="text-primary fs-4"><i class="fas fa-info-circle"></i></div>
+              <p class="text-slate-600 small mb-0 fw-medium">
+                Un profesional confirmará tu disponibilidad vía WhatsApp o Email tras enviar la solicitud.
+              </p>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg rounded-4 px-5 py-3 fw-black shadow-lg hover-lift border-0">
+              Confirmar Cita <i class="fas fa-paper-plane ms-2"></i>
             </button>
           </div>
         </form>
       </div>
     </div>
   </div>
+
+  <style>
+    .bg-slate-50 { background-color: #f8fafc; }
+    .text-slate-500 { color: #64748b; }
+    .text-slate-600 { color: #475569; }
+    .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+    .focus\:bg-white:focus { background-color: white !important; }
+    .tracking-tighter { letter-spacing: -0.05em; }
+    .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
 
   <!-- Services Sections -->
   <section id="odontologia" class="container py-9">
