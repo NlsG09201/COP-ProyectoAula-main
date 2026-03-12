@@ -1,53 +1,140 @@
-<main class="main-content">
-  <section class="contact-hero">
-    <div class="container mx-auto text-center py-20 px-4">
-      <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4 relative inline-block">
-        Contáctanos
-        <span class="block w-16 h-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mx-auto mt-2"></span>
-      </h1>
-      <p class="text-lg md:text-xl text-gray-600 mb-8">Estamos aquí para ayudarte. Ponte en contacto con nosotros.</p>
+<main class="overflow-hidden font-sans">
+  <!-- Hero Section (Bootstrap + Tailwind) -->
+  <section class="py-5 py-md-9 position-relative bg-light">
+    <div class="container position-relative z-1">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8 animate-reveal">
+          <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2 mb-4 fw-bold text-uppercase tracking-widest">
+            Contacto
+          </span>
+          <h1 class="display-3 fw-black text-dark mb-4 tracking-tight">
+            Estamos Aquí para <span class="text-primary gradient-text">Ayudarte</span>
+          </h1>
+          <p class="lead text-muted mb-5 px-md-5">
+            ¿Tienes alguna duda o quieres agendar una cita? Ponte en contacto con nosotros y te responderemos lo antes posible.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Background Decor -->
+    <div class="position-absolute top-0 start-50 translate-middle-x w-100 h-100 z-0 pointer-events-none opacity-25">
+      <div class="position-absolute top-0 start-0 w-25 h-50 bg-primary rounded-circle blur-[120px] -translate-x-50 -translate-y-50"></div>
+      <div class="position-absolute bottom-0 end-0 w-25 h-50 bg-info rounded-circle blur-[120px] translate-x-50 translate-y-50"></div>
     </div>
   </section>
 
-  <section class="contact-info-form">
-    <div class="container mx-auto py-16 px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
-      <div class="contact-info-card bg-white/80 rounded-xl shadow-xl border border-blue-100 p-8 flex flex-col justify-center">
-        <h2 class="text-2xl md:text-3xl font-bold text-blue-700 mb-6">Información de Contacto</h2>
-        <p class="text-base md:text-lg text-gray-700 mb-4 flex items-center"><i class="fas fa-map-marker-alt mr-3 text-blue-600"></i>Carrera 6h número 26 f 43 b/nuevo pioneros, Sincelejo, Magdalena, Colombia</p>
-        <p class="text-base md:text-lg text-gray-700 mb-4 flex items-center"><i class="fas fa-phone mr-3 text-blue-600"></i>Teléfono: +57 301 4218455</p>
-        <p class="text-base md:text-lg text-gray-700 mb-4 flex items-center"><i class="fas fa-envelope mr-3 text-blue-600"></i>Email: centroodontologicoypsicologico@gmail.com</p>
-        <p class="text-base md:text-lg text-gray-700 mb-4 flex items-center"><i class="fas fa-clock mr-3 text-blue-600"></i>Horario: Lunes a Viernes 9:00 AM - 6:00 PM</p>
-        <div class="social-links mt-8 flex gap-4">
-          <a href="#" target="_blank" class="social-icon hover:scale-110 transition"><i class="fab fa-facebook-f text-2xl text-blue-700"></i></a>
-          <a href="https://www.instagram.com/centroodontologicoypsicologico?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="social-icon hover:scale-110 transition"><i class="fab fa-instagram text-2xl text-pink-500"></i></a>
-          <a href="https://api.whatsapp.com/send/?phone=573014218455&text&type=phone_number&app_absent=0" target="_blank" class="social-icon hover:scale-110 transition"><i class="fab fa-whatsapp text-2xl text-green-500"></i></a>
+  <!-- Contact Grid (Bootstrap + Tailwind) -->
+  <section class="container mt-n5 position-relative z-2 pb-9">
+    <div class="row g-4">
+      
+      <!-- Contact Information Card -->
+      <div class="col-lg-5">
+        <div class="card border-0 bg-dark text-white rounded-5 p-4 p-md-5 h-100 shadow-xl">
+          <div class="mb-5">
+            <h2 class="h3 fw-black mb-3">Información de Contacto</h2>
+            <p class="text-white text-opacity-75">Utiliza cualquiera de nuestros canales oficiales para comunicarte con nosotros.</p>
+          </div>
+
+          <ul class="list-unstyled space-y-8 mb-5">
+            <li class="d-flex align-items-start gap-4 group">
+              <div class="d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-4 w-12 h-12 flex-shrink-0 group-hover:bg-primary transition-all">
+                <i class="fas fa-map-marker-alt text-primary group-hover:text-white"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold mb-1">Nuestra Ubicación</h4>
+                <p class="text-white text-opacity-50 small mb-0">Carrera 6h #26 f 43 b/nuevo pioneros, Sincelejo, Colombia</p>
+              </div>
+            </li>
+
+            <li class="d-flex align-items-start gap-4 group">
+              <div class="d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-4 w-12 h-12 flex-shrink-0 group-hover:bg-primary transition-all">
+                <i class="fas fa-phone text-primary group-hover:text-white"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold mb-1">Teléfono / WhatsApp</h4>
+                <p class="text-white text-opacity-50 small mb-0">+57 301 4218455</p>
+              </div>
+            </li>
+
+            <li class="d-flex align-items-start gap-4 group">
+              <div class="d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-4 w-12 h-12 flex-shrink-0 group-hover:bg-primary transition-all">
+                <i class="fas fa-envelope text-primary group-hover:text-white"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold mb-1">Correo Electrónico</h4>
+                <p class="text-white text-opacity-50 small mb-0">centroodontologico@gmail.com</p>
+              </div>
+            </li>
+          </ul>
+
+          <div class="pt-5 border-top border-secondary">
+            <h4 class="fw-bold mb-4">Síguenos</h4>
+            <div class="d-flex gap-3">
+              <a href="#" class="d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-3 w-10 h-10 text-white hover:bg-primary transition-all hover:scale-110">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="#" class="d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-3 w-10 h-10 text-white hover:bg-danger transition-all hover:scale-110">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="#" class="d-flex align-items-center justify-content-center bg-white bg-opacity-10 rounded-3 w-10 h-10 text-white hover:bg-success transition-all hover:scale-110">
+                <i class="fab fa-whatsapp"></i>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="contact-form-card">
-        <h2 class="text-2xl md:text-3xl font-bold text-blue-700 mb-6">Envíanos un Mensaje</h2>
-        <form id="contactForm" action="guardar_contacto.php" method="POST" class="bg-white rounded-2xl shadow-2xl border border-blue-100 p-8 flex flex-col gap-4">
-          <div>
-            <label for="name" class="block text-gray-700 font-semibold mb-2">Nombre</label>
-            <input type="text" name="nombre" id="name" required placeholder="Nombre" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition" />
+      <!-- Contact Form Card -->
+      <div class="col-lg-7">
+        <div class="card border-0 bg-white rounded-5 p-4 p-md-5 h-100 shadow-lg">
+          <div class="mb-5">
+            <h2 class="h3 fw-black text-dark mb-2">Envíanos un Mensaje</h2>
+            <p class="text-muted fw-medium">Te responderemos en menos de 24 horas hábiles.</p>
           </div>
-          <div>
-            <label for="email" class="block text-gray-700 font-semibold mb-2">Correo</label>
-            <input type="email" name="email" id="email" required placeholder="Correo" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition" />
-          </div>
-          <div>
-            <label for="phone" class="block text-gray-700 font-semibold mb-2">Teléfono</label>
-            <input type="text" name="telefono" id="phone" placeholder="Teléfono" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition" />
-          </div>
-          <div>
-            <label for="message" class="block text-gray-700 font-semibold mb-2">Mensaje</label>
-            <textarea name="mensaje" id="message" required placeholder="Mensaje" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition resize-none" rows="4"></textarea>
-          </div>
-          <button type="submit" class="bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-700 hover:to-blue-500 text-white font-bold py-2 px-6 rounded-lg transition mt-2 shadow-lg">Enviar</button>
-          <div id="formMessage" class="mt-2"></div>
-        </form>
+
+          <form id="contactForm" class="row g-4">
+            <div class="col-md-6">
+              <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Tu Nombre</label>
+              <input type="text" name="nombre" id="name" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="Ej: Juan Pérez" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Tu Correo</label>
+              <input type="email" name="email" id="email" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="ejemplo@correo.com" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Asunto</label>
+              <select name="subject" id="subject" class="form-select form-select-lg rounded-3 border-light bg-light">
+                <option value="Cita Nueva">Cita Nueva</option>
+                <option value="Consulta General">Consulta General</option>
+                <option value="Sugerencia">Sugerencia</option>
+                <option value="Otros">Otros</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Mensaje</label>
+              <textarea name="mensaje" id="message" rows="5" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="¿En qué podemos ayudarte?" required></textarea>
+            </div>
+
+            <div id="formMessage" class="col-12 text-center small fw-bold"></div>
+
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 w-100 fw-bold shadow-sm py-3 mt-2">
+                Enviar Mensaje
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </section>
-</main>
 
+  <!-- Map Section -->
+  <section class="container mb-9">
+    <div class="card border-0 rounded-5 overflow-hidden shadow-sm h-[450px]">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3935.5323204735343!2d-75.390038!3d9.286348!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e5914619d8e5783%3A0x6a0c5c4f6a6c4a0!2sSincelejo%2C%20Sucre!5e0!3m2!1ses!2sco!4v1710200000000!5m2!1ses!2sco" 
+        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </section>
+</main>

@@ -1,50 +1,182 @@
-<main class="main-content">
-  <section class="hero-section">
-    <div class="container mx-auto text-center py-20">
-      <h1 class="text-5xl font-bold text-gray-800 mb-4">Bienvenido a Nuestro Centro</h1>
-      <p class="text-xl text-gray-600 mb-8">Cuidado integral para tu salud dental y bienestar mental.</p>
-      <a routerLink="/servicios" class="btn-primary">Explora Nuestros Servicios</a>
+<main class="overflow-hidden">
+  <!-- Hero Section with Bootstrap and Tailwind mix -->
+  <section class="py-5 py-md-7 position-relative min-vh-90 d-flex align-items-center bg-white">
+    <div class="container px-4 px-lg-5">
+      <div class="row align-items-center gx-5">
+        <div class="col-lg-6 mb-5 mb-lg-0 animate-reveal">
+          <div class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2 fw-bold text-uppercase tracking-wider mb-4">
+            <i class="fas fa-heartbeat me-2"></i> Innovación en Salud Integral
+          </div>
+          
+          <h1 class="display-3 fw-bolder text-slate-900 mb-4 lh-sm">
+            Tu Bienestar, <br>
+            <span class="text-primary">Nuestra Prioridad</span>
+          </h1>
+          
+          <p class="lead text-muted mb-5 pe-lg-5">
+            Expertos en odontología avanzada y psicología clínica. Brindamos un cuidado integral diseñado para transformar tu calidad de vida.
+          </p>
+          
+          <div class="d-flex flex-column flex-sm-row gap-3">
+            <button routerLink="/servicios" class="btn btn-primary btn-lg px-5 py-3 rounded-4 shadow-lg hover-lift">
+              Ver Servicios <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+            <button routerLink="/contacto" class="btn btn-outline-primary btn-lg px-5 py-3 rounded-4 hover-lift">
+              Agendar Cita
+            </button>
+          </div>
+
+          <div class="mt-5 pt-4 border-top border-light d-flex align-items-center gap-4">
+            <div class="avatar-group d-flex">
+              <img src="https://i.pravatar.cc/100?u=1" class="rounded-circle border-4 border-white shadow-sm" style="width: 48px; height: 48px; margin-right: -12px;" alt="User">
+              <img src="https://i.pravatar.cc/100?u=2" class="rounded-circle border-4 border-white shadow-sm" style="width: 48px; height: 48px; margin-right: -12px;" alt="User">
+              <img src="https://i.pravatar.cc/100?u=3" class="rounded-circle border-4 border-white shadow-sm" style="width: 48px; height: 48px;" alt="User">
+            </div>
+            <div>
+              <div class="fw-bold text-dark">+5,000 Pacientes Satisfechos</div>
+              <div class="small text-muted">Confianza y experiencia garantizada</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6 animate-reveal stagger-1">
+          <div class="position-relative">
+            <div class="position-absolute top-0 end-0 translate-middle bg-primary rounded-circle opacity-10 blur-3xl" style="width: 300px; height: 300px; z-index: -1;"></div>
+            <div class="card border-0 shadow-2xl rounded-5 overflow-hidden">
+              <img src="/assets/Logo.png" alt="COP Health" class="card-img-top img-fluid" style="object-fit: cover;">
+              <div class="card-body p-4 bg-white position-relative">
+                <div class="position-absolute top-0 start-50 translate-middle-x bg-white shadow-lg rounded-4 p-3 d-flex align-items-center gap-3 animate-bounce-slow" style="width: 80%;">
+                  <div class="bg-success rounded-3 p-2 text-white">
+                    <i class="fas fa-check-circle fs-4"></i>
+                  </div>
+                  <div>
+                    <div class="small text-muted fw-bold text-uppercase">Calificación</div>
+                    <div class="fw-black fs-5">4.9/5.0 Estrellas</div>
+                  </div>
+                </div>
+                <div class="mt-4 text-center text-muted small fw-bold uppercase tracking-widest">Compromiso con la excelencia</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="about-us-preview">
-    <div class="container mx-auto flex flex-col md:flex-row items-center justify-center py-16">
-      <div class="md:w-1/2 p-4">
-        <img src="/assets/Logo.png" alt="Cuidado Integral" class="rounded-lg shadow-lg">
-      </div>
-      <div class="md:w-1/2 p-4">
-        <h2 class="text-4xl font-bold text-gray-800 mb-4">¿Quiénes Somos?</h2>
-        <p class="text-lg text-gray-700 mb-6">
-          Somos un equipo de profesionales dedicados a ofrecer soluciones de salud oral y apoyo psicológico. Creemos en un enfoque holístico para tu bienestar, combinando la experiencia clínica con un trato humano y personalizado.
-        </p>
-        <a routerLink="/nosotros" class="btn-secondary">Conoce Más Sobre Nosotros</a>
+  <!-- Statistics Grid -->
+  <section class="py-5 bg-light">
+    <div class="container px-4 px-lg-5">
+      <div class="row g-4">
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm rounded-4 text-center p-4 hover-lift h-100">
+            <div class="display-5 fw-black text-primary mb-1">10+</div>
+            <div class="small fw-bold text-muted text-uppercase tracking-wider">Años de Trayectoria</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm rounded-4 text-center p-4 hover-lift h-100">
+            <div class="display-5 fw-black text-primary mb-1">15+</div>
+            <div class="small fw-bold text-muted text-uppercase tracking-wider">Especialistas</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm rounded-4 text-center p-4 hover-lift h-100">
+            <div class="display-5 fw-black text-primary mb-1">24/7</div>
+            <div class="small fw-bold text-muted text-uppercase tracking-wider">Soporte Chatbot</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm rounded-4 text-center p-4 hover-lift h-100">
+            <div class="display-5 fw-black text-primary mb-1">100%</div>
+            <div class="small fw-bold text-muted text-uppercase tracking-wider">Compromiso</div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="services-preview">
-    <div class="container mx-auto py-16 text-center">
-      <h2 class="text-4xl font-bold text-gray-800 mb-12">Nuestros Servicios Destacados</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="service-card">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Odontología General</h3>
-          <p class="text-gray-600 mb-4">Revisiones, limpiezas, empastes y más para mantener tu sonrisa saludable.</p>
-          <a routerLink="/servicios#odontologia" class="text-blue-600 hover:underline">Ver más</a>
+  <!-- Services Grid -->
+  <section class="py-7 bg-white">
+    <div class="container px-4 px-lg-5">
+      <div class="text-center mb-6 max-w-2xl mx-auto">
+        <h2 class="display-5 fw-black text-dark mb-3">Servicios de <span class="text-primary">Clase Mundial</span></h2>
+        <p class="lead text-muted">Combinamos tecnología de punta con un enfoque humano para cuidar de ti.</p>
+      </div>
+
+      <div class="row g-4 mt-4">
+        <div class="col-md-4">
+          <div class="card border-0 shadow-lg rounded-5 p-4 h-100 hover-lift service-card-template">
+            <div class="bg-primary bg-opacity-10 rounded-4 p-3 d-inline-block mb-4">
+              <span class="fs-1">🦷</span>
+            </div>
+            <h3 class="h4 fw-black mb-3">Odontología</h3>
+            <p class="text-muted mb-4">Desde estética dental hasta implantes complejos con la precisión que tu sonrisa merece.</p>
+            <a routerLink="/servicios" class="text-primary fw-bold text-decoration-none d-flex align-items-center mt-auto">
+              Explorar área <i class="fas fa-chevron-right ms-2 small"></i>
+            </a>
+          </div>
         </div>
-        <div class="service-card">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Psicología Clínica</h3>
-          <p class="text-gray-600 mb-4">Sesiones individuales para abordar ansiedad, estrés y otros desafíos emocionales.</p>
-          <a routerLink="/servicios#psicologia" class="text-blue-600 hover:underline">Ver más</a>
+
+        <div class="col-md-4">
+          <div class="card border-0 shadow-lg rounded-5 p-4 h-100 hover-lift service-card-template">
+            <div class="bg-primary bg-opacity-10 rounded-4 p-3 d-inline-block mb-4">
+              <span class="fs-1">🧠</span>
+            </div>
+            <h3 class="h4 fw-black mb-3">Psicología</h3>
+            <p class="text-muted mb-4">Apoyo profesional personalizado para potenciar tu salud mental y equilibrio emocional.</p>
+            <a routerLink="/servicios" class="text-primary fw-bold text-decoration-none d-flex align-items-center mt-auto">
+              Explorar área <i class="fas fa-chevron-right ms-2 small"></i>
+            </a>
+          </div>
         </div>
-        <div class="service-card">
-          <h3 class="text-2xl font-semibold text-gray-800 mb-3">Ortodoncia</h3>
-          <p class="text-gray-600 mb-4">Soluciones avanzadas para alinear tus dientes y mejorar tu mordida.</p>
-          <a routerLink="/servicios#ortodoncia" class="text-blue-600 hover:underline">Ver más</a>
+
+        <div class="col-md-4">
+          <div class="card border-0 shadow-lg rounded-5 p-4 h-100 hover-lift service-card-template">
+            <div class="bg-primary bg-opacity-10 rounded-4 p-3 d-inline-block mb-4">
+              <span class="fs-1">📝</span>
+            </div>
+            <h3 class="h4 fw-black mb-3">Autoevaluación</h3>
+            <p class="text-muted mb-4">Herramientas digitales validadas para un diagnóstico preventivo de tu estado emocional.</p>
+            <a routerLink="/psicoevaluacion" class="text-primary fw-bold text-decoration-none d-flex align-items-center mt-auto">
+              Iniciar test <i class="fas fa-chevron-right ms-2 small"></i>
+            </a>
+          </div>
         </div>
       </div>
-      <div class="mt-12">
-        <a routerLink="/servicios" class="btn-primary">Ver Todos los Servicios</a>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="py-7 bg-light">
+    <div class="container px-4 px-lg-5">
+      <div class="card border-0 rounded-5 overflow-hidden shadow-2xl bg-dark text-white p-5 p-md-7 position-relative">
+        <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-primary opacity-25"></div>
+        <div class="row align-items-center position-relative z-10">
+          <div class="col-lg-8 text-center text-lg-start mb-5 mb-lg-0">
+            <h2 class="display-4 fw-black mb-3">¿Listo para comenzar tu transformación?</h2>
+            <p class="lead text-light text-opacity-75 mb-0">Nuestro equipo está listo para brindarte la atención integral que te mereces.</p>
+          </div>
+          <div class="col-lg-4 text-center text-lg-end">
+            <button routerLink="/contacto" class="btn btn-primary btn-xl px-5 py-4 rounded-4 shadow-lg fw-bold w-100 w-sm-auto">
+              Agendar Cita Ahora
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 </main>
+
+<style>
+  .vh-90 { min-height: 90vh; }
+  .fw-black { font-weight: 900; }
+  .py-7 { padding-top: 6rem; padding-bottom: 6rem; }
+  .rounded-5 { border-radius: 2.5rem !important; }
+  .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+  .bg-gradient-primary { background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%); }
+  .btn-xl { padding: 1.25rem 2.5rem; font-size: 1.25rem; }
+  .service-card-template { transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); }
+  .service-card-template:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.1) !important; }
+  .hover-lift { transition: transform 0.3s ease; }
+  .hover-lift:hover { transform: translateY(-5px); }
+</style>

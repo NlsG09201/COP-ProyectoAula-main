@@ -13,51 +13,151 @@ interface Paciente { idP?: number; idPersona?: number; docIden: string; nombreCo
   selector: 'app-pacientes-page',
   imports: [CommonModule, FormsModule, RouterModule],
   template: `
-    <h2 class="text-2xl font-semibold mb-2">Pacientes</h2>
-    <p class="text-slate-600 mb-4">Registra y administra pacientes.</p>
+    <div class="container-fluid p-0 animate-reveal">
+      <!-- Header -->
+      <div class="row align-items-center justify-content-between mb-5 g-4">
+        <div class="col-md-auto">
+          <h2 class="display-6 fw-black text-dark mb-1 tracking-tight">Expedientes de Pacientes</h2>
+          <p class="text-uppercase fw-bold text-muted small tracking-widest mb-0">Base de datos centralizada de atención</p>
+        </div>
+        <div class="col-md-auto">
+          <button class="btn btn-white border shadow-sm rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2" (click)="cargar()">
+            <i class="fas fa-sync-alt text-primary"></i> Actualizar
+          </button>
+        </div>
+      </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-      <div class="field"><label>Documento</label><div class="flex items-center gap-2"><input class="flex-1" [(ngModel)]="form.docIden" (blur)="verificarDoc()" (ngModelChange)="docInputChanged($event)" /><span *ngIf="docValid===true" class="text-green-600">✓</span><span *ngIf="docValid===false" class="text-red-600">✗</span></div><div *ngIf="docMsg" class="text-xs mt-1" [class.text-red-600]="docValid===false" [class.text-green-600]="docValid===true">{{ docMsg }}</div></div>
-      <div class="field"><label>Nombre</label><input [(ngModel)]="form.nombreCompleto" /></div>
-      <div class="field"><label>Teléfono</label><input [(ngModel)]="form.telefono" /></div>
-      <div class="field"><label>Email</label><div class="flex items-center gap-2"><input class="flex-1" [(ngModel)]="form.email" (ngModelChange)="emailChanged($event)" /><span *ngIf="emailValid===true" class="text-green-600">✓</span><span *ngIf="emailValid===false" class="text-red-600">✗</span></div><div *ngIf="emailMsg" class="text-xs mt-1" [class.text-red-600]="emailValid===false" [class.text-green-600]="emailValid===true">{{ emailMsg }}</div></div>
-      <div class="field"><label>Dirección</label><input [(ngModel)]="form.direccion" /></div>
-    </div>
-    <button class="btn" (click)="guardar()" [disabled]="loading || (editingId===null && (docValid===false || emailValid===false))">{{ editingId ? 'Actualizar' : 'Guardar' }}</button>
-    <button *ngIf="editingId" class="btn btn-secondary ml-2" (click)="cancelarEdicion()">Cancelar</button>
-    <div *ngIf="msg" class="mt-2">{{ msg }}</div>
+      <!-- Registration Form Card -->
+      <div class="card border-0 shadow-sm rounded-5 mb-5 overflow-hidden">
+        <div class="card-header bg-white border-0 p-4 pb-0">
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-4 w-12 h-12 shadow-sm">
+              <i class="fas" [ngClass]="editingId ? 'fa-edit' : 'fa-plus'"></i>
+            </div>
+            <h3 class="h5 fw-black text-dark mb-0">{{ editingId ? 'Editar Paciente' : 'Registrar Nuevo Paciente' }}</h3>
+          </div>
+        </div>
+        <div class="card-body p-4 p-md-5">
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Documento de Identidad</label>
+              <div class="input-group input-group-lg">
+                <input class="form-control rounded-3 border-light bg-light focus:bg-white" [(ngModel)]="form.docIden" (blur)="verificarDoc()" (ngModelChange)="docInputChanged($event)" placeholder="Número de identificación" />
+                <span class="input-group-text bg-light border-light rounded-3" *ngIf="docValid !== null">
+                  <i class="fas" [ngClass]="docValid ? 'fa-check-circle text-success' : 'fa-times-circle text-danger'"></i>
+                </span>
+              </div>
+              <p *ngIf="docMsg" class="small fw-bold mt-2 mb-0" [ngClass]="docValid===false ? 'text-danger' : 'text-success'">{{ docMsg }}</p>
+            </div>
 
-    <h3 class="text-xl font-semibold mt-8 mb-2">Lista de pacientes</h3>
-    <div class="field"><label>Buscar</label><input placeholder="Nombre/Documento" [(ngModel)]="filtro" (ngModelChange)="aplicarFiltro()" /></div>
-    <div class="overflow-x-auto rounded-lg shadow">
-      <table *ngIf="filtrados.length" class="min-w-full bg-white">
-        <thead class="bg-blue-50"><tr>
-          <th class="px-4 py-2 text-left">ID</th>
-          <th class="px-4 py-2 text-left">Documento</th>
-          <th class="px-4 py-2 text-left">Nombre</th>
-          <th class="px-4 py-2 text-left">Teléfono</th>
-          <th class="px-4 py-2 text-left">Email</th>
-          <th class="px-4 py-2 text-left">Dirección</th>
-          <th class="px-4 py-2 text-left">Acciones</th>
-        </tr></thead>
-        <tbody>
-          <tr *ngFor="let p of filtrados" class="border-t">
-            <td class="px-4 py-2">{{ p.idP || p.idPersona }}</td>
-            <td class="px-4 py-2">{{ p.docIden }}</td>
-            <td class="px-4 py-2">{{ p.nombreCompleto }}</td>
-            <td class="px-4 py-2">{{ p.telefono }}</td>
-            <td class="px-4 py-2">{{ p.email }}</td>
-            <td class="px-4 py-2">{{ p.direccion }}</td>
-            <td class="px-4 py-2 flex gap-2 flex-wrap">
-              <button class="text-blue-600 hover:underline" (click)="editar(p)">Editar</button>
-              <button class="text-green-600 hover:underline" (click)="verOdontograma(p)">Odontograma</button>
-              <button class="text-red-600 hover:underline" (click)="eliminar(p)">Eliminar</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Nombre Completo</label>
+              <input class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" [(ngModel)]="form.nombreCompleto" placeholder="Nombres y Apellidos" />
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label small fw-black text-muted text-uppercase tracking-widest">WhatsApp / Teléfono</label>
+              <input class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" [(ngModel)]="form.telefono" placeholder="+57 300 000 0000" />
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+              <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Correo Electrónico</label>
+              <div class="input-group input-group-lg">
+                <input class="form-control rounded-3 border-light bg-light focus:bg-white" [(ngModel)]="form.email" (ngModelChange)="emailChanged($event)" placeholder="paciente@ejemplo.com" />
+                <span class="input-group-text bg-light border-light rounded-3" *ngIf="emailValid !== null">
+                  <i class="fas" [ngClass]="emailValid ? 'fa-check-circle text-success' : 'fa-times-circle text-danger'"></i>
+                </span>
+              </div>
+              <p *ngIf="emailMsg" class="small fw-bold mt-2 mb-0" [ngClass]="emailValid===false ? 'text-danger' : 'text-success'">{{ emailMsg }}</p>
+            </div>
+
+            <div class="col-md-12 col-lg-8">
+              <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Dirección de Residencia</label>
+              <input class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" [(ngModel)]="form.direccion" placeholder="Calle, Carrera, Barrio..." />
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-3 mt-5 pt-4 border-top">
+            <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm" (click)="guardar()" [disabled]="loading || (editingId===null && (docValid===false || emailValid===false))">
+              <i class="fas fa-save me-2"></i> {{ editingId ? 'Actualizar Registro' : 'Confirmar Registro' }}
+            </button>
+            <button *ngIf="editingId" class="btn btn-outline-secondary btn-lg rounded-pill px-5 fw-bold" (click)="cancelarEdicion()">Cancelar</button>
+            <div *ngIf="msg" class="ms-3 badge rounded-pill px-4 py-2 fw-bold" [ngClass]="msg.includes('Error') ? 'bg-danger text-white' : 'bg-success text-white'">{{ msg }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- List Section -->
+      <div class="card border-0 shadow-sm rounded-5 overflow-hidden">
+        <div class="card-header bg-white border-0 p-4">
+          <div class="row align-items-center g-3">
+            <div class="col-md">
+              <h3 class="h5 fw-black text-dark mb-0">Listado Maestro</h3>
+            </div>
+            <div class="col-md-auto">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-0 rounded-start-pill ps-4">
+                  <i class="fas fa-search text-muted small"></i>
+                </span>
+                <input placeholder="Filtrar por nombre o doc..." [(ngModel)]="filtro" (ngModelChange)="aplicarFiltro()" class="form-control border-0 bg-light rounded-end-pill pe-4 py-2 small" />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0" *ngIf="filtrados.length">
+            <thead class="bg-light">
+              <tr>
+                <th class="ps-4 border-0 small fw-black text-muted text-uppercase tracking-widest py-3">Paciente</th>
+                <th class="border-0 small fw-black text-muted text-uppercase tracking-widest py-3">Identificación</th>
+                <th class="border-0 small fw-black text-muted text-uppercase tracking-widest py-3">Contacto</th>
+                <th class="border-0 small fw-black text-muted text-uppercase tracking-widest py-3">Ubicación</th>
+                <th class="pe-4 border-0 small fw-black text-muted text-uppercase tracking-widest py-3 text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of filtrados" class="transition-all hover-lift">
+                <td class="ps-4">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3 w-10 h-10 fw-black shadow-sm">
+                      {{ p.nombreCompleto.charAt(0) }}
+                    </div>
+                    <div>
+                      <div class="fw-bold text-dark">{{ p.nombreCompleto }}</div>
+                      <div class="text-muted small">ID: {{ p.idP }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge bg-light text-dark fw-bold border">{{ p.docIden }}</span></td>
+                <td>
+                  <div class="small fw-bold text-dark">{{ p.telefono || 'Sin teléfono' }}</div>
+                  <div class="text-muted small">{{ p.email || 'Sin correo' }}</div>
+                </td>
+                <td class="small text-muted">{{ p.direccion || 'Sin dirección' }}</td>
+                <td class="pe-4 text-end">
+                  <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-light btn-sm rounded-3 p-2 text-primary border" (click)="editar(p)" title="Editar">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-light btn-sm rounded-3 p-2 text-danger border" (click)="eliminar(p)" title="Eliminar">
+                      <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <a [routerLink]="['/odontograma']" [queryParams]="{pacienteId: p.idPersona || p.idP}" class="btn btn-light btn-sm rounded-3 p-2 text-info border" title="Odontograma">
+                      <i class="fas fa-tooth"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div *ngIf="!filtrados.length" class="p-5 text-center text-muted fw-bold">
+            <i class="fas fa-user-slash fa-3x mb-3 opacity-25"></i>
+            <p>No se encontraron pacientes registrados.</p>
+          </div>
+        </div>
+      </div>
     </div>
-    <div *ngIf="!filtrados.length && !loading" class="mt-2">No hay pacientes registrados.</div>
   `,
 })
 export class PacientesPageComponent implements OnDestroy {
@@ -81,13 +181,6 @@ export class PacientesPageComponent implements OnDestroy {
     this.cargar();
     this.docSub = this.docInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(v => this.verificarDocDebounced(v));
     this.emailSub = this.emailInput$.pipe(debounceTime(300), distinctUntilChanged()).subscribe(v => this.verificarEmailDebounced(v));
-  }
-
-  verOdontograma(p: Paciente) {
-    const id = p.idPersona || p.idP;
-    if (id) {
-      this.router.navigate(['/odontograma'], { queryParams: { pacienteId: id } });
-    }
   }
 
   guardar() {

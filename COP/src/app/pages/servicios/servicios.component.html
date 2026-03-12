@@ -1,160 +1,157 @@
-<main class="main-content">
-  <section class="services-hero">
-    <div class="container mx-auto text-center py-20">
-      <h1 class="text-5xl font-bold text-gray-800 mb-4">Nuestros Servicios Integrales</h1>
-      <p class="text-xl text-gray-600 mb-8">Ofrecemos una amplia gama de tratamientos dentales y terapias psicológicas.</p>
-      <button id="toggleBooking" class="btn-primary px-8 py-3 rounded text-white bg-blue-600 hover:bg-blue-700">Solicitar una cita</button>
+<main class="overflow-hidden font-sans">
+  <!-- Hero Section (Bootstrap + Tailwind) -->
+  <section class="py-5 py-md-9 position-relative bg-light">
+    <div class="container position-relative z-1">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8 animate-reveal">
+          <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2 mb-4 fw-bold text-uppercase tracking-widest">
+            Cuidado Profesional
+          </span>
+          <h1 class="display-3 fw-black text-dark mb-4 tracking-tight">
+            Nuestros Servicios <br>
+            <span class="text-primary gradient-text">Especializados</span>
+          </h1>
+          <p class="lead text-muted mb-5 px-md-5">
+            Ofrecemos soluciones integrales con tecnología de vanguardia y un equipo humano excepcional para tu salud dental y mental.
+          </p>
+          <div class="d-flex justify-content-center gap-3">
+            <button id="toggleBooking" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-sm d-flex align-items-center gap-3">
+              <i class="fas fa-calendar-alt"></i>
+              <span>Agendar Cita Ahora</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Background Decor -->
+    <div class="position-absolute top-0 start-50 translate-middle-x w-100 h-100 z-0 pointer-events-none opacity-25">
+      <div class="position-absolute top-0 start-0 w-25 h-50 bg-primary rounded-circle blur-[120px] -translate-x-50 -translate-y-50"></div>
+      <div class="position-absolute bottom-0 end-0 w-25 h-50 bg-info rounded-circle blur-[120px] translate-x-50 translate-y-50"></div>
     </div>
   </section>
 
-  <style>
-    .booking-container{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease}
-    .booking-container.open{grid-template-rows:1fr}
-    .booking-section{overflow:hidden}
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 10px 18px rgba(17,24,39,.08)}
-    .card-header{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:18px 20px;border-bottom:1px solid #e5e7eb;background:linear-gradient(180deg,#f8fafc 0%,#ffffff 70%)}
-    .card-icon{display:inline-grid;place-items:center;width:44px;height:44px;border-radius:10px;background:#2563eb;color:#fff;font-size:20px}
-    .card-title{font-size:1.25rem;font-weight:700;color:#1f2937}
-    .card-sub{font-size:.875rem;color:#64748b}
-    .card-body{padding:20px}
-    .card-footer{padding:16px 20px;border-top:1px solid #e5e7eb;background:#f9fafb;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .btn-primary{display:inline-flex;align-items:center;gap:8px}
-  </style>
-  <div id="bookingContainer" class="booking-container max-w-2xl mx-auto mb-8">
-    <section class="booking-section card">
-      <div class="card-header">
-        <div class="card-icon">🗓️</div>
+  <!-- Booking Section (Bootstrap Card + Tailwind Form) -->
+  <div id="bookingContainer" class="container mt-n5 position-relative z-2 transition-all duration-700 opacity-0 translate-y-5 pointer-events-none [&.open]:opacity-100 [&.open]:translate-y-0 [&.open]:pointer-events-auto">
+    <div class="card border-0 shadow-lg rounded-5 overflow-hidden max-w-4xl mx-auto">
+      <div class="card-header bg-primary p-4 p-md-5 border-0 text-white d-flex align-items-center gap-4">
+        <div class="d-flex align-items-center justify-content-center bg-white bg-opacity-20 rounded-4 w-16 h-16 backdrop-blur-md">
+          <i class="fas fa-edit fa-2x"></i>
+        </div>
         <div>
-          <div class="card-title">Agendar Cita</div>
-          <div class="card-sub">Completa tus datos y selecciona fecha y servicio</div>
+          <h2 class="h3 fw-black mb-1">Nueva Cita</h2>
+          <p class="text-white text-opacity-75 fw-bold text-uppercase small tracking-widest mb-0">Gestión de atención personalizada</p>
         </div>
       </div>
-      <form id="citaForm" class="card-body">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="block text-gray-700 mb-1">Nombre</label>
-            <input id="pacienteNombre" class="w-full border rounded px-3 py-2" required>
+      
+      <div class="card-body p-4 p-md-5">
+        <form id="citaForm" class="row g-4">
+          <div class="col-md-6">
+            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Nombre Completo</label>
+            <input id="pacienteNombre" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="Ej: Juan Pérez" required>
           </div>
-          <div>
-            <label class="block text-gray-700 mb-1">Documento</label>
-            <input id="pacienteDoc" class="w-full border rounded px-3 py-2">
+          <div class="col-md-6">
+            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Documento</label>
+            <input id="pacienteDoc" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="Número de identificación">
           </div>
-          <div>
-            <label class="block text-gray-700 mb-1">Email</label>
-            <input id="pacienteEmail" type="email" class="w-full border rounded px-3 py-2" required>
+          <div class="col-md-6">
+            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Email</label>
+            <input id="pacienteEmail" type="email" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="ejemplo@correo.com" required>
           </div>
-          <div>
-            <label class="block text-gray-700 mb-1">Teléfono</label>
-            <input id="pacienteTelefono" class="w-full border rounded px-3 py-2">
+          <div class="col-md-6">
+            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">WhatsApp</label>
+            <input id="pacienteTelefono" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="+57 300 000 0000">
           </div>
-          <div class="md:col-span-2">
-            <label class="block text-gray-700 mb-1">Dirección</label>
-            <input id="pacienteDireccion" class="w-full border rounded px-3 py-2">
+          <div class="col-12">
+            <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Dirección</label>
+            <input id="pacienteDireccion" class="form-control form-control-lg rounded-3 border-light bg-light focus:bg-white" placeholder="Calle, Carrera, Barrio">
           </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <label class="block text-gray-700 mb-1">Categoría</label>
-            <select id="categoriaSelect" class="w-full border rounded px-3 py-2">
-              <option value="">Todos</option>
-              <option value="Odontología">Odontología</option>
-              <option value="Psicologia">Psicología</option>
-            </select>
+
+          <div class="col-12 my-4 pt-4 border-top">
+            <div class="row g-4">
+              <div class="col-md-4">
+                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Categoría</label>
+                <select id="categoriaSelect" class="form-select form-select-lg rounded-3 border-light bg-light">
+                  <option value="">Todos los servicios</option>
+                  <option value="Odontología">Odontología</option>
+                  <option value="Psicologia">Psicología</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Fecha</label>
+                <input id="citaFecha" type="date" class="form-select form-select-lg rounded-3 border-light bg-light" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Hora</label>
+                <input id="citaHora" type="time" class="form-select form-select-lg rounded-3 border-light bg-light" required>
+              </div>
+              <div class="col-12">
+                <label class="form-label small fw-black text-muted text-uppercase tracking-widest">Servicio Específico</label>
+                <select id="servicioSelect" class="form-select form-select-lg rounded-3 border-light bg-light" required>
+                  <option value="" disabled selected>Selecciona una opción...</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div>
-            <label class="block text-gray-700 mb-1">Fecha</label>
-            <input id="citaFecha" type="date" class="w-full border rounded px-3 py-2" required>
+
+          <div id="citaMsg" class="col-12 d-none alert rounded-3 fw-bold text-center"></div>
+
+          <div class="col-12 d-flex flex-column flex-md-row align-items-center justify-content-between gap-4 pt-3">
+            <p class="text-muted small mb-0 max-w-sm text-center text-md-start">
+              <i class="fas fa-info-circle me-1"></i>
+              Un profesional asignado confirmará tu disponibilidad vía WhatsApp o Email.
+            </p>
+            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm">
+              Confirmar Cita
+            </button>
           </div>
-          <div>
-            <label class="block text-gray-700 mb-1">Hora</label>
-            <input id="citaHora" type="time" class="w-full border rounded px-3 py-2" required>
-          </div>
-          <div>
-            <label class="block text-gray-700 mb-1">Servicio</label>
-            <select id="servicioSelect" class="w-full border rounded px-3 py-2" required></select>
-          </div>
-        </div>
-        <div id="citaMsg" class="mt-2 text-sm"></div>
-      </form>
-      <div class="card-footer">
-        <div class="text-sm text-gray-600">Un médico disponible asignará y confirmará tu cita por correo.</div>
-        <button type="submit" form="citaForm" class="btn-primary px-6 py-2 rounded text-white bg-blue-600 hover:bg-blue-700">Agendar</button>
+        </form>
       </div>
-    </section>
+    </div>
   </div>
 
-  <section id="odontologia" class="service-category">
-    <div class="container mx-auto py-16 px-4">
-      <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Odontología</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Servicio 1 -->
-        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
-            <span class="text-3xl">🦷</span>
-          </div>
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">Limpieza y Profilaxis</h3>
-          <p class="text-gray-600 mb-6">Mantenimiento preventivo para una sonrisa saludable y libre de sarro.</p>
-          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
-        </div>
+  <!-- Services Sections -->
+  <section id="odontologia" class="container py-9">
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-7">
+        <h2 class="display-4 fw-black text-dark mb-3">Odontología <span class="text-primary">Especializada</span></h2>
+        <p class="lead text-muted">Tratamientos avanzados para una sonrisa radiante y saludable.</p>
+      </div>
+    </div>
 
-        <!-- Servicio 2 -->
-        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
-            <span class="text-3xl">✨</span>
+    <div class="row g-4 service-category" id="odontologia-list">
+      <div class="col-md-4 col-lg-3">
+        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift transition-all animate-reveal">
+          <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3 w-12 h-12 mb-4">
+            <i class="fas fa-tooth fa-lg"></i>
           </div>
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">Estética Dental</h3>
-          <p class="text-gray-600 mb-6">Blanqueamientos y carillas para mejorar la apariencia de tu sonrisa.</p>
-          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
-        </div>
-
-        <!-- Servicio 3 -->
-        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
-            <span class="text-3xl">📏</span>
-          </div>
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">Ortodoncia</h3>
-          <p class="text-gray-600 mb-6">Alineación perfecta con brackets o alineadores invisibles.</p>
-          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
+          <h3 class="h5 fw-black text-dark mb-3">Limpieza Dental</h3>
+          <p class="text-muted small mb-4">Eliminación de placa y sarro para prevenir enfermedades gingivales.</p>
+          <button class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold mt-auto">Agendar</button>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="psicologia" class="service-category bg-gray-50">
-    <div class="container mx-auto py-16 px-4">
-      <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Psicología</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 max-w-4xl mx-auto">
-        <!-- Servicio 1 -->
-        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
-            <span class="text-3xl">🧠</span>
-          </div>
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">Terapia Individual</h3>
-          <p class="text-gray-600 mb-6">Apoyo profesional para el manejo de estrés, ansiedad y crecimiento personal.</p>
-          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
-        </div>
+  <section id="psicologia" class="container py-9 bg-light rounded-5 mb-9">
+    <div class="row justify-content-center text-center mb-5 pt-5">
+      <div class="col-lg-7">
+        <h2 class="display-4 fw-black text-dark mb-3">Psicología <span class="text-primary">Clínica</span></h2>
+        <p class="lead text-muted">Acompañamiento profesional para tu bienestar emocional y mental.</p>
+      </div>
+    </div>
 
-        <!-- Servicio 2 -->
-        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
-            <span class="text-3xl">👨‍👩‍👧‍👦</span>
+    <div class="row g-4 service-category justify-content-center px-4 pb-5" id="psicologia-list">
+      <div class="col-md-4 col-lg-3">
+        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-lift transition-all animate-reveal">
+          <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3 w-12 h-12 mb-4">
+            <i class="fas fa-brain fa-lg"></i>
           </div>
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">Terapia Infantil</h3>
-          <p class="text-gray-600 mb-6">Manejo de emociones, conducta y aprendizaje para los más pequeños.</p>
-          <button class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors">Solicitar Cita</button>
-        </div>
-
-        <!-- Autoevaluación -->
-        <div class="service-card group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-transparent hover:border-blue-100 md:col-span-2">
-          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors duration-300">
-            <span class="text-3xl">📝</span>
-          </div>
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">Autoevaluación Ansiedad y Depresión</h3>
-          <p class="text-gray-600 mb-6">Realiza pruebas PHQ-9 y GAD-7 y recibe orientación para agendar terapia.</p>
-          <a routerLink="/psico-evaluacion" class="btn-primary w-full py-3 rounded-xl bg-blue-600 text-white font-semibold text-center hover:bg-blue-700 transition-colors">Realizar Autoevaluación</a>
+          <h3 class="h5 fw-black text-dark mb-3">Terapia Individual</h3>
+          <p class="text-muted small mb-4">Espacio seguro para explorar tus emociones y superar desafíos personales.</p>
+          <button class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold mt-auto">Agendar</button>
         </div>
       </div>
     </div>
   </section>
 </main>
-

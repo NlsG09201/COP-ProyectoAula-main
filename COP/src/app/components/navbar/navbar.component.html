@@ -1,26 +1,69 @@
-<header class="header bg-white shadow">
-  <div class="container mx-auto flex justify-between items-center p-4">
-    <div class="logo flex items-center">
-      <img src="/assets/Logo.png" alt="Logo Centro Odontológico y Psicológico" class="h-16 w-auto rounded-lg shadow-md">
-      <span class="ml-4 text-2xl font-bold text-gray-800">COP</span>
-    </div>
-    <button id="menu-toggle" (click)="toggleMenu()" class="block md:hidden text-3xl text-gray-700 focus:outline-none" aria-label="Abrir menú">
-      <i class="fas fa-bars"></i>
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-3">
+  <div class="container px-4 px-lg-5">
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center gap-3" routerLink="/">
+      <div class="position-relative">
+        <img src="/assets/Logo.png" alt="COP" class="rounded-3 shadow-sm" style="height: 50px; width: auto;">
+      </div>
+      <div class="d-flex flex-column">
+        <span class="h3 mb-0 fw-black text-primary tracking-tighter">COP</span>
+        <span class="text-uppercase fw-bold text-muted small" style="font-size: 0.6rem; letter-spacing: 0.2em;">Centro de Salud</span>
+      </div>
+    </a>
+
+    <!-- Toggler -->
+    <button class="navbar-toggler border-0 shadow-none" type="button" (click)="toggleMenu()" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
     </button>
-    <nav class="navigation" id="main-nav">
-      <ul id="main-menu" class="flex flex-col md:flex-row md:space-x-6" [class.hidden]="isMobile() && !menuOpen()">
-        <li><a routerLink="/" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Inicio</a></li>
-        <li><a routerLink="/servicios" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Servicios</a></li>
-        <li><a routerLink="/nosotros" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Nosotros</a></li>
-        <li><a routerLink="/testimonios" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Testimonios</a></li>
-        <li><a routerLink="/contacto" routerLinkActive="active" class="nav-link block px-4 py-2 md:p-0" (click)="closeMenu()">Contacto</a></li>
-        <li *ngIf="!isLoggedIn()"><a routerLink="/auth" class="btn-primary px-4 py-1 rounded-lg text-white bg-blue-600 hover:bg-blue-700 ml-4 block text-center" (click)="closeMenu()">Entrar</a></li>
-        <li *ngIf="isLoggedIn()" class="flex items-center space-x-2 ml-4">
-          <span class="text-sm font-medium text-gray-700 hidden lg:inline">{{ getUserName() }}</span>
-          <button (click)="logout()" class="text-sm text-red-600 hover:text-red-800 font-semibold px-2 py-1">Salir</button>
+
+    <!-- Nav Links -->
+    <div class="collapse navbar-collapse" [class.show]="menuOpen()">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-3">
+        <li class="nav-item">
+          <a class="nav-link fw-bold px-3 py-2 rounded-3 transition-all" routerLink="/" routerLinkActive="active text-primary bg-primary bg-opacity-10" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-bold px-3 py-2 rounded-3 transition-all" routerLink="/servicios" routerLinkActive="active text-primary bg-primary bg-opacity-10">Servicios</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-bold px-3 py-2 rounded-3 transition-all" routerLink="/nosotros" routerLinkActive="active text-primary bg-primary bg-opacity-10">Nosotros</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-bold px-3 py-2 rounded-3 transition-all" routerLink="/testimonios" routerLinkActive="active text-primary bg-primary bg-opacity-10">Testimonios</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fw-bold px-3 py-2 rounded-3 transition-all" routerLink="/contacto" routerLinkActive="active text-primary bg-primary bg-opacity-10">Contacto</a>
         </li>
       </ul>
-    </nav>
+
+      <!-- Action Buttons -->
+      <div class="d-flex align-items-center gap-3">
+        <ng-container *ngIf="!isLoggedIn()">
+          <button routerLink="/auth" class="btn btn-primary px-4 py-2 fw-bold rounded-3 shadow-sm hover-lift">
+            <i class="fas fa-user-circle me-2"></i> Área Pacientes
+          </button>
+        </ng-container>
+        <ng-container *ngIf="isLoggedIn()">
+          <div class="dropdown">
+            <button class="btn btn-light d-flex align-items-center gap-2 px-3 py-2 rounded-pill border shadow-sm" type="button">
+              <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-center fw-bold small" style="width: 32px; height: 32px;">
+                {{ getUserName().charAt(0) }}
+              </div>
+              <span class="small fw-bold text-dark">{{ getUserName() }}</span>
+              <i class="fas fa-sign-out-alt text-danger ms-2 cursor-pointer" (click)="logout()"></i>
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
   </div>
-</header>
+</nav>
+
+<style>
+  .navbar-nav .nav-link { color: #64748b; }
+  .navbar-nav .nav-link:hover { color: #0d6efd; background-color: rgba(13, 110, 253, 0.05); }
+  .navbar-nav .nav-link.active { color: #0d6efd !important; background-color: rgba(13, 110, 253, 0.1) !important; }
+  .fw-black { font-weight: 900; }
+  .hover-lift:hover { transform: translateY(-2px); transition: transform 0.2s ease; }
+</style>
 
