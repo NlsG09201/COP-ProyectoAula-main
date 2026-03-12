@@ -19,20 +19,6 @@ services:
       timeout: 5s
       retries: 10
 
-  mongo:
-    image: mongo:7
-    container_name: cop-mongo
-    restart: unless-stopped
-    ports:
-      - "27018:27017"
-    volumes:
-      - mongo_data:/data/db
-    healthcheck:
-      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.runCommand({ ping: 1 })' || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: cop-rabbit
@@ -75,25 +61,6 @@ services:
     ports:
       - "8080:8080"
 
-  backend-mongo:
-    build:
-      context: ./Backend
-    container_name: cop-backend-mongo
-    restart: unless-stopped
-    environment:
-      SPRING_PROFILES_ACTIVE: mongo
-      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/copdb
-      SPRING_RABBITMQ_HOST: rabbitmq
-      SPRING_RABBITMQ_PORT: 5672
-      MAILHOG_API_BASE: http://mailhog:8025
-    depends_on:
-      mongo:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    ports:
-      - "8081:8080"
-
   worker:
     build:
       context: ./Worker
@@ -102,7 +69,6 @@ services:
     environment:
       SERVER_PORT: 8082
       worker.backend.base-url: http://backend:8080/api
-      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/workerdb
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       # Configuración de Correo (MailHog por defecto, cambiar para Gmail/SendGrid)
@@ -112,13 +78,6 @@ services:
       SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
       SPRING_MAIL_FROM: no-reply@cop.local
       public.cop.base: "http://localhost:8086"
-      # Para usar Gmail/SendGrid, descomenta y rellena estas líneas (esto sobreescribirá lo anterior):
-      # SPRING_MAIL_HOST: "smtp.gmail.com"
-      # SPRING_MAIL_PORT: 587
-      # SPRING_MAIL_USERNAME: "tu-correo@gmail.com"
-      # SPRING_MAIL_PASSWORD: "tu-contraseña-de-aplicacion"
-      # SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
-      # SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
       # Configuración Twilio WhatsApp
       TWILIO_ACCOUNT_SID: "ACXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
       TWILIO_AUTH_TOKEN: "your_auth_token"
@@ -126,8 +85,6 @@ services:
     depends_on:
       backend:
         condition: service_started
-      mongo:
-        condition: service_healthy
       rabbitmq:
         condition: service_healthy
       mailhog:
@@ -156,5 +113,5 @@ services:
 
 volumes:
   mysql_data:
-  mongo_data:
+
 
