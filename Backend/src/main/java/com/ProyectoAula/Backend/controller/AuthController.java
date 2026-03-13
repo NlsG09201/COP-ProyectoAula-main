@@ -40,7 +40,7 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre de usuario ya existe");
         }
 
-        cliente.setRol(Rol.CLIENTE);
+        cliente.setRol(Rol.PACIENTE);
         cliente.setPasswordHash(passwordEncoder.encode(cliente.getPasswordHash()));
         
         Persona guardado = personaRepository.save(cliente);

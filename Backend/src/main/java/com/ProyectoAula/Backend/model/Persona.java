@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "PERSONAS")
 public class Persona {
 
-    public enum Rol { MEDICO, PACIENTE, CLIENTE }
+    public enum Rol { MEDICO, PACIENTE }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,16 +29,23 @@ public class Persona {
     @Column(name = "Direccion")
     private String direccion;
 
+    @Column(name = "Username", unique = true)
     private String username;
+    @Column(name = "PasswordHash")
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "Rol")
     private Rol rol;
 
+    @Column(name = "Certificado")
     private String certificado;
 
+    @Column(name = "HoraInicioDisponibilidad")
     private LocalTime horaInicioDisponibilidad;
+    @Column(name = "HoraFinDisponibilidad")
     private LocalTime horaFinDisponibilidad;
+    @Column(name = "DiasDisponibles")
     private String diasDisponibles;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)

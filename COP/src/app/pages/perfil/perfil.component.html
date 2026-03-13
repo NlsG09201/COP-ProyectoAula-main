@@ -1,0 +1,122 @@
+<div class="max-w-4xl mx-auto px-4 py-12">
+  <div class="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden animate-fade-in">
+    
+    <!-- Header Perfil -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 px-8 py-12 text-white relative overflow-hidden">
+      <div class="relative z-10 flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+        <div class="w-24 h-24 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-4xl font-black border-4 border-white/30 shadow-2xl">
+          {{ user?.nombreCompleto?.charAt(0) || 'P' }}
+        </div>
+        <div>
+          <h1 class="text-3xl font-black tracking-tight mb-1">{{ user?.nombreCompleto }}</h1>
+          <p class="text-blue-100 font-medium flex items-center justify-center md:justify-start gap-2">
+            <i class="fas fa-id-card text-sm opacity-70"></i>
+            ID: {{ user?.docIden || 'No asignado' }}
+          </p>
+        </div>
+        <div class="md:ml-auto">
+          <button (click)="toggleEdit()" 
+                  class="bg-white/10 hover:bg-white/20 backdrop-blur-md px-6 py-2.5 rounded-full font-bold transition-all border border-white/20 flex items-center gap-2 mx-auto">
+            <i class="fas" [class.fa-edit]="!editing" [class.fa-times]="editing"></i>
+            {{ editing ? 'Cancelar Edición' : 'Editar Perfil' }}
+          </button>
+        </div>
+      </div>
+      <!-- Adorno de fondo -->
+      <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+      <div class="absolute -left-12 -top-12 w-48 h-48 bg-indigo-400/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- Contenido -->
+    <div class="p-8">
+      
+      <!-- Mensajes de Estado -->
+      <div *ngIf="message" 
+           [class]="isError ? 'bg-red-50 text-red-700 border-red-200' : 'bg-green-50 text-green-700 border-green-200'"
+           class="mb-8 p-4 rounded-2xl border flex items-center gap-3 font-semibold animate-bounce-in">
+        <i class="fas" [class.fa-exclamation-circle]="isError" [class.fa-check-circle]="!isError"></i>
+        {{ message }}
+      </div>
+
+      <!-- Vista: Ver Datos -->
+      <div *ngIf="!editing" class="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in">
+        <div class="space-y-6">
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nombre Completo</label>
+            <p class="text-lg font-bold text-slate-900">{{ user?.nombreCompleto }}</p>
+          </div>
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Correo Electrónico</label>
+            <p class="text-lg font-bold text-slate-900">{{ user?.email }}</p>
+          </div>
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Usuario</label>
+            <p class="text-lg font-bold text-slate-900">@{{ user?.username }}</p>
+          </div>
+        </div>
+        <div class="space-y-6">
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Teléfono de Contacto</label>
+            <p class="text-lg font-bold text-slate-900">{{ user?.telefono || 'Sin registrar' }}</p>
+          </div>
+          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Dirección de Residencia</label>
+            <p class="text-lg font-bold text-slate-900">{{ user?.direccion || 'Sin registrar' }}</p>
+          </div>
+          <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+            <label class="block text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">Estado de Paciente</label>
+            <div class="flex items-center gap-2 text-blue-700 font-black">
+              <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+              ACTIVO
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista: Formulario Editar -->
+      <form *ngIf="editing" (submit)="onUpdate($event)" class="space-y-8 animate-slide-up">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-2">
+            <label class="block text-sm font-bold text-slate-700">Nombre Completo</label>
+            <input type="text" [(ngModel)]="form.nombreCompleto" name="nombre" 
+                   class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none font-medium bg-slate-50"
+                   required placeholder="Tu nombre real">
+          </div>
+          <div class="space-y-2">
+            <label class="block text-sm font-bold text-slate-700">Identificación (DNI/Cédula)</label>
+            <input type="text" [(ngModel)]="form.docIden" name="doc" 
+                   class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none font-medium bg-slate-50"
+                   required placeholder="Número de documento">
+          </div>
+          <div class="space-y-2">
+            <label class="block text-sm font-bold text-slate-700">Correo Electrónico</label>
+            <input type="email" [(ngModel)]="form.email" name="email" 
+                   class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none font-medium bg-slate-50"
+                   required placeholder="tu@email.com">
+          </div>
+          <div class="space-y-2">
+            <label class="block text-sm font-bold text-slate-700">Teléfono</label>
+            <input type="tel" [(ngModel)]="form.telefono" name="tel" 
+                   class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none font-medium bg-slate-50"
+                   placeholder="Ej: 300 123 4567">
+          </div>
+          <div class="md:col-span-2 space-y-2">
+            <label class="block text-sm font-bold text-slate-700">Dirección</label>
+            <input type="text" [(ngModel)]="form.direccion" name="dir" 
+                   class="w-full px-5 py-3.5 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-600 transition-all outline-none font-medium bg-slate-50"
+                   placeholder="Tu dirección de residencia">
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 pt-4">
+          <button type="submit" [disabled]="loading"
+                  class="flex-1 bg-blue-600 text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-3">
+            <i class="fas" [class.fa-save]="!loading" [class.fa-spinner]="loading" [class.animate-spin]="loading"></i>
+            {{ loading ? 'Guardando Cambios...' : 'Guardar Información' }}
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `PERSONAS` (
   `Direccion` VARCHAR(255),
   `Username` VARCHAR(100) UNIQUE,
   `PasswordHash` VARCHAR(255),
-  `Rol` ENUM('MEDICO','PACIENTE','CLIENTE') NOT NULL,
+  `Rol` ENUM('MEDICO','PACIENTE') NOT NULL,
   `Certificado` VARCHAR(200),
   `HoraInicioDisponibilidad` TIME,
   `HoraFinDisponibilidad` TIME,

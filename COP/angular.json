@@ -32,7 +32,9 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/assets/bootstrap.min.css",
+              "src/styles.css",
+              "src/assets/font-awesome.min.css"
             ]
           },
           "configurations": {

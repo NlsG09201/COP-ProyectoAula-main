@@ -9,23 +9,23 @@ public class Testimonio {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_Testimonio")
+    @Column(name = "ID_Testimonio", columnDefinition = "INT UNSIGNED")
     private Long id;
 
     @Column(name = "Nombre", nullable = false)
     private String nombre;
 
-    @Column(name = "Comentario", nullable = false, length = 1000)
+    @Column(name = "Comentario", nullable = false, columnDefinition = "TEXT")
     private String comentario;
 
     @Column(name = "Calificacion", nullable = false)
     private int calificacion; // 1-5 estrellas
 
-    @Column(name = "FechaCreacion", nullable = false)
+    @Column(name = "FechaCreacion", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime fechaCreacion;
 
     @ManyToOne
-    @JoinColumn(name = "ID_Servicio")
+    @JoinColumn(name = "ID_Servicio", nullable = false, columnDefinition = "INT UNSIGNED")
     private Servicio servicio;
 
     // Constructor por defecto

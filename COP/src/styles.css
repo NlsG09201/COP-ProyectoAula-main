@@ -3,14 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-app-navbar {
-  border: 5px solid #00ff00 !important;
-  display: block !important;
-  min-height: 50px !important;
-  position: relative !important;
-  z-index: 9999 !important;
-}
-
 @layer base {
   :root {
     --primary: #0d6efd;
